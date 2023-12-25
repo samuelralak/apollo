@@ -26,11 +26,7 @@ const MainNavigation = () => {
                                     </Disclosure.Button>
                                 </div>
                                 <div className="flex flex-shrink-0 items-center">
-                                    <img
-                                        className="h-8 w-auto"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                                        alt="Your Company"
-                                    />
+                                    <h1 className="text-slate-700 font-bold text-lg">[APOLLO]</h1>
                                 </div>
                                 <div className="hidden md:ml-6 md:flex md:space-x-8">
                                     {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
@@ -65,14 +61,15 @@ const MainNavigation = () => {
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative ml-3">
                                         <div>
-                                            <Menu.Button className="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                                <span className="absolute -inset-1.5" />
+                                            <Menu.Button
+                                                className="relative flex rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                                <span className="absolute -inset-1.5"/>
                                                 <span className="sr-only">Open user menu</span>
-                                                <img
-                                                    className="h-8 w-8 rounded-lg"
-                                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                    alt=""
-                                                />
+                                                <span className="h-8 w-8 rounded-lg">
+                                                    <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                                    </svg>
+                                                </span>
                                             </Menu.Button>
                                         </div>
                                         <Transition
@@ -146,15 +143,15 @@ const MainNavigation = () => {
                         <div className="border-t border-gray-200 pb-3 pt-4">
                             <div className="flex items-center px-4 sm:px-6">
                                 <div className="flex-shrink-0">
-                                    <img
-                                        className="h-10 w-10 rounded-lg"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                        alt=""
-                                    />
+                                    <span className="h-10 w-10 rounded-lg">
+                                        <svg className="h-10 w-10 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                    </span>
                                 </div>
                                 <div className="ml-3">
-                                    <div className="text-base font-medium text-gray-800">Tom Cook</div>
-                                    <div className="text-sm font-medium text-gray-500">tom@example.com</div>
+                                    <div className="text-base font-medium text-gray-800">Fullname</div>
+                                    <div className="text-sm font-medium text-gray-500">sam@example.com</div>
                                 </div>
                                 <button
                                     type="button"
