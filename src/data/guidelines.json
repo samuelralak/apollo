@@ -1,0 +1,80 @@
+{
+  "conversational_and_exploratory": [
+    {
+      "summary": "Choose theme",
+      "points": [
+        "Focus on personal or subjective topics.",
+        "Encourage storytelling or experiences.",
+        "Aim for emotional or thoughtful engagement."
+      ]
+    },
+    {
+      "summary": "Be inviting",
+      "points": [
+        "Phrase to elicit opinions or stories.",
+        "Avoid yes/no format; seek depth.",
+        "Keep it open-ended for diverse views."
+      ]
+    },
+    {
+      "summary": "Promote interaction",
+      "points": [
+        "Welcome various perspectives.",
+        "Be respectful and open-minded.",
+        "Foster a conversational tone."
+      ]
+    }
+  ],
+  "technical_and_precise": [
+    {
+      "summary": "Be specific",
+      "points": [
+        "Focus on technical or factual topics.",
+        "Clearly state the technical problem.",
+        "Include essential technical details."
+      ]
+    },
+    {
+      "summary": "Show your work",
+      "points": [
+        "Share what you've already tried.",
+        "Mention findings from this site or others.",
+        "Explain why solutions found were inadequate."
+      ]
+    },
+    {
+      "summary": "Add precision",
+      "points": [
+        "When relevant, include code snippets or error messages.",
+        "Offer context to guide potential solutions.",
+        "Focus on problem-solving and efficiency."
+      ]
+    }
+  ],
+  "generalized": [
+    {
+      "summary": "Be inclusive",
+      "points": [
+        "Keep the topic broad and versatile.",
+        "Ensure clarity and general interest.",
+        "Avoid overly technical or niche subjects."
+      ]
+    },
+    {
+      "summary": "Guide responses",
+      "points": [
+        "Provide general context if necessary.",
+        "Pose the question to invite various interpretations.",
+        "Keep it simple yet engaging."
+      ]
+    },
+    {
+      "summary": "Encourage variety",
+      "points": [
+        "Be open to different types of answers.",
+        "Welcome creative or unconventional insights.",
+        "Promote a friendly, inclusive discussion environment."
+      ]
+    }
+  ]
+}

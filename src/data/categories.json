@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "conversational_and_exploratory",
+    "title": "Conversational & Exploratory",
+    "description": "Seeking subjective insights or personal experiences"
+  },
+  {
+    "slug": "technical_and_precise",
+    "title": "Technical & Precise",
+    "description": "Seeking objective, fact-based answers or solutions"
+  },
+  {
+    "slug": "generalized",
+    "title": "Generalized",
+    "description": "Broad and open-ended, suitable for a wide range of topics without specific format constraints"
+  }
+]
