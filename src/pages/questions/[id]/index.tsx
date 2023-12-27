@@ -1,50 +1,15 @@
 import {PlayIcon} from "@heroicons/react/24/outline";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../../../components/NDKProvider";
-import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
-import {Question} from "../../../resources/question.ts";
+import {NDKKind} from "@nostr-dev-kit/ndk";
+import Question, {transformer as questionTransformer} from "../../../resources/question";
 import {Navigate, useParams} from "react-router-dom";
 import {validate as validateUUID} from 'uuid'
 import {formatDateTime} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
-import Loader from "../../../components/Loader.tsx";
-import EventOwner from "../../../components/shared/EventOwner.tsx";
-import AnswersContainer from "../../../components/answers/AnswersContainer.tsx";
-
-const marshallQuestionAttributes = (event: NDKEvent): Question => {
-    console.log({event})
-    let question = {
-        description: event.content,
-        createdAt: event.created_at,
-        eventId: event.id,
-        user: {pubkey: event.pubkey}
-    } as Question
-
-    question = event.tags.reduce((accumulator, currentValue) => {
-        const [tag, value] = currentValue
-
-        switch (tag) {
-            case "category":
-                accumulator.category = value
-                break;
-            case "title":
-                accumulator.title = value
-                break;
-            case "d":
-                accumulator.id = value
-                break;
-            case "t":
-                accumulator.tags = [...(accumulator.tags ?? []), ...[value]]
-                break;
-            default:
-            // Do nothing...
-        }
-
-        return accumulator
-    }, question)
-
-    return question
-}
+import Loader from "../../../components/Loader";
+import EventOwner from "../../../components/shared/EventOwner";
+import AnswersContainer from "../../../components/answers/AnswersContainer";
 
 const Page = () => {
     const {questionId} = useParams()
@@ -61,7 +26,7 @@ const Page = () => {
                 (async () => {
                     const questionFilters = {kinds: [1993 as NDKKind], "#d": [questionId]}
                     const questionEvent = await ndkInstance().fetchEvent(questionFilters, {closeOnEose: false})
-                    const questionFromEvent = marshallQuestionAttributes(questionEvent!)
+                    const questionFromEvent = questionTransformer(questionEvent!)
                     setQuestion(questionFromEvent)
                 })()
             } else {

@@ -4,7 +4,7 @@ import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import answerSchema from "../../schemas/answer-schema.ts";
 import {ReactNode, useContext} from "react";
-import {Question} from "../../resources/question.ts";
+import Question from "../../resources/question";
 import {v4 as uuidv4} from "uuid";
 import {NDKContext} from "../NDKProvider.tsx";
 import {ToastContext} from "../ToastProvider.tsx";

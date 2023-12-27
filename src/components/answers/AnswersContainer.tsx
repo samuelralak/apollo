@@ -1,10 +1,10 @@
-import {Question} from "../../resources/question.ts";
+import Question from "../../resources/question";
 import AnswerList from "./AnswerList.tsx";
 import YourAnswer from "./YourAnswer.tsx";
 import {useContext, useEffect, useState} from "react";
 import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
-import {NDKContext} from "../NDKProvider.tsx";
-import {Answer} from "../../resources/answer.ts";
+import {NDKContext} from "../NDKProvider";
+import {Answer} from "../../resources/answer";
 
 const answersFromEvent = (events: NDKEvent[]): Answer[] => {
     return events.reduce((acc, curr) => {

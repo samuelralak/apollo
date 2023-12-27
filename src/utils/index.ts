@@ -7,9 +7,48 @@ import {
     differenceInYears,
     format
 } from "date-fns";
+import {NDKTag} from "@nostr-dev-kit/ndk";
 
-export const classNames = (...classes: string[]) => {
+export const classNames = (...classes: string[]): string => {
     return classes.filter(Boolean).join(' ')
+}
+
+export const tagFromEvents = (tags: NDKTag[]): Record<string, string[]> => {
+    return tags.reduce((acc, curr) => {
+        const [key, ...rest] = curr
+        return {...acc, [key]: [...(acc[key] ?? []), ...rest]}
+    }, {} as Record<string, string[]>)
+}
+
+export const markdownToText = (markdown: string): string => {
+    // Truncate at the first occurrence of a code block
+    const codeBlockIndex = markdown.indexOf('```');
+
+    if (codeBlockIndex !== -1) {
+        markdown = markdown.substring(0, codeBlockIndex);
+    }
+
+    // Regular expression patterns for removing markdown syntax
+    const patterns: [RegExp, string][] = [
+        [/\*\*(.*?)\*\*/g, '$1'],  // Bold
+        [/__(.*?)__/g, '$1'],      // Bold
+        [/\*(.*?)\*/g, '$1'],      // Italic
+        [/_(.*?)_/g, '$1'],        // Italic
+        [/\[(.*?)\]\(.*?\)/g, '$1'], // Links
+        [/!\[(.*?)\]\(.*?\)/g, '$1'], // Images
+        [/#\s?(.*)/g, '$1'],       // Headers
+        [/>\s?(.*)/g, '$1'],       // Blockquotes
+        [/`{1,2}(.*?)`{1,2}/g, '$1'], // Inline code
+        [/\n{2,}/g, '\n'],         // Multiple newlines
+        [/^\s+|\s+$/g, '']         // Trim
+    ];
+
+    // Apply each pattern to remove markdown syntax
+    patterns.forEach(([pattern, replacement]) => {
+        markdown = markdown.replace(pattern, replacement);
+    });
+
+    return markdown;
 }
 
 export const formatDateTime = (unixTimestamp: number | undefined): string => {
@@ -28,7 +67,8 @@ export const formatDateTime = (unixTimestamp: number | undefined): string => {
         if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
         if (diffInHours < 24) return `${diffInHours} hours ago`;
         if (diffInDays < 3) return `${diffInDays} days ago`;
-        if (diffInMonths < 11) return format(timestampDate, "d MMM, h:mm a");
+        // if (diffInMonths < 11) return format(timestampDate, "d MMM, h:mm a");
+        if (diffInMonths < 11) return format(timestampDate, "d MMM");
         if (diffInMonths >= 11 || diffInYears >= 1)
             return `${diffInYears} years ago`;
     }

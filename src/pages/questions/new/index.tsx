@@ -13,7 +13,7 @@ import categories from "../../../data/categories.json"
 import guidelineData from "../../../data/guidelines.json"
 import {Guideline} from "../../../resources/guideline.ts";
 import {NDKContext} from "../../../components/NDKProvider.tsx";
-import {Question} from "../../../resources/question.ts";
+import Question from "../../../resources/question";
 import {v4 as uuidv4} from 'uuid'
 import {NDKKind} from "@nostr-dev-kit/ndk";
 import {useNavigate} from "react-router-dom";
@@ -100,7 +100,7 @@ const Page = () => {
     }, [questionId])
 
     return (
-        <>
+        <div className="mx-auto max-w-7xl">
             <div className="md:flex md:items-center md:justify-between">
                 <div className="min-w-0 flex-1">
                     <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -317,7 +317,7 @@ const Page = () => {
                     </div>
                 </section>
             </div>
-        </>
+        </div>
     )
 }
 

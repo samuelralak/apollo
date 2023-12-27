@@ -1,8 +1,9 @@
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../NDKProvider.tsx";
+import {classNames} from "../../utils";
 
-const EventOwner = ({pubkey}: { pubkey: string }) => {
+const EventOwner = ({pubkey, mini}: { pubkey: string, mini?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
     const [userProfile, setUserEvent] = useState<NDKUserProfile | null>()
 
@@ -15,20 +16,20 @@ const EventOwner = ({pubkey}: { pubkey: string }) => {
         })()
     }, [pubkey]);
 
-    console.log({userProfile})
-
     return (
         <a href="#" className="group block flex-shrink-0">
             <div className="flex items-center">
                 <div>
                     {userProfile?.image ? (
                         <img
-                            className="inline-block h-9 w-9 rounded-lg object-cover"
+                            className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block object-cover')}
                             src={userProfile.image}
                             alt="avatar"
                         />
                     ) : (
-                        <span className="inline-block h-9 w-9 overflow-hidden rounded-lg bg-slate-100">
+                        <span
+                            className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block overflow-hidden bg-slate-100')}
+                        >
                             <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -42,7 +43,7 @@ const EventOwner = ({pubkey}: { pubkey: string }) => {
                         {userProfile?.displayName ?? userProfile?.name}
                     </p>
 
-                    {userProfile?.nip05 && (
+                    {(userProfile?.nip05 && !mini) && (
                         <p className="text-xs font-medium text-slate-500 group-hover:text-slate-700">
                             {userProfile?.nip05}
                         </p>
