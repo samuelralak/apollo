@@ -7,7 +7,7 @@ import {MinusSmallIcon, PlusSmallIcon, XMarkIcon} from "@heroicons/react/24/outl
 import {KeyboardEvent, ReactNode, useContext, useEffect, useState} from "react";
 import {classNames} from "../../../utils";
 import {Category} from "../../../resources/category";
-import MDEditor, {codeLive, divider, fullscreen, hr, ICommand, image, strikethrough, title} from '@uiw/react-md-editor';
+import MDEditor from '@uiw/react-md-editor';
 import {Disclosure} from "@headlessui/react";
 import categories from "../../../data/categories.json"
 import guidelineData from "../../../data/guidelines.json"
@@ -18,6 +18,7 @@ import {v4 as uuidv4} from 'uuid'
 import {NDKKind} from "@nostr-dev-kit/ndk";
 import {useNavigate} from "react-router-dom";
 import {ToastContext} from "../../../components/ToastProvider.tsx";
+import {commandsFilter} from "../../../utils/md-editor.ts";
 
 const options: Category[] = categories
 const guidelines: Record<string, Guideline[]> = guidelineData
@@ -27,19 +28,6 @@ const placeholderTitleExamples: Record<string, string> = {
     technical_and_precise: "What are best practices for optimizing Lightning Network node performance?",
     generalized: "How do diet and exercise contribute to overall mental health?"
 }
-
-const excludeCommands = [
-    codeLive.name, fullscreen.name, title.name, image.name, hr.name, strikethrough.name, divider.name
-]
-
-const commandsFilter = (command: ICommand): false | ICommand => {
-    if (excludeCommands.includes(command.name) || !excludeCommands.includes(command.groupName)) {
-        return false
-    }
-
-    return command
-}
-
 
 const Page = () => {
     const navigate = useNavigate()

@@ -1,11 +1,12 @@
 export interface Question {
-    id?: string;
+    id: string;
     title: string;
     description: string;
     tags: string[];
     category: string;
     createdAt?: number;
-    user?: {
+    eventId: string;
+    user: {
         pubkey: string
     };
 }

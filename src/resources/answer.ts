@@ -1,9 +1,9 @@
 export interface Answer {
     id?: string;
     description: string;
-    accepted: boolean;
-    createdAt?: string;
+    createdAt: number;
     questionId: string;
+    eventId: string;
     user: {
         pubkey: string
     }

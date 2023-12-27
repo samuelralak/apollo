@@ -6,27 +6,17 @@ import {Question} from "../../../resources/question.ts";
 import {Navigate, useParams} from "react-router-dom";
 import {validate as validateUUID} from 'uuid'
 import {formatDateTime} from "../../../utils";
-import MDEditor, {codeLive, divider, fullscreen, hr, ICommand, image, strikethrough, title} from '@uiw/react-md-editor';
+import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../components/Loader.tsx";
 import EventOwner from "../../../components/shared/EventOwner.tsx";
-
-// TODO: Duplicated code
-const excludeCommands = [
-    codeLive.name, fullscreen.name, title.name, image.name, hr.name, strikethrough.name, divider.name
-]
-
-const commandsFilter = (command: ICommand): false | ICommand => {
-    if (excludeCommands.includes(command.name) || !excludeCommands.includes(command.groupName)) {
-        return false
-    }
-
-    return command
-}
+import AnswersContainer from "../../../components/answers/AnswersContainer.tsx";
 
 const marshallQuestionAttributes = (event: NDKEvent): Question => {
+    console.log({event})
     let question = {
         description: event.content,
         createdAt: event.created_at,
+        eventId: event.id,
         user: {pubkey: event.pubkey}
     } as Question
 
@@ -147,100 +137,7 @@ const Page = () => {
                 </div>
             </div>
 
-            <div className="divide-y divide-slate-200">
-                <div className="mb-5">
-                    <h1 className="text-xl font-medium text-slate-600">3 Answers</h1>
-
-                    <div className="flex flex-row gap-x-4 mt-8">
-                        <div className="w-10 flex flex-col items-center">
-                            <PlayIcon className="h-6 -rotate-90 text-slate-400"/>
-                            <p className="w-full text-center font-semibold text-xl text-slate-600">1</p>
-                            <PlayIcon className="h-6 rotate-90 text-slate-400"/>
-                        </div>
-                        <div className="flex-1">
-                            <div className="question-detail">
-                                <p>
-                                    Vestibulum aliquam vitae eros nec sodales. Proin sed turpis eget ipsum porta tempus.
-                                    Nullam felis nibh, suscipit in lectus eu, pharetra vehicula neque. Nulla eget magna
-                                    consequat, porttitor leo sed, pretium lacus. Praesent nisi lectus, rhoncus sed
-                                    dignissim
-                                    eu, faucibus id ante. Donec sit amet magna venenatis, elementum est eu, condimentum
-                                    velit. Sed maximus sem et nisi vulputate pulvinar. Quisque condimentum eros eget
-                                    vulputate accumsan. Vestibulum aliquam, orci ac iaculis posuere, urna tellus
-                                    malesuada
-                                    augue, nec pellentesque lectus urna vel lectus.
-                                </p>
-                            </div>
-
-
-                            <div className="flex flex-row py-3 align-middle justify-center">
-                                <a href="#" className="group block flex-shrink-0 flex-1">
-                                    <div className="flex items-center">
-                                        <div>
-                                            <img
-                                                className="inline-block h-9 w-9 rounded-lg"
-                                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                alt=""
-                                            />
-                                        </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-slate-700 group-hover:text-slate-900">Tom
-                                                Cook</p>
-                                            <p className="text-xs font-medium text-slate-500 group-hover:text-slate-700">View
-                                                profile</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div>
-                                    <dl className="text-right text-sm">
-                                        <dt>asked</dt>
-                                        <dd>6 hours ago</dd>
-                                    </dl>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="pt-5">
-                    <h1 className="text-xl font-medium text-slate-600">Your Answer</h1>
-                    <div className="mt-5 w-full">
-                        <MDEditor
-                            value={""}
-                            onChange={() => {
-                            }}
-                            commandsFilter={commandsFilter}
-                            preview={'edit'}
-                            data-color-mode={'light'}
-                            className="prose prose-slate max-w-none prose-code:text-slate-700"
-                        />
-                    </div>
-                    <div className="rounded-lg bg-blue-50 p-4 border-2 border-blue-100 mt-5 text-slate-700">
-                        <div className="ml-3 flex flex-col gap-y-2">
-                            <p className="text-sm">
-                                Thanks for contributing an answer to our Q&A! Your insights are valuable.
-                            </p>
-
-                            <p className="text-sm font-semibold">When answering:</p>
-
-                            <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
-                                <li>Ensure you address the question directly.</li>
-                                <li>Include details, explanations, and if possible, references.</li>
-                                <li>Embrace our diverse topics - from technical to personal experiences.</li>
-                            </ul>
-
-                            <p className="text-sm font-semibold">Avoid:</p>
-
-                            <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
-                                <li>Requesting clarification or additional information.</li>
-                                <li>Baseless opinions. Prefer facts or shared experiences.</li>
-                                <li>Responding to other answers unless providing additional information.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
+            <AnswersContainer question={question}/>
         </div>
     )
 }
