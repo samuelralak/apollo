@@ -10,6 +10,9 @@ import {AppDispatch} from "../../store";
 import {NDKContext} from "../NDKProvider.tsx";
 import {SignerMethod, signIn} from "../../features/auth/auth-slice.ts";
 import {decodeNsec, validatePrivateKey} from "../../utils";
+import secureLocalStorage from "react-secure-storage";
+import constants from "../../constants";
+import {nip19} from "nostr-tools";
 
 const GetStarted = () => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
@@ -51,6 +54,12 @@ const GetStarted = () => {
             try {
                 const decodedKey = privateKeyType === 'nsec' ? decodeNsec(privateKey as `nsec1${string}`) : privateKey
                 const signer = new NDKPrivateKeySigner(decodedKey)
+
+                secureLocalStorage.setItem(constants.secureStorageKey, {
+                    privkey: decodedKey,
+                    nsec: nip19.nsecEncode(new TextEncoder().encode(decodedKey))
+                })
+
                 await _fetchProfileAndSignIn(signer, SignerMethod.PRIVATE_KEY)
             } catch (e) {
                 console.log({e})

@@ -1,6 +1,11 @@
-import NDK, {NDKEvent, NDKNip07Signer, NDKSigner} from "@nostr-dev-kit/ndk";
+import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
 import {createContext, ReactNode, useEffect, useRef, useState} from "react";
 import Loader from "./Loader.tsx";
+import {useSelector} from "react-redux";
+import {RootState} from "../store";
+import {SignerMethod} from "../features/auth/auth-slice.ts";
+import secureLocalStorage from "react-secure-storage";
+import constants from "../constants";
 
 export interface NDKContext {
     ndkConnected: boolean,
@@ -21,6 +26,7 @@ const relays = [
 export const NDKContext = createContext<NDKContext | null>(null)
 
 const NDKProvider = ({children}: { children: ReactNode }) => {
+    const auth = useSelector((state: RootState) => state.auth)
     const ndk = useRef<NDK | undefined>()
     const [ndkConnected, setNDKConnected] = useState<boolean>(false)
 
@@ -54,8 +60,22 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
         if (signer) {
             ndk.current!.signer = signer
         } else {
-            const nipO7Singer = new NDKNip07Signer(3000)
-            setNDKSigner(nipO7Singer)
+            switch (auth.signerMethod) {
+                case SignerMethod.NIP07: {
+                    setNDKSigner(new NDKNip07Signer(3000))
+                    break;
+                }
+                case SignerMethod.PRIVATE_KEY: {
+                    const fromStorage = secureLocalStorage.getItem(constants.secureStorageKey) as {
+                        privkey: string,
+                        nsec: string
+                    }
+                    setNDKSigner(new NDKPrivateKeySigner(fromStorage.privkey!))
+                    break;
+                }
+                default:
+                    ndk.current!.signer = undefined
+            }
         }
     }
 

@@ -1,13 +1,31 @@
 import {configureStore} from "@reduxjs/toolkit";
-import authReducer from "../features/auth/auth-slice"
+import authReducer, {AuthState} from "../features/auth/auth-slice"
+import {authListenerMiddleware} from "./middlewares";
 
-const store = configureStore({
-    reducer: {
-        auth: authReducer
-    }
-})
+interface PreloadedState {
+    auth: AuthState
+}
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+const configureAppStore = (preloadedState: PreloadedState) => {
+    return configureStore({
+        preloadedState,
+        reducer: {
+            auth: authReducer
+        },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({
+                serializableCheck: {
+                    ignoredActions: ['persist/PERSIST'],
+                }
+            }).concat([authListenerMiddleware.middleware]),
+    })
+}
 
-export default store
+
+export type RootState = ReturnType<ReturnType<typeof configureAppStore>['getState']>
+export type AppDispatch = ReturnType<typeof configureAppStore>['dispatch']
+
+export {
+    type PreloadedState,
+    configureAppStore
+}

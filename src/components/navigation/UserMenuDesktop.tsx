@@ -4,8 +4,14 @@ import {BellIcon} from "@heroicons/react/24/outline";
 import {Menu, Transition} from "@headlessui/react";
 import {Fragment} from "react";
 import {classNames} from "../../utils";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../store";
+import {signOut} from "../../features/auth/auth-slice.ts";
 
-const UserMenu = () => {
+const UserMenuDesktop = () => {
+    const dispatch = useDispatch() as AppDispatch
+    const onSignOut = () => dispatch(signOut())
+
     return (
         <>
             <div className="flex-shrink-0">
@@ -36,12 +42,10 @@ const UserMenu = () => {
                             <span className="absolute -inset-1.5"/>
                             <span className="sr-only">Open user menu</span>
                             <span className="h-8 w-8 rounded-lg">
-                                                    <svg className="h-full w-full text-gray-300" fill="currentColor"
-                                                         viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                                    </svg>
-                                                </span>
+                                <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </span>
                         </Menu.Button>
                     </div>
                     <Transition
@@ -84,7 +88,7 @@ const UserMenu = () => {
                             <Menu.Item>
                                 {({active}) => (
                                     <a
-                                        href="#"
+                                        onClick={onSignOut}
                                         className={classNames(
                                             active ? 'bg-gray-100' : '',
                                             'block px-4 py-2 text-sm text-gray-700'
@@ -102,4 +106,4 @@ const UserMenu = () => {
     )
 }
 
-export default UserMenu
+export default UserMenuDesktop

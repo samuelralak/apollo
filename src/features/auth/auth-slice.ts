@@ -1,12 +1,13 @@
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {fetchFromStorage, storeNames} from "../../storage";
 
-export enum SignerMethod {
+enum SignerMethod {
     NIP07 = 'nip-07',
     PRIVATE_KEY = 'privateKey'
 }
 
-export interface AuthState {
+interface AuthState {
     isLoggedIn: boolean;
     userProfile: NDKUserProfile | undefined;
     signerMethod: SignerMethod | undefined;
@@ -16,6 +17,11 @@ const initialState: AuthState = {
     isLoggedIn: false,
     userProfile: undefined,
     signerMethod: undefined
+}
+
+const preloadAuth = async (): Promise<AuthState> => {
+    const session = await fetchFromStorage(storeNames.SESSION, 'auth') as AuthState
+    return {...initialState, ...(session ?? {})}
 }
 
 const authSlice = createSlice({
@@ -33,4 +39,11 @@ const authSlice = createSlice({
 })
 
 export const {signIn, signOut} = authSlice.actions
+
+export {
+    preloadAuth,
+    SignerMethod,
+    type AuthState
+}
+
 export default authSlice.reducer

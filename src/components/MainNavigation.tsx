@@ -1,10 +1,11 @@
 import {Disclosure} from '@headlessui/react'
-import {Bars3Icon, BellIcon, XMarkIcon} from '@heroicons/react/24/outline'
+import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
 import {NavLink} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {RootState} from "../store";
-import UserMenu from "./navigation/UserMenu";
+import UserMenuDesktop from "./navigation/UserMenuDesktop.tsx";
 import GetStarted from "./navigation/GetStarted.tsx";
+import UserMenuMobile from "./navigation/UserMenuMobile.tsx";
 
 const MainNavigation = () => {
     const auth = useSelector((state: RootState) => state.auth)
@@ -44,7 +45,7 @@ const MainNavigation = () => {
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                {auth.isLoggedIn ? (<UserMenu/>) : (<GetStarted/>)}
+                                {auth.isLoggedIn ? (<UserMenuDesktop/>) : (<GetStarted/>)}
                             </div>
                         </div>
                     </div>
@@ -60,54 +61,7 @@ const MainNavigation = () => {
                                 Home
                             </Disclosure.Button>
                         </div>
-                        <div className="border-t border-gray-200 pb-3 pt-4">
-                            <div className="flex items-center px-4 sm:px-6">
-                                <div className="flex-shrink-0">
-                                    <span className="h-10 w-10 rounded-lg">
-                                        <svg className="h-10 w-10 text-gray-300" fill="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path
-                                                d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                                <div className="ml-3">
-                                    <div className="text-base font-medium text-gray-800">Fullname</div>
-                                    <div className="text-sm font-medium text-gray-500">sam@example.com</div>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
-                                    <span className="absolute -inset-1.5"/>
-                                    <span className="sr-only">View notifications</span>
-                                    <BellIcon className="h-6 w-6" aria-hidden="true"/>
-                                </button>
-                            </div>
-                            <div className="mt-3 space-y-1">
-                                <Disclosure.Button
-                                    as="a"
-                                    href="#"
-                                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
-                                >
-                                    Your Profile
-                                </Disclosure.Button>
-                                <Disclosure.Button
-                                    as="a"
-                                    href="#"
-                                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
-                                >
-                                    Settings
-                                </Disclosure.Button>
-                                <Disclosure.Button
-                                    as="a"
-                                    href="#"
-                                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
-                                >
-                                    Sign out
-                                </Disclosure.Button>
-                            </div>
-                        </div>
+                        <UserMenuMobile/>
                     </Disclosure.Panel>
                 </>
             )}
