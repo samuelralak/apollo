@@ -8,11 +8,20 @@ import {
     format
 } from "date-fns";
 import {NDKTag} from "@nostr-dev-kit/ndk";
+import {nip19} from "nostr-tools";
 
+/**
+ *
+ * @param classes
+ */
 export const classNames = (...classes: string[]): string => {
     return classes.filter(Boolean).join(' ')
 }
 
+/**
+ *
+ * @param tags
+ */
 export const tagFromEvents = (tags: NDKTag[]): Record<string, string[]> => {
     return tags.reduce((acc, curr) => {
         const [key, ...rest] = curr
@@ -20,6 +29,10 @@ export const tagFromEvents = (tags: NDKTag[]): Record<string, string[]> => {
     }, {} as Record<string, string[]>)
 }
 
+/**
+ *
+ * @param markdown
+ */
 export const markdownToText = (markdown: string): string => {
     // Truncate at the first occurrence of a code block
     const codeBlockIndex = markdown.indexOf('```');
@@ -51,6 +64,22 @@ export const markdownToText = (markdown: string): string => {
     return markdown;
 }
 
+/**
+ *
+ * @param key
+ */
+export const validatePrivateKey = (key: string): 'nsec' | 'hex' | false => {
+    const hexRegex = /^[0-9a-fA-F]+$/;
+    const nsecRegex = /^nsec\d+[a-zA-Z0-9]+$/;
+    const valid = hexRegex.test(key) || nsecRegex.test(key)
+
+    return valid ? (key.length === 64 ? 'hex' : 'nsec') : valid
+}
+
+/**
+ *
+ * @param unixTimestamp
+ */
 export const formatDateTime = (unixTimestamp: number | undefined): string => {
     if (unixTimestamp) {
         const now = new Date();
@@ -75,3 +104,12 @@ export const formatDateTime = (unixTimestamp: number | undefined): string => {
 
     return ""
 };
+
+/**
+ *
+ * @param nsec
+ */
+export const decodeNsec = (nsec: `nsec1${string}`): string => {
+    const {data} = nip19.decode(nsec)
+    return new TextDecoder().decode(data)
+}

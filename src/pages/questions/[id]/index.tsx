@@ -1,4 +1,3 @@
-import {PlayIcon} from "@heroicons/react/24/outline";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../../../components/NDKProvider";
 import {NDKKind} from "@nostr-dev-kit/ndk";
@@ -10,6 +9,7 @@ import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../components/Loader";
 import EventOwner from "../../../components/shared/EventOwner";
 import AnswersContainer from "../../../components/answers/AnswersContainer";
+import Votes from "../../../components/shared/Votes.tsx";
 
 const Page = () => {
     const {questionId} = useParams()
@@ -28,6 +28,8 @@ const Page = () => {
                     const questionEvent = await ndkInstance().fetchEvent(questionFilters, {closeOnEose: false})
                     const questionFromEvent = questionTransformer(questionEvent!)
                     setQuestion(questionFromEvent)
+
+                    console.log({questionEvent})
                 })()
             } else {
                 setValidQuestionId(isValidUUID)
@@ -67,11 +69,7 @@ const Page = () => {
                 ))}
             </div>
             <div className="flex flex-row gap-x-4 my-8">
-                <div className="w-10 flex flex-col items-center">
-                    <PlayIcon className="h-6 -rotate-90 text-slate-400"/>
-                    <p className="w-full text-center font-semibold text-xl text-slate-600">1</p>
-                    <PlayIcon className="h-6 rotate-90 text-slate-400"/>
-                </div>
+                <Votes kind={1993 as NDKKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
                 <div className="flex-1">
                     <div className="question-detail">
                         <MDEditor.Markdown

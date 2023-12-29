@@ -4,7 +4,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import questionSchema from "../../../schemas/question-schema.ts";
 import 'react-customize-token-input/dist/react-customize-token-input.css';
 import {MinusSmallIcon, PlusSmallIcon, XMarkIcon} from "@heroicons/react/24/outline";
-import {KeyboardEvent, ReactNode, useContext, useEffect, useState} from "react";
+import {KeyboardEvent, ReactNode, useContext, useState} from "react";
 import {classNames} from "../../../utils";
 import {Category} from "../../../resources/category";
 import MDEditor from '@uiw/react-md-editor';
@@ -15,7 +15,6 @@ import {Guideline} from "../../../resources/guideline.ts";
 import {NDKContext} from "../../../components/NDKProvider.tsx";
 import Question from "../../../resources/question";
 import {v4 as uuidv4} from 'uuid'
-import {NDKKind} from "@nostr-dev-kit/ndk";
 import {useNavigate} from "react-router-dom";
 import {ToastContext} from "../../../components/ToastProvider.tsx";
 import {commandsFilter} from "../../../utils/md-editor.ts";
@@ -34,7 +33,7 @@ const Page = () => {
     const questionId = uuidv4()
 
     const {showToast} = useContext(ToastContext) as ToastContext
-    const {publishEvent, ndkInstance} = useContext(NDKContext) as NDKContext
+    const {publishEvent} = useContext(NDKContext) as NDKContext
     const [publishing, setPublishing] = useState<boolean>(false)
     const [tokenInputFocus, setTokenInputFocus] = useState<boolean>(false)
     const {
@@ -71,33 +70,32 @@ const Page = () => {
 
     const onQuestionSubmit: SubmitHandler<FieldValues> = async (data) => {
         setPublishing(true)
-        const payload = {...data, id: questionId} as Question
-        await publishEvent(1993, payload.description, [
-            ["d", payload.id!],
-            ["title", payload.title],
-            ["category", payload.category],
-            ...payload.tags.map((tag) => ["t", tag])
-        ])
-    }
 
-    useEffect(() => {
-        (() => {
-            const subscription = ndkInstance().subscribe({kinds: [1993 as NDKKind], "#d": [questionId]})
-            subscription.on("event", (event) => {
-                if (event.relay) {
-                    setPublishing(false)
-                    showToast({
-                        title: 'Success',
-                        subtitle: 'Your question has been successfully published.',
-                        type: 'success'
-                    })
-                    navigate(`/questions/${questionId}`)
-                }
+        try {
+            const payload = {...data, id: questionId} as Question
+            await publishEvent(1993, payload.description, [
+                ["d", payload.id!],
+                ["title", payload.title],
+                ["category", payload.category], // deprecated
+                ["L", "category"],
+                ["l", payload.category, "category"],
+                ...payload.tags.map((tag) => ["t", tag])
+            ])
+
+            setPublishing(false)
+            showToast({
+                title: 'Success',
+                subtitle: 'Your question has been successfully published.',
+                type: 'success'
             })
+            navigate(`/questions/${questionId}`)
+        } catch (e) {
+            console.log({e})
+            setPublishing(false)
+            // TODO: handle error response
+        }
 
-            return () => subscription.stop()
-        })()
-    }, [questionId])
+    }
 
     return (
         <div className="mx-auto max-w-7xl">
