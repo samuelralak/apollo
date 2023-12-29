@@ -9,7 +9,6 @@ import UserMenuMobile from "./navigation/UserMenuMobile.tsx";
 
 const MainNavigation = () => {
     const auth = useSelector((state: RootState) => state.auth)
-    console.log({auth})
 
     return (
         <Disclosure as="nav" className="bg-white border-b">
@@ -45,7 +44,7 @@ const MainNavigation = () => {
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                {auth.isLoggedIn ? (<UserMenuDesktop/>) : (<GetStarted/>)}
+                                {auth.isLoggedIn ? (<UserMenuDesktop auth={auth}/>) : (<GetStarted />)}
                             </div>
                         </div>
                     </div>
@@ -61,7 +60,7 @@ const MainNavigation = () => {
                                 Home
                             </Disclosure.Button>
                         </div>
-                        <UserMenuMobile/>
+                        {auth.isLoggedIn && (<UserMenuMobile auth={auth}/>)}
                     </Disclosure.Panel>
                 </>
             )}

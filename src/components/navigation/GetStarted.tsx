@@ -74,6 +74,7 @@ const GetStarted = () => {
         <>
             <div className="flex-shrink-0">
                 <button
+                    id="get-started"
                     type="button"
                     onClick={() => setShowModal(true)}
                     className="relative inline-flex items-center rounded-lg bg-transparent px-3 py-2 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-transparent focus-visible:outline-none "

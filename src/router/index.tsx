@@ -1,10 +1,11 @@
 import {createBrowserRouter} from "react-router-dom";
 import Root, {HomePage, NewQuestionPage, QuestionPage} from "../pages";
+import withAuthRequired from "../components/hocs/withAuthRequired.tsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Root />,
+        element: <Root/>,
         children: [
             {
                 index: true,
@@ -12,11 +13,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'questions/:questionId',
-                element: <QuestionPage />
+                element: <QuestionPage/>
             },
             {
                 path: 'questions/new',
-                element: <NewQuestionPage />
+                element: withAuthRequired(NewQuestionPage),
             }
         ]
     }

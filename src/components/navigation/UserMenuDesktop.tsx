@@ -6,9 +6,9 @@ import {Fragment} from "react";
 import {classNames} from "../../utils";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store";
-import {signOut} from "../../features/auth/auth-slice.ts";
+import {AuthState, signOut} from "../../features/auth/auth-slice.ts";
 
-const UserMenuDesktop = () => {
+const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
     const dispatch = useDispatch() as AppDispatch
     const onSignOut = () => dispatch(signOut())
 
@@ -41,11 +41,20 @@ const UserMenuDesktop = () => {
                             className="relative flex rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span className="absolute -inset-1.5"/>
                             <span className="sr-only">Open user menu</span>
-                            <span className="h-8 w-8 rounded-lg">
-                                <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                </svg>
-                            </span>
+                            {auth?.userProfile?.image ? (
+                                <img src={auth?.userProfile?.image}
+                                     alt="cover"
+                                     className="h-8 w-8 rounded-lg object-cover"
+                                />
+                            ) : (
+                                <span className="h-8 w-8 rounded-lg">
+                                    <svg className="h-full w-full text-gray-300" fill="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path
+                                            d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                    </svg>
+                                </span>
+                            )}
                         </Menu.Button>
                     </div>
                     <Transition

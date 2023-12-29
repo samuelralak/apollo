@@ -8,6 +8,9 @@ import Question from "../../resources/question";
 import {v4 as uuidv4} from "uuid";
 import {NDKContext} from "../NDKProvider.tsx";
 import {ToastContext} from "../ToastProvider.tsx";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
+import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
 
 const YourAnswer = ({question, publishing, setPublishing}: {
     question: Question,
@@ -15,6 +18,7 @@ const YourAnswer = ({question, publishing, setPublishing}: {
     setPublishing: (value: boolean) => void
 }) => {
     const answerId = uuidv4()
+    const auth = useSelector((state: RootState) => state.auth)
     const {showToast} = useContext(ToastContext) as ToastContext
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const {handleSubmit, setValue, watch, formState: {errors}} = useForm({resolver: zodResolver(answerSchema)})
@@ -37,6 +41,31 @@ const YourAnswer = ({question, publishing, setPublishing}: {
             subtitle: 'Your answer has been successfully published.',
             type: 'success'
         })
+    }
+
+    if (!auth?.isLoggedIn) {
+        return (
+            <div className="rounded-lg bg-yellow-50 border-2 border-yellow-100 p-4 my-5">
+                <div className="flex">
+                    <div className="flex-shrink-0">
+                        <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true"/>
+                    </div>
+                    <div className="ml-3 flex-1 md:flex md:justify-between">
+                        <p className="text-sm text-yellow-700">A new software update is available. See what’s new in
+                            version 2.0.4.</p>
+                        <p className="mt-3 text-sm md:ml-6 md:mt-0">
+                            <a
+                                onClick={() => window.document.getElementById('get-started')?.click()}
+                                className="whitespace-nowrap font-medium text-yellow-700 hover:text-yellow-600 cursor-pointer"
+                            >
+                                Get started
+                                <span aria-hidden="true"> &rarr;</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (

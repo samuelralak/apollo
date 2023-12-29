@@ -2,22 +2,30 @@ import {classNames} from "../../utils";
 import {Menu, Transition} from "@headlessui/react";
 import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {Fragment} from "react";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store";
 
 const ActionItems = () => {
+    const isAuthenticated = useSelector((state: RootState) => state.auth.isLoggedIn);
+
     return (
         <div className="flex flex-row gap-x-2 text-xs sm:text-sm font-medium text-slate-500">
             <a href="#"
                className="hidden sm:block items-center gap-x-1.5 w-auto hover:text-slate-700 cursor-pointer">
                 <span className="hidden sm:block">Share</span>
             </a>
-            <a href="#"
-               className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
-                <span className="hidden sm:block">Zap</span>
-            </a>
-            <a href="#"
-               className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
-                <span className="hidden sm:block">Edit</span>
-            </a>
+            {isAuthenticated && (
+                <>
+                    <a href="#"
+                       className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
+                        <span className="hidden sm:block">Zap</span>
+                    </a>
+                    <a href="#"
+                       className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
+                        <span className="hidden sm:block">Edit</span>
+                    </a>
+                </>
+            )}
 
             <Menu as="div" className="relative inline-block text-left sm:hidden">
                 <div>
@@ -53,32 +61,36 @@ const ActionItems = () => {
                                     </a>
                                 )}
                             </Menu.Item>
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
+                            {isAuthenticated && (
+                                <>
+                                    <Menu.Item>
+                                        {({active}) => (
+                                            <a
+                                                href="#"
+                                                className={classNames(
+                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                    'block px-4 py-2 text-sm'
+                                                )}
+                                            >
+                                                Zap
+                                            </a>
                                         )}
-                                    >
-                                        Zap
-                                    </a>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({active}) => (
+                                            <a
+                                                href="#"
+                                                className={classNames(
+                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                    'block px-4 py-2 text-sm'
+                                                )}
+                                            >
+                                                Edit
+                                            </a>
                                         )}
-                                    >
-                                        Edit
-                                    </a>
-                                )}
-                            </Menu.Item>
+                                    </Menu.Item>
+                                </>
+                            )}
                         </div>
                     </Menu.Items>
                 </Transition>
