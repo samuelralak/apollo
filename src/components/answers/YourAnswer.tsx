@@ -11,6 +11,7 @@ import {ToastContext} from "../ToastProvider.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
+import constants from "../../constants";
 
 const YourAnswer = ({question, publishing, setPublishing}: {
     question: Question,
@@ -28,10 +29,10 @@ const YourAnswer = ({question, publishing, setPublishing}: {
 
     const onAnswerSubmit: SubmitHandler<FieldValues> = async ({description}) => {
         setPublishing(true)
-        await publishEvent(2017, description, [
+        await publishEvent(constants.answerKind, description, [
             ["d", answerId],
             ["e", question.eventId],
-            ["a", `1993:${question.user.pubkey}:${question.id}`]
+            ["a", `${constants.questionKind}:${question.user.pubkey}:${question.id}`]
         ])
 
         setPublishing(false)

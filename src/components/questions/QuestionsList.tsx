@@ -44,7 +44,7 @@ const QuestionsList = memo(({questions}: { questions: Question[] }) => {
                                 </span>
                             </div>
 
-                            <ActionItems/>
+                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
                         </div>
                     </div>
                 </div>

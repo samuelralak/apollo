@@ -2,9 +2,10 @@ import Question from "../../resources/question";
 import AnswerList from "./AnswerList.tsx";
 import YourAnswer from "./YourAnswer.tsx";
 import {useContext, useEffect, useState} from "react";
-import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
+import {NDKEvent} from "@nostr-dev-kit/ndk";
 import {NDKContext} from "../NDKProvider";
 import {Answer} from "../../resources/answer";
+import constants from "../../constants";
 
 const answersFromEvent = (events: NDKEvent[]): Answer[] => {
     return events.reduce((acc, curr) => {
@@ -29,7 +30,7 @@ const AnswersContainer = ({question}: { question: Question }) => {
     useEffect(() => {
         (async () => {
             if (!publishingAnswer) {
-                const filters = {kinds: [2017 as NDKKind], "#e": [question.eventId]}
+                const filters = {kinds: [constants.answerKind], "#e": [question.eventId]}
                 const answerEvents = await ndkInstance().fetchEvents(filters)
                 setAnswers(answersFromEvent([...answerEvents]))
             }

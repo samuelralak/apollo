@@ -4,8 +4,9 @@ import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {Fragment} from "react";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
+import {Link} from "react-router-dom";
 
-const ActionItems = () => {
+const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isLoggedIn);
 
     return (
@@ -20,10 +21,10 @@ const ActionItems = () => {
                        className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
                         <span className="hidden sm:block">Zap</span>
                     </a>
-                    <a href="#"
-                       className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
+                    <Link to={`/questions/${props.id}/edit`}
+                          className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
                         <span className="hidden sm:block">Edit</span>
-                    </a>
+                    </Link>
                 </>
             )}
 
@@ -78,15 +79,15 @@ const ActionItems = () => {
                                     </Menu.Item>
                                     <Menu.Item>
                                         {({active}) => (
-                                            <a
-                                                href="#"
+                                            <Link
+                                                to={`/questions/${props.id}/edit`}
                                                 className={classNames(
                                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                     'block px-4 py-2 text-sm'
                                                 )}
                                             >
                                                 Edit
-                                            </a>
+                                            </Link>
                                         )}
                                     </Menu.Item>
                                 </>

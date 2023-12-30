@@ -5,6 +5,7 @@ import {classNames} from "../../utils";
 
 interface Option {
     [key: string]: string | undefined;
+
     title: string;
 }
 
@@ -17,8 +18,16 @@ interface Props<T extends Option> {
     onChangeCallback?: (value: string) => void
 }
 
-const SelectMenu = <T extends Option>({options, idKey, descriptionKey, defaultValue, placeholder, onChangeCallback}: Props<T>) => {
+const SelectMenu = <T extends Option>({
+                                          options,
+                                          idKey,
+                                          descriptionKey,
+                                          defaultValue,
+                                          placeholder,
+                                          onChangeCallback
+                                      }: Props<T>) => {
     const [selected, setSelected] = useState<T | undefined>(defaultValue)
+
     const onChange = (value: T) => {
         if (onChangeCallback) {
             onChangeCallback(value[idKey]!)

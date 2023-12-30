@@ -25,8 +25,12 @@ The `.content` is the detailed description of the question. It will contain HTML
 The list of tags are as follows:
 * `d` (required) universally unique identifier (UUID) for the question.
 * `title` (required) concise title of the question.
-* `category` (optional) broader category of the question.
 * `t` (required, at least one) topic tags for specific categorization.
+* `L` (optional) label namespace of `category` per [NIP-32](https://github.com/nostr-protocol/nips/blob/master/32.md)
+* `l` (optional) category name e.g `technical` under the label namespace of `category` per [NIP-32](https://github.com/nostr-protocol/nips/blob/master/32.md)
+* `e` (optional) reference tag to the accepted answer event id.
+* `a` (optional) reference tag to the accepted answer.
+
 
 ```json
 {
@@ -38,9 +42,12 @@ The list of tags are as follows:
   "tags": [
     ["d", "<UUID>"],
     ["title", "<title of question event>"],
-    ["category", "<category of the question>"],
+    ["L", "category"],
+    ["l", "<category name e.g technical_and_precise>", "category"],
     ["t", "<topic tag>"],
-    ["t", "<topic tag>"]
+    ["t", "<topic tag>"],
+    ["e", "accepted answer event id"],
+    ["a", "32017:<accepted answer author pubkey>:<d-identifier of accepted answer event>", "<optional relay url>", "accepted_answer"]
   ]
 }
 ```
@@ -57,9 +64,8 @@ The `.content` is the description of the answer. It will contain HTML or Markdow
 
 The list of tags are as follows:
 * `d` (required) universally unique identifier (UUID) for the answer.
+* `e` (required) reference tag to the question event id.
 * `a` (required) reference tag to the corresponding question event.
-* `L` (required) label namespace of `accepted` per [NIP-32](https://github.com/nostr-protocol/nips/blob/master/32.md)
-* `l` (required) label of `true` or `false` under the label namespace of `accepted` per [NIP-32](https://github.com/nostr-protocol/nips/blob/master/32.md). It indicates the acceptance status of the answer.
 
 ```json
 {
@@ -70,9 +76,8 @@ The list of tags are as follows:
   "content": "<HTML or Markdown description of the answer>",
   "tags": [
     ["d", "<UUID>"],
-    ["a", "31993:<question author pubkey>:<d-identifier of question event>", "<optional relay url>"],
-    ["L", "accepted"],
-    ["l", "<true/false>", "accepted"]
+    ["e", "<question event id>"],
+    ["a", "31993:<question author pubkey>:<d-identifier of question event>", "<optional relay url>"]
   ]
 }
 ```

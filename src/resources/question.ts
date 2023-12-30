@@ -30,7 +30,7 @@ export const transformer = (event: NDKEvent) => {
         eventId: event.id,
         title: (tags['title'] ?? [])[0],
         description: content,
-        category: (tags['category'] ?? [])[0],
+        category: (tags['category'] ?? tags['l'] ?? [])[0],
         tags: (tags['t'] ?? []),
         createdAt: event.created_at,
         user: {

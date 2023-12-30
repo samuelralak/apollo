@@ -28,6 +28,14 @@
     border: 2px solid #e2e8f0 !important;
 }
 
+.w-md-editor-show-edit {
+    height: auto !important;
+}
+
+.w-md-editor-show-preview {
+    height: 400px !important;
+}
+
 .w-md-editor > .w-md-editor-toolbar {
     min-height: 3rem !important;
     border-radius: 0.5rem 0.5rem 0 0 !important;

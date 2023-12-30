@@ -1,5 +1,5 @@
 import HomePage from './home'
-import {NewQuestionPage, QuestionPage} from "./questions";
+import {EditQuestionPage, NewQuestionPage, QuestionPage} from "./questions";
 
 import MainNavigation from "../components/MainNavigation.tsx";
 import {Outlet} from "react-router-dom";
@@ -17,6 +17,6 @@ const Root = () => (
     </ToastProvider>
 )
 
-export {HomePage, QuestionPage, NewQuestionPage}
+export {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage}
 
 export default Root

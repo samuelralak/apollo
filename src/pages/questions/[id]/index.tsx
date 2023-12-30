@@ -1,49 +1,30 @@
-import {useContext, useEffect, useState} from "react";
-import {NDKContext} from "../../../components/NDKProvider";
-import {NDKKind} from "@nostr-dev-kit/ndk";
+import {useState} from "react";
+import {NDKEvent} from "@nostr-dev-kit/ndk";
 import Question, {transformer as questionTransformer} from "../../../resources/question";
-import {Navigate, useParams} from "react-router-dom";
-import {validate as validateUUID} from 'uuid'
+import {useParams} from "react-router-dom";
 import {formatDateTime} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../components/Loader";
 import EventOwner from "../../../components/shared/EventOwner";
 import AnswersContainer from "../../../components/answers/AnswersContainer";
 import Votes from "../../../components/shared/Votes.tsx";
+import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
+import constants from "../../../constants";
 
 const Page = () => {
     const {questionId} = useParams()
-    const [validQuestionId, setValidQuestionId] = useState<boolean>(true)
     const [question, setQuestion] = useState<Question>()
-    const {ndkInstance} = useContext(NDKContext) as NDKContext
 
-    // TODO: Move into a custom hook
-    useEffect(() => {
-        if (questionId) {
-            const isValidUUID = validateUUID(questionId)
+    const handleQuestionEvent = (event: NDKEvent) => {
+        const questionFromEvent = questionTransformer(event)
+        setQuestion(questionFromEvent)
+    }
 
-            if (isValidUUID) {
-                (async () => {
-                    const questionFilters = {kinds: [1993 as NDKKind], "#d": [questionId]}
-                    const questionEvent = await ndkInstance().fetchEvent(questionFilters, {closeOnEose: false})
-                    const questionFromEvent = questionTransformer(questionEvent!)
-                    setQuestion(questionFromEvent)
+    useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)
 
-                    console.log({questionEvent})
-                })()
-            } else {
-                setValidQuestionId(isValidUUID)
-            }
-
-        }
-
-    }, [questionId]);
 
     console.log({question})
 
-    if (!questionId || !validQuestionId) {
-        return <Navigate replace to='/'/>
-    }
 
     if (!question) {
         return <Loader loadingText={'Fetching question'}/>
@@ -69,7 +50,7 @@ const Page = () => {
                 ))}
             </div>
             <div className="flex flex-row gap-x-4 my-8">
-                <Votes kind={1993 as NDKKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
                 <div className="flex-1">
                     <div className="question-detail">
                         <MDEditor.Markdown

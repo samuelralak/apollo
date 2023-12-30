@@ -5,8 +5,8 @@ const constants: {
     answerKind: NDKKind;
     secureStorageKey: string;
 } = {
-    questionKind: import.meta.env.VITE_QUESTION_KIND,
-    answerKind:  import.meta.env.VITE_ANSWER_KIND,
+    questionKind: parseInt(import.meta.env.VITE_QUESTION_KIND),
+    answerKind:  parseInt(import.meta.env.VITE_ANSWER_KIND),
     secureStorageKey: '_heimdall'
 }
 
