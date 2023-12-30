@@ -10,12 +10,15 @@ const useNDKSubscription = (filters: NDKFilter | NDKFilter[], opts?: NDKSubscrip
         (async () => {
             const defaultOpts = {...{closeOnEose: true}, ...(opts ?? {})}
             const subscription = ndkInstance().subscribe(filters, defaultOpts);
+            // await subscription.start()
             setNDKSubscription(subscription)
 
             subscription.on('event', (event: NDKEvent) => callbackFn?.(event))
         })()
 
-        return () => ndkSubscription?.stop()
+        return () => {
+            ndkSubscription?.stop()
+        }
     }, []);
 }
 

@@ -25,7 +25,7 @@ const AnswerList = ({answers}: { answers: Answer[] }) => {
                                         whiteSpace: 'pre-wrap',
                                         backgroundColor: 'white',
                                         color: '#334155',
-                                        fontFamily: 'Poppins, sans-serif'
+                                        fontFamily: 'Public Sans, sans-serif'
                                     }}
                                     data-color-mode={'light'}
                                     className="bg-white font-normal text-slate-700 prose prose-slate max-w-3xl"

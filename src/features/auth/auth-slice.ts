@@ -39,7 +39,6 @@ const authSlice = createSlice({
 })
 
 export const {signIn, signOut} = authSlice.actions
-
 export {
     preloadAuth,
     SignerMethod,

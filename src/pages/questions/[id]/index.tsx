@@ -32,7 +32,7 @@ const Page = () => {
 
     return (
         <div className="mx-auto max-w-3xl">
-            <h1 className="text-2xl font-semibold text-slate-700">{question?.title}</h1>
+            <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
             <div className="flex flex-row gap-x-2 mt-1">
                 <p className="text-xs sm:text-sm font-medium text-slate-500">
                     Asked {formatDateTime(question?.createdAt)}
@@ -59,10 +59,10 @@ const Page = () => {
                                 whiteSpace: 'pre-wrap',
                                 backgroundColor: 'white',
                                 color: '#334155',
-                                fontFamily: 'Poppins, sans-serif'
+                                fontFamily: 'Public Sans, sans-serif'
                             }}
                             data-color-mode={'light'}
-                            className="bg-white font-normal text-slate-700 prose prose-slate max-w-3xl"
+                            className="bg-white font-medium text-slate-600 prose prose-slate max-w-3xl"
                         />
                     </div>
 

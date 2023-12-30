@@ -15,7 +15,7 @@ const QuestionsList = memo(({questions}: { questions: Question[] }) => {
 
                     <div className="flex flex-1 flex-col w-full gap-y-2.5">
                         <div className="w-full overflow-hidden">
-                            <Link to={`/questions/${question.id}`} className="text-lg font-semibold text-slate-700">
+                            <Link to={`/questions/${question.id}`} className="text-lg font-extrabold text-slate-700">
                                 {question.title}
                             </Link>
 
@@ -30,7 +30,7 @@ const QuestionsList = memo(({questions}: { questions: Question[] }) => {
                                 ))}
                             </div>
 
-                            <p className="mt-2 line-clamp-2 text-sm text-slate-600 w-full">
+                            <p className="mt-2 line-clamp-2 text-sm text-slate-600 w-full font-medium">
                                 {markdownToText(question.description)}
                             </p>
                         </div>
