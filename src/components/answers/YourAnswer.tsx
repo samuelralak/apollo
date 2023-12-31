@@ -74,12 +74,13 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
                         <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true"/>
                     </div>
                     <div className="ml-3 flex-1 md:flex md:justify-between">
-                        <p className="text-sm text-yellow-700">A new software update is available. See what’s new in
-                            version 2.0.4.</p>
+                        <p className="text-sm text-yellow-700 font-medium">
+                            You have to be logged in to share your wisdom and post an answer.
+                        </p>
                         <p className="mt-3 text-sm md:ml-6 md:mt-0">
                             <a
                                 onClick={() => window.document.getElementById('get-started')?.click()}
-                                className="whitespace-nowrap font-medium text-yellow-700 hover:text-yellow-600 cursor-pointer"
+                                className="whitespace-nowrap font-semibold text-yellow-700 hover:text-yellow-600 cursor-pointer"
                             >
                                 Get started
                                 <span aria-hidden="true"> &rarr;</span>
