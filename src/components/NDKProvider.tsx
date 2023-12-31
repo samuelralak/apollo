@@ -15,13 +15,7 @@ export interface NDKContext {
     publishEvent: (kind: number, content: string, tags?: string[][]) => Promise<string>
 }
 
-const relays = [
-    'wss://relay.nostrosity.com',
-    // 'wss://relay.damus.io',
-    // 'wss://relay.primal.net',
-    // 'wss://relay.nos.social',
-    // 'wss://relay.nostr.band'
-]
+const relays = [...constants.explicitRelays]
 
 export const NDKContext = createContext<NDKContext | null>(null)
 
