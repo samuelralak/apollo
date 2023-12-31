@@ -39,7 +39,7 @@ const EventOwner = ({pubkey, mini}: { pubkey: string, mini?: boolean }) => {
 
                 </div>
                 <div className="ml-3">
-                    <p className="text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                    <p className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">
                         {userProfile?.displayName ?? userProfile?.name}
                     </p>
 

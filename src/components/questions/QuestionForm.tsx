@@ -234,7 +234,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                 <div className="mt-6 flex items-center justify-end gap-x-6 border-t border-slate-900/10 pt-6">
                     <button disabled={publishing}
                             type="button"
-                            className="text-sm font-semibold leading-6 text-slate-900 disabled:text-slate-300"
+                            className="text-sm font-semibold leading-6 text-slate-900 disabled:text-slate-300 text-center"
                     >
                         Cancel
                     </button>

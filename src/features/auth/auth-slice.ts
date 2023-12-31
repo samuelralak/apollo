@@ -9,12 +9,14 @@ enum SignerMethod {
 
 interface AuthState {
     isLoggedIn: boolean;
+    pubkey: string | undefined;
     userProfile: NDKUserProfile | undefined;
     signerMethod: SignerMethod | undefined;
 }
 
 const initialState: AuthState = {
     isLoggedIn: false,
+    pubkey: undefined,
     userProfile: undefined,
     signerMethod: undefined
 }
@@ -28,8 +30,9 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        signIn: (state, {payload}: PayloadAction<{ userProfile: NDKUserProfile, signerMethod: SignerMethod }>) => {
+        signIn: (state, {payload}: PayloadAction<{ pubkey: string, userProfile: NDKUserProfile, signerMethod: SignerMethod }>) => {
             state.isLoggedIn = true
+            state.pubkey = payload.pubkey
             state.userProfile = payload.userProfile
             state.signerMethod = payload.signerMethod
         },

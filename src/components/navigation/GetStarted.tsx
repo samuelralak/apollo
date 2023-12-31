@@ -27,7 +27,9 @@ const GetStarted = () => {
 
         dispatch(
             signIn({
-                userProfile: ndkUser?.profile ?? {}, signerMethod: signerMethod
+                pubkey: ndkUser.pubkey,
+                userProfile: ndkUser?.profile ?? {},
+                signerMethod: signerMethod
             })
         )
     }

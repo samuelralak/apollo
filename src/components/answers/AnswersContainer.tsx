@@ -1,48 +1,40 @@
 import Question from "../../resources/question";
 import AnswerList from "./AnswerList.tsx";
 import YourAnswer from "./YourAnswer.tsx";
-import {useContext, useEffect, useState} from "react";
-import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {NDKContext} from "../NDKProvider";
-import {Answer} from "../../resources/answer";
+import {useState} from "react";
+import {NDKFilter} from "@nostr-dev-kit/ndk";
+import {transformer as answerTransformer} from "../../resources/answer";
 import constants from "../../constants";
-
-const answersFromEvent = (events: NDKEvent[]): Answer[] => {
-    return events.reduce((acc, curr) => {
-        return [...acc, ...[{
-            id: curr.tags.filter((tag) => tag[0] === 'd')[0][1],
-            questionId: (curr.tags.filter((tag) => tag[0] === 'a')[0][1]).split(":")[2],
-            description: curr.content,
-            createdAt: curr.created_at,
-            eventId: curr.id,
-            user: {
-                pubkey: curr.pubkey
-            }
-        } as Answer]]
-    }, [] as Answer[])
-}
+import useNDKSubscription from "../../hooks/useNDKSubscription.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store";
+import {updateAnswer} from "../../features/answer/answer-slice.ts";
 
 const AnswersContainer = ({question}: { question: Question }) => {
-    const [answers, setAnswers] = useState<Answer[]>([])
+    const answerFilters: NDKFilter = {kinds: [constants.answerKind], "#a": [`${constants.questionKind}:${question.user.pubkey}:${question.id}`]}
+    const pubkey = useSelector((state: RootState) => state.auth).pubkey;
+    const questionAnswers = useSelector((state: RootState) => state.answer)[question.id];
     const [publishingAnswer, setPublishingAnswer] = useState<boolean>(false)
-    const {ndkInstance} = useContext(NDKContext) as NDKContext
+    const dispatch = useDispatch() as AppDispatch
+    const answers = Object.values(questionAnswers?.data ?? {})
 
-    useEffect(() => {
-        (async () => {
-            if (!publishingAnswer) {
-                const filters = {kinds: [constants.answerKind], "#e": [question.eventId]}
-                const answerEvents = await ndkInstance().fetchEvents(filters)
-                setAnswers(answersFromEvent([...answerEvents]))
-            }
-        })()
-    }, [question.eventId, publishingAnswer]);
+    useNDKSubscription(answerFilters, {closeOnEose: false}, (event) => {
+        const answer = answerTransformer(event)
+        dispatch(updateAnswer(answer))
+    })
 
     return (
         <>
-            <AnswerList answers={answers}/>
+            {answers.length >= 0 && !questionAnswers?.data[pubkey ?? ''] && (<AnswerList answers={answers}/>)}
+
             <div className="pt-5">
-                <h1 className="text-xl font-medium text-slate-600">Your Answer</h1>
-                <YourAnswer question={question} publishing={publishingAnswer} setPublishing={setPublishingAnswer}/>
+                <h1 className="text-lg font-bold text-slate-600">Your Answer</h1>
+                <YourAnswer
+                    answer={questionAnswers?.data[pubkey ?? '']}
+                    question={question}
+                    publishing={publishingAnswer}
+                    setPublishing={setPublishingAnswer}
+                />
             </div>
         </>
     )

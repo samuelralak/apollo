@@ -3,7 +3,7 @@ import {commandsFilter} from "../../utils/md-editor.ts";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import answerSchema from "../../schemas/answer-schema.ts";
-import {ReactNode, useContext} from "react";
+import {ReactNode, useContext, useState} from "react";
 import Question from "../../resources/question";
 import {v4 as uuidv4} from "uuid";
 import {NDKContext} from "../NDKProvider.tsx";
@@ -12,20 +12,37 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
 import constants from "../../constants";
+import {Answer} from "../../resources/answer";
+import AnswerItem from "./AnswerItem.tsx";
 
-const YourAnswer = ({question, publishing, setPublishing}: {
+const YourAnswer = ({answer, question, publishing, setPublishing}: {
+    answer?: Answer
     question: Question,
     publishing: boolean,
     setPublishing: (value: boolean) => void
 }) => {
-    const answerId = uuidv4()
+    const answerId = answer?.id ?? uuidv4()
     const auth = useSelector((state: RootState) => state.auth)
     const {showToast} = useContext(ToastContext) as ToastContext
     const {publishEvent} = useContext(NDKContext) as NDKContext
-    const {handleSubmit, setValue, watch, formState: {errors}} = useForm({resolver: zodResolver(answerSchema)})
-    const answerDescription = watch('description', '')
+    const [editing, setEditing] = useState<boolean>(false)
+    const {handleSubmit, setValue, watch, formState: {errors}} = useForm({
+        resolver: zodResolver(answerSchema),
+        defaultValues: {
+            description: answer?.description ?? ''
+        }
+    })
+    const answerDescription = watch('description', answer?.description ?? '')
 
-    const onEditorChange = (value?: string) => setValue('description', value)
+    const onEditorChange = (value?: string) => {
+        if (value) {
+            setValue('description', value)
+        }
+    }
+
+    const onEditAction = () => {
+        setEditing(!editing)
+    }
 
     const onAnswerSubmit: SubmitHandler<FieldValues> = async ({description}) => {
         setPublishing(true)
@@ -36,7 +53,12 @@ const YourAnswer = ({question, publishing, setPublishing}: {
         ])
 
         setPublishing(false)
-        setValue('description', '')
+        setEditing(editing ? !editing : editing)
+
+        if (!editing) {
+            setValue('description', '')
+        }
+
         showToast({
             title: 'Success',
             subtitle: 'Your answer has been successfully published.',
@@ -69,6 +91,10 @@ const YourAnswer = ({question, publishing, setPublishing}: {
         )
     }
 
+    if (answer && !editing) {
+        return <AnswerItem answer={answer} editAction={onEditAction}/>
+    }
+
     return (
         <>
             <div>
@@ -90,14 +116,27 @@ const YourAnswer = ({question, publishing, setPublishing}: {
                     )}
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={publishing}
-                    onClick={handleSubmit(onAnswerSubmit)}
-                    className="rounded-lg bg-slate-600 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 disabled:text-slate-300 hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
-                >
-                    {publishing ? 'Publishing...' : 'Publish your answer'}
-                </button>
+                <div className="flex gap-x-6">
+                    <button
+                        type="submit"
+                        disabled={publishing}
+                        onClick={handleSubmit(onAnswerSubmit)}
+                        className="rounded-lg bg-slate-600 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 disabled:text-slate-300 hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+                    >
+                        {publishing ? 'Publishing...' : 'Publish your answer'}
+                    </button>
+
+                    {editing && (
+                        <button disabled={publishing}
+                                onClick={onEditAction}
+                                type="button"
+                                className="text-sm font-semibold leading-6 text-slate-900 disabled:text-slate-300 text-center"
+                        >
+                            Cancel
+                        </button>
+                    )}
+                </div>
+
             </div>
 
 

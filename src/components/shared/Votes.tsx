@@ -18,17 +18,17 @@ const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
         'h-8 w-8 cursor-pointer'
     );
 
-const Votes = ({kind, eventId, pubkey, ref}: { kind: NDKKind, eventId: string, pubkey: string, ref?: string }) => {
+const Votes = ({kind, eventId, pubkey, refEvent}: { kind: NDKKind, eventId: string, pubkey: string, refEvent?: string }) => {
     const voteFilters = {kinds: [constants.voteKind], "#e": [eventId], "#p": [pubkey]}
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const auth = useSelector((state: RootState) => state.auth);
     const vote = useSelector((state: RootState) => state.vote)[eventId];
     const dispatch = useDispatch() as AppDispatch
-    const myVote = vote?.data[auth.userProfile?.pubkey ?? ""]
+    const myVote = vote?.data[auth.pubkey ?? ""]
 
     const onVote = async (voteType: VoteType) => {
         if (auth.isLoggedIn) {
-            const refTag = ref ? [["e", ref]] : []
+            const refTag = refEvent ? [["e", refEvent]] : []
             await publishEvent(constants.voteKind, voteType, [
                 ...refTag,
                 ["e", eventId],

@@ -1,6 +1,7 @@
 import {configureStore} from "@reduxjs/toolkit";
 import authReducer, {AuthState} from "../features/auth/auth-slice"
 import voteReducer from "../features/vote/vote-slice"
+import answerReducer from "../features/answer/answer-slice"
 import {authListenerMiddleware} from "./middlewares";
 
 interface PreloadedState {
@@ -12,7 +13,8 @@ const configureAppStore = (preloadedState: PreloadedState) => {
         preloadedState,
         reducer: {
             auth: authReducer,
-            vote: voteReducer
+            vote: voteReducer,
+            answer: answerReducer
         },
         middleware: getDefaultMiddleware =>
             getDefaultMiddleware({

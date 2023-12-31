@@ -10,6 +10,7 @@ import AnswersContainer from "../../../components/answers/AnswersContainer";
 import Votes from "../../../components/shared/Votes.tsx";
 import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
 import constants from "../../../constants";
+import ActionItems from "../../../components/shared/ActionItems.tsx";
 
 const Page = () => {
     const {questionId} = useParams()
@@ -21,10 +22,6 @@ const Page = () => {
     }
 
     useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)
-
-
-    console.log({question})
-
 
     if (!question) {
         return <Loader loadingText={'Fetching question'}/>
@@ -62,21 +59,22 @@ const Page = () => {
                                 fontFamily: 'Public Sans, sans-serif'
                             }}
                             data-color-mode={'light'}
-                            className="bg-white font-medium text-slate-600 prose prose-slate max-w-3xl"
+                            className="bg-white font-medium prose prose-slate"
                         />
                     </div>
 
 
-                    <div className="flex flex-row py-3 align-middle justify-between mt-5">
-                        <div className="flex gap-x-2 text-sm font-medium text-slate-500">
-                            <a className="hover:text-slate-700 cursor-pointer">Share</a>
-                            <a className="hover:text-slate-700 cursor-pointer">Zap</a>
-                            <a className="hover:text-slate-700 cursor-pointer">Edit</a>
+                    <div className="flex flex-row py-3 align-middle justify-between mt-5 items-center">
+                        <div>
+                            <p className="text-xs font-semibold text-slate-500 pb-1">
+                                <span
+                                    className="font-bold text-slate-700">asked</span> {formatDateTime(question?.createdAt)}
+                            </p>
+                            <EventOwner pubkey={question.user?.pubkey}/>
                         </div>
 
-                        {question.user?.pubkey && (
-                            <EventOwner pubkey={question.user?.pubkey}/>
-                        )}
+
+                        <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
                     </div>
                 </div>
             </div>
