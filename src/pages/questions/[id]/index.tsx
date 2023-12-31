@@ -12,13 +12,17 @@ import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
 import constants from "../../../constants";
 import ActionItems from "../../../components/shared/ActionItems.tsx";
 import SEOContainer from "../../../components/SEOContainer.tsx";
+import {nip19} from "nostr-tools";
 
 const Page = () => {
     const {questionId} = useParams()
     const [question, setQuestion] = useState<Question>()
 
     const handleQuestionEvent = (event: NDKEvent) => {
+        console.log({event})
+
         const questionFromEvent = questionTransformer(event)
+        console.log(nip19.naddrEncode({pubkey: event.pubkey, kind: constants.questionKind, identifier: questionFromEvent.id }))
         setQuestion(questionFromEvent)
     }
 
@@ -29,7 +33,7 @@ const Page = () => {
     }
 
     return (
-        <div className="mx-auto max-w-3xl">
+        <>
             <SEOContainer
                 title={question?.title}
                 description={markdownToText(question.description)}
@@ -37,58 +41,63 @@ const Page = () => {
                 url={`/questions/${question?.id}`}
             />
 
-            <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
-            <div className="flex flex-row gap-x-2 mt-1">
-                <p className="text-xs sm:text-sm font-medium text-slate-500">
-                    Asked {formatDateTime(question?.createdAt)}
-                </p>
-            </div>
+            <div className="mx-auto max-w-3xl">
 
-            <div className="flex flex-row gap-x-2 mt-3.5">
-                {question?.tags?.map((tag, index) => (
-                    <span
-                        key={`${tag}-${index}-${question?.id}`}
-                        className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600"
-                    >
+
+                <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
+                <div className="flex flex-row gap-x-2 mt-1">
+                    <p className="text-xs sm:text-sm font-medium text-slate-500">
+                        Asked {formatDateTime(question?.createdAt)}
+                    </p>
+                </div>
+
+                <div className="flex flex-row gap-x-2 mt-3.5">
+                    {question?.tags?.map((tag, index) => (
+                        <span
+                            key={`${tag}-${index}-${question?.id}`}
+                            className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600"
+                        >
                         {tag}
                     </span>
-                ))}
-            </div>
-            <div className="flex flex-row gap-x-4 my-8">
-                <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
-                <div className="flex-1">
-                    <div className="question-detail">
-                        <MDEditor.Markdown
-                            source={question?.description ?? ''}
-                            style={{
-                                whiteSpace: 'pre-wrap',
-                                backgroundColor: 'white',
-                                color: '#334155',
-                                fontFamily: 'Public Sans, sans-serif'
-                            }}
-                            data-color-mode={'light'}
-                            className="bg-white prose prose-slate"
-                        />
-                    </div>
-
-
-                    <div className="flex flex-row py-3 align-middle justify-between mt-5 items-center">
-                        <div>
-                            <p className="text-xs font-semibold text-slate-500 pb-1">
-                                <span
-                                    className="font-bold text-slate-700">asked</span> {formatDateTime(question?.createdAt)}
-                            </p>
-                            <EventOwner pubkey={question.user?.pubkey}/>
+                    ))}
+                </div>
+                <div className="flex flex-row gap-x-4 my-8">
+                    <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                    <div className="flex-1">
+                        <div className="question-detail">
+                            <MDEditor.Markdown
+                                source={question?.description ?? ''}
+                                style={{
+                                    whiteSpace: 'pre-wrap',
+                                    backgroundColor: 'white',
+                                    color: '#334155',
+                                    fontFamily: 'Public Sans, sans-serif'
+                                }}
+                                data-color-mode={'light'}
+                                className="bg-white prose prose-slate"
+                            />
                         </div>
 
 
-                        <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                        <div className="flex flex-row py-3 align-middle justify-between mt-5 items-center">
+                            <div>
+                                <p className="text-xs font-semibold text-slate-500 pb-1">
+                                <span
+                                    className="font-bold text-slate-700">asked</span> {formatDateTime(question?.createdAt)}
+                                </p>
+                                <EventOwner pubkey={question.user?.pubkey}/>
+                            </div>
+
+
+                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <AnswersContainer question={question}/>
-        </div>
+                <AnswersContainer question={question}/>
+            </div>
+        </>
+
     )
 }
 
