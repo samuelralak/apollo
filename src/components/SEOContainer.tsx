@@ -16,7 +16,7 @@ const metaDefaults = {
     keywords: 'nostr, bitcoin, NIPS, decentralized Q&A, NOSTR platform, collaborative learning, community knowledge sharing, user-driven Q&A, decentralized ecosystem, Apollo questions and answers, NOSTR community discussions, insightful exchanges, decentralized learning platform',
     author: 'Apollo Engineering',
     type: 'website',
-    url: 'https://apolloqa.vercel.app' // TODO: Change this when we have a custom domain
+    url: 'https://www.apolloqa.org' // TODO: Change this when we have a custom domain
 }
 
 const SEOContainer = ({title, description, name, type, keywords, author, url}: Props) => {
