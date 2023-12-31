@@ -59,12 +59,15 @@ const QuestionForm = ({question}: { question?: Question }) => {
 
     const onTokenInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         const currentTarget = event.currentTarget as HTMLInputElement
-        const tagInputValue = currentTarget.value.trim()
+        const tagInputValue = currentTarget.value
 
-        if ((event.key === ' ' || event.key === ',') && tagInputValue) {
+        if (tagInputValue && /\s|,/.test(tagInputValue)) {
             event.preventDefault();
-            setValue('tags', [...questionTags, tagInputValue.toLowerCase()]);
-            currentTarget.value = ''
+
+            if (tagInputValue.trim()) {
+                setValue('tags', [...questionTags, tagInputValue.trim().toLowerCase()]);
+                currentTarget.value = ''
+            }
         }
     }
 
@@ -95,7 +98,6 @@ const QuestionForm = ({question}: { question?: Question }) => {
             })
             navigate(`/questions/${questionId}`)
         } catch (e) {
-            console.log({e})
             setPublishing(false)
             // TODO: handle error response
         }
@@ -218,7 +220,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                 name="tags"
                                 className="block flex-1 border-0 bg-transparent py-4 text-sm pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
                                 placeholder="comma or space seperated values "
-                                onKeyDown={onTokenInputKeyDown}
+                                onInput={onTokenInputKeyDown}
                                 onFocus={onToggleFocus}
                                 onBlur={onToggleFocus}
                             />

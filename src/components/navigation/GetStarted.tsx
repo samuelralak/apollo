@@ -12,7 +12,6 @@ import {SignerMethod, signIn} from "../../features/auth/auth-slice.ts";
 import {decodeNsec, validatePrivateKey} from "../../utils";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../constants";
-import {nip19} from "nostr-tools";
 
 const GetStarted = () => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
@@ -44,28 +43,18 @@ const GetStarted = () => {
             const signer = new NDKNip07Signer(3000)
             await _fetchProfileAndSignIn(signer, SignerMethod.NIP07)
         } catch (e) {
-            console.log({e})
             // TODO: Trigger error notification with human message
         }
     }
 
     const continueWithPrivateKey = async () => {
-        const privateKeyType = validatePrivateKey(privateKey!)
-
-        if (privateKey) {
-            console.log({privateKeyType})
+        if (validatePrivateKey(privateKey)) {
             try {
-                const decodedKey = privateKeyType === 'nsec' ? decodeNsec(privateKey as `nsec1${string}`) : privateKey
-                const signer = new NDKPrivateKeySigner(decodedKey as string)
-
-                secureLocalStorage.setItem(constants.secureStorageKey, {
-                    privkey: decodedKey,
-                    nsec: nip19.nsecEncode(decodedKey as Uint8Array)
-                })
-
+                const decodedKey = decodeNsec(privateKey as `nsec1${string}`)
+                const signer = new NDKPrivateKeySigner(decodedKey as unknown as string)
+                secureLocalStorage.setItem(constants.secureStorageKey, {privkey: decodedKey, nsec: privateKey})
                 await _fetchProfileAndSignIn(signer, SignerMethod.PRIVATE_KEY)
             } catch (e) {
-                console.log({e})
                 // TODO: Trigger error notification with human message
             }
         } else {
@@ -197,7 +186,7 @@ const GetStarted = () => {
                                                 type="password"
                                                 value={privateKey}
                                                 onInput={onPrivateKeyInput}
-                                                placeholder="nsec or hex private key"
+                                                placeholder="nsec..."
                                                 className="mt-4 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 leading-6 "
                                             />
 

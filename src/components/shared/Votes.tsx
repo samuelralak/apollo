@@ -18,7 +18,12 @@ const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
         'h-8 w-8 cursor-pointer'
     );
 
-const Votes = ({kind, eventId, pubkey, refEvent}: { kind: NDKKind, eventId: string, pubkey: string, refEvent?: string }) => {
+const Votes = ({kind, eventId, pubkey, refEvent}: {
+    kind: NDKKind,
+    eventId: string,
+    pubkey: string,
+    refEvent?: string
+}) => {
     const voteFilters = {kinds: [constants.voteKind], "#e": [eventId], "#p": [pubkey]}
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const auth = useSelector((state: RootState) => state.auth);
@@ -44,17 +49,21 @@ const Votes = ({kind, eventId, pubkey, refEvent}: { kind: NDKKind, eventId: stri
 
     return (
         <div className="w-8 flex flex-col items-center">
-            <ArrowUpCircleIcon
-                className={voteActionClassName(myVote, VoteType.UPVOTE)}
-                onClick={() => onVote(VoteType.UPVOTE)}
-            />
+            <button type="button" onClick={() => onVote(VoteType.UPVOTE)}>
+                <ArrowUpCircleIcon
+                    className={voteActionClassName(myVote, VoteType.UPVOTE)}
+                />
+            </button>
+
 
             <p className="w-full text-center font-medium text-lg text-slate-500">{vote?.total ?? 0}</p>
 
-            <ArrowDownCircleIcon
-                className={voteActionClassName(myVote, VoteType.DOWNVOTE)}
-                onClick={() => onVote(VoteType.DOWNVOTE)}
-            />
+            <button onClick={() => onVote(VoteType.DOWNVOTE)}>
+                <ArrowDownCircleIcon
+                    className={voteActionClassName(myVote, VoteType.DOWNVOTE)}
+                />
+            </button>
+
         </div>
     )
 }

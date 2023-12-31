@@ -68,12 +68,9 @@ export const markdownToText = (markdown: string): string => {
  *
  * @param key
  */
-export const validatePrivateKey = (key: string): 'nsec' | 'hex' | false => {
-    const hexRegex = /^[0-9a-fA-F]+$/;
+export const validatePrivateKey = (key: string): boolean => {
     const nsecRegex = /^nsec\d+[a-zA-Z0-9]+$/;
-    const valid = hexRegex.test(key) || nsecRegex.test(key)
-
-    return valid ? (key.length === 64 ? 'hex' : 'nsec') : valid
+    return nsecRegex.test(key)
 }
 
 /**
