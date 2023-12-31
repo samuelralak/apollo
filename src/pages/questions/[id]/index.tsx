@@ -2,7 +2,7 @@ import {useState} from "react";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
 import Question, {transformer as questionTransformer} from "../../../resources/question";
 import {useParams} from "react-router-dom";
-import {formatDateTime} from "../../../utils";
+import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../components/Loader";
 import EventOwner from "../../../components/shared/EventOwner";
@@ -11,6 +11,7 @@ import Votes from "../../../components/shared/Votes.tsx";
 import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
 import constants from "../../../constants";
 import ActionItems from "../../../components/shared/ActionItems.tsx";
+import SEOContainer from "../../../components/SEOContainer.tsx";
 
 const Page = () => {
     const {questionId} = useParams()
@@ -29,6 +30,13 @@ const Page = () => {
 
     return (
         <div className="mx-auto max-w-3xl">
+            <SEOContainer
+                title={question?.title}
+                description={markdownToText(question.description)}
+                keywords={question?.tags?.join(',')}
+                url={`/questions/${question?.id}`}
+            />
+
             <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
             <div className="flex flex-row gap-x-2 mt-1">
                 <p className="text-xs sm:text-sm font-medium text-slate-500">
