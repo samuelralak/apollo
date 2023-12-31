@@ -63,9 +63,10 @@ const QuestionForm = ({question}: { question?: Question }) => {
 
         if (tagInputValue && /\s|,/.test(tagInputValue)) {
             event.preventDefault();
+            const tag = tagInputValue.replace(',', '').trim()
 
-            if (tagInputValue.trim()) {
-                setValue('tags', [...questionTags, tagInputValue.trim().toLowerCase()]);
+            if (tag) {
+                setValue('tags', [...questionTags, tag.toLowerCase()]);
                 currentTarget.value = ''
             }
         }
