@@ -32,7 +32,7 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                             fontFamily: 'Public Sans, sans-serif'
                         }}
                         data-color-mode={'light'}
-                        className="bg-white font-normal text-slate-700 prose prose-slate"
+                        className="bg-white text-slate-700 prose prose-slate"
                     />
                 </div>
 

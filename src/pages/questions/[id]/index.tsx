@@ -59,7 +59,7 @@ const Page = () => {
                                 fontFamily: 'Public Sans, sans-serif'
                             }}
                             data-color-mode={'light'}
-                            className="bg-white font-medium prose prose-slate"
+                            className="bg-white prose prose-slate"
                         />
                     </div>
 

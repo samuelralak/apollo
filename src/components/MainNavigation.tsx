@@ -31,7 +31,7 @@ const MainNavigation = () => {
                                     </Disclosure.Button>
                                 </div>
                                 <div className="flex flex-shrink-0 items-center">
-                                    <h1 className="text-slate-700 font-bold text-lg">[APOLLO]</h1>
+                                    <h1 className="text-slate-700 font-extrabold font-['Poppins'] text-lg">[APOLLO]</h1>
                                 </div>
                                 <div className="hidden md:ml-6 md:flex md:space-x-8">
                                     {/* Current: "border-blue-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
