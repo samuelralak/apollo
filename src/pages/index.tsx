@@ -6,14 +6,12 @@ import {Outlet} from "react-router-dom";
 import NDKProvider from "../components/NDKProvider.tsx";
 import ToastProvider from "../components/ToastProvider.tsx";
 import {HelmetProvider} from "react-helmet-async";
-import {SpeedInsights} from "@vercel/speed-insights/next";
 
 const Root = () => {
     const helmetContext = {}
 
     return (
         <HelmetProvider context={helmetContext}>
-            <SpeedInsights/>
             <ToastProvider>
                 <NDKProvider>
                     <MainNavigation/>

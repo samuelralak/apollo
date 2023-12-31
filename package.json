@@ -16,7 +16,6 @@
     "@nostr-dev-kit/ndk": "^2.3.1",
     "@reduxjs/toolkit": "^2.0.1",
     "@uiw/react-md-editor": "^4.0.1",
-    "@vercel/speed-insights": "^1.0.2",
     "date-fns": "^3.0.6",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
