@@ -6,6 +6,7 @@ import {RootState} from "../store";
 import {SignerMethod} from "../features/auth/auth-slice.ts";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../constants";
+import {decodeNsec} from "../utils";
 
 export interface NDKContext {
     ndkConnected: boolean,
@@ -60,11 +61,9 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
                     break;
                 }
                 case SignerMethod.PRIVATE_KEY: {
-                    const fromStorage = secureLocalStorage.getItem(constants.secureStorageKey) as {
-                        privkey: string,
-                        nsec: string
-                    }
-                    setNDKSigner(new NDKPrivateKeySigner(fromStorage.privkey!))
+                    const {nsec} = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec: string }
+                    const decodedKey = decodeNsec(nsec as `nsec1${string}`)
+                    setNDKSigner(new NDKPrivateKeySigner(decodedKey as unknown as string))
                     break;
                 }
                 default:
