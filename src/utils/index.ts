@@ -109,7 +109,7 @@ export const formatDateTime = (unixTimestamp: number | undefined): string => {
  *
  * @param nsec
  */
-export const decodeNsec = (nsec: `nsec1${string}`): string => {
+export const decodeNsec = (nsec: `nsec1${string}`): Uint8Array => {
     const {data} = nip19.decode(nsec)
-    return new TextDecoder().decode(data)
+    return data
 }

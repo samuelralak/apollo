@@ -53,13 +53,14 @@ const GetStarted = () => {
         const privateKeyType = validatePrivateKey(privateKey!)
 
         if (privateKey) {
+            console.log({privateKeyType})
             try {
                 const decodedKey = privateKeyType === 'nsec' ? decodeNsec(privateKey as `nsec1${string}`) : privateKey
-                const signer = new NDKPrivateKeySigner(decodedKey)
+                const signer = new NDKPrivateKeySigner(decodedKey as string)
 
                 secureLocalStorage.setItem(constants.secureStorageKey, {
                     privkey: decodedKey,
-                    nsec: nip19.nsecEncode(new TextEncoder().encode(decodedKey))
+                    nsec: nip19.nsecEncode(decodedKey as Uint8Array)
                 })
 
                 await _fetchProfileAndSignIn(signer, SignerMethod.PRIVATE_KEY)
