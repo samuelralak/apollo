@@ -42,7 +42,7 @@ const SelectMenu = <T extends Option>({
                     <Listbox.Label className="sr-only">Change published status</Listbox.Label>
                     <div className="relative">
                         <Listbox.Button
-                            className="inline-flex w-full items-center justify-between rounded-lg bg-slate-100 ring-2 ring-slate-200 p-3.5 text-sm text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 focus:ring-offset-slate-50">
+                            className="inline-flex w-full items-center justify-between rounded-lg bg-slate-100 ring-2 ring-slate-200 p-3.5 text-sm text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-2 focus:ring-offset-slate-50">
                             <span>{selected?.title ?? placeholder}</span>
                             <ChevronDownIcon className="h-6 w-6 text-slate-900" aria-hidden="true"/>
                         </Listbox.Button>

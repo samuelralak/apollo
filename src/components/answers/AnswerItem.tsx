@@ -7,11 +7,22 @@ import EventOwner from "../shared/EventOwner.tsx";
 import {Menu, Transition} from "@headlessui/react";
 import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {Fragment} from "react";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store";
+import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
 
 const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => void }) => {
     const auth = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch() as AppDispatch
+
+    const onZapClick = () => {
+        dispatch(showPortal({
+            portalId: PortalID.zap,
+            pubkey: answer.user.pubkey,
+            eventId: answer.eventId,
+            eventCoordinate: `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`
+        }))
+    }
 
     return (
         <div className="flex flex-row gap-x-4 pt-4" key={answer.id}>
@@ -53,7 +64,7 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                         </a>
                         {auth.isLoggedIn && (
                             <>
-                                <a href="#"
+                                <a onClick={onZapClick}
                                    className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
                                     <span className="hidden sm:block">Zap</span>
                                 </a>
@@ -103,17 +114,12 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                                         {auth.isLoggedIn && (
                                             <>
                                                 <Menu.Item>
-                                                    {({active}) => (
-                                                        <a
-                                                            href="#"
-                                                            className={classNames(
-                                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                                'block px-4 py-2 text-sm'
-                                                            )}
-                                                        >
-                                                            Zap
-                                                        </a>
-                                                    )}
+                                                    <a
+                                                        onClick={onZapClick}
+                                                        className='text-gray-700 block px-4 py-2 text-sm'
+                                                    >
+                                                        Zap
+                                                    </a>
                                                 </Menu.Item>
                                                 {auth.pubkey === answer.user.pubkey && (
                                                     <Menu.Item>

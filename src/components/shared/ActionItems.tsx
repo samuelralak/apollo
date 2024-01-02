@@ -2,12 +2,24 @@ import {classNames} from "../../utils";
 import {Menu, Transition} from "@headlessui/react";
 import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {Fragment} from "react";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store";
 import {Link} from "react-router-dom";
+import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
+import constants from "../../constants";
 
 const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => {
     const auth = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch() as AppDispatch
+
+    const onZapClick = () => {
+        dispatch(showPortal({
+            portalId: PortalID.zap,
+            pubkey: props.pubkey,
+            eventId: props.eventId,
+            eventCoordinate: `${constants.questionKind}:${props.pubkey}:${props.id}`
+        }))
+    }
 
     return (
         <div className="flex flex-row gap-x-2 text-xs sm:text-sm font-medium text-slate-500">
@@ -17,7 +29,7 @@ const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => 
             </a>
             {auth.isLoggedIn && (
                 <>
-                    <a href="#"
+                    <a onClick={onZapClick}
                        className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
                         <span className="hidden sm:block">Zap</span>
                     </a>
@@ -67,18 +79,14 @@ const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => 
                             {auth.isLoggedIn && (
                                 <>
                                     <Menu.Item>
-                                        {({active}) => (
-                                            <a
-                                                href="#"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm'
-                                                )}
-                                            >
-                                                Zap
-                                            </a>
-                                        )}
+                                        <a
+                                            onClick={onZapClick}
+                                            className='text-gray-700 block px-4 py-2 text-sm'
+                                        >
+                                            Zap
+                                        </a>
                                     </Menu.Item>
+
                                     {auth.pubkey === props.pubkey && (
                                         <Menu.Item>
                                             {({active}) => (

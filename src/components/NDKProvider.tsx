@@ -9,10 +9,12 @@ import constants from "../constants";
 import {decodeNsec} from "../utils";
 
 export interface NDKContext {
+    signer: () => NDKSigner | null,
     ndkConnected: boolean,
     ndkInstance: () => NDK,
     setNDKSigner: (signer?: NDKSigner) => void,
     removeNDKSigner: () => void,
+    buildEvent: (kind: number, content: string, tags?: string[][]) => NDKEvent
     publishEvent: (kind: number, content: string, tags?: string[][]) => Promise<string>
 }
 
@@ -35,6 +37,15 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
         }
     }
 
+    const buildEvent = (kind: number, content: string, tags?: string[][]): NDKEvent => {
+        const ndkEvent = new NDKEvent(ndk.current)
+        ndkEvent.kind = kind
+        ndkEvent.content = content
+        ndkEvent.tags = tags ?? []
+
+        return ndkEvent
+    }
+
     const publishEvent = async (kind: number, content: string, tags?: string[][]) => {
         if (!ndkInstance().signer) {
             setNDKSigner()
@@ -46,6 +57,20 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
 
         await ndkEvent.publish()
         return ndkEvent.id
+    }
+
+    const signer = (): NDKSigner | null => {
+        if (auth.signerMethod === SignerMethod.NIP07) {
+            return (new NDKNip07Signer(3000))
+        }
+
+        if (auth.signerMethod === SignerMethod.PRIVATE_KEY) {
+            const {nsec} = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec: string }
+            const decodedKey = decodeNsec(nsec as `nsec1${string}`)
+            return (new NDKPrivateKeySigner(decodedKey as unknown as string))
+        }
+
+        return null
     }
 
     const ndkInstance = (): NDK => ndk.current!
@@ -81,7 +106,7 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     }
 
     return (
-        <NDKContext.Provider value={{ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, publishEvent}}>
+        <NDKContext.Provider value={{signer, ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, buildEvent, publishEvent}}>
             {children}
         </NDKContext.Provider>
     )

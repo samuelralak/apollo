@@ -147,7 +147,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                             defaultValue={question?.title ?? ''}
                             type="text"
                             placeholder={`e.g ${placeholderTitleExamples[questionCategory] ?? ''}`}
-                            className="block w-full border-0 focus:border-0 rounded-lg py-4 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 leading-6 "
+                            className="block w-full border-0 focus:border-0 rounded-lg py-4 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
                         />
                     </div>
                     {errors.title && (

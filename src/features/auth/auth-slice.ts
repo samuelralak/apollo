@@ -18,7 +18,7 @@ const initialState: AuthState = {
     isLoggedIn: false,
     pubkey: undefined,
     userProfile: undefined,
-    signerMethod: undefined
+    signerMethod: undefined,
 }
 
 const preloadAuth = async (): Promise<AuthState> => {
