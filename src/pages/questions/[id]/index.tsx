@@ -1,6 +1,5 @@
-import {useState} from "react";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import Question, {transformer as questionTransformer} from "../../../resources/question";
+import {transformer as questionTransformer} from "../../../resources/question";
 import {useParams} from "react-router-dom";
 import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
@@ -12,14 +11,18 @@ import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
 import constants from "../../../constants";
 import ActionItems from "../../../components/shared/ActionItems.tsx";
 import SEOContainer from "../../../components/SEOContainer.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../../store";
+import {addQuestion} from "../../../features/question/question-slice.ts";
 
 const Page = () => {
+    const dispatch = useDispatch<AppDispatch>()
     const {questionId} = useParams()
-    const [question, setQuestion] = useState<Question>()
+    const question = useSelector((state: RootState) => state.question).data[questionId!]
 
     const handleQuestionEvent = (event: NDKEvent) => {
         const questionFromEvent = questionTransformer(event)
-        setQuestion(questionFromEvent)
+        dispatch(addQuestion(questionFromEvent))
     }
 
     useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)
@@ -38,8 +41,6 @@ const Page = () => {
             />
 
             <div className="mx-auto max-w-3xl">
-
-
                 <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
                 <div className="flex flex-row gap-x-2 mt-1">
                     <p className="text-xs sm:text-sm font-medium text-slate-500">
@@ -58,7 +59,10 @@ const Page = () => {
                     ))}
                 </div>
                 <div className="flex flex-row gap-x-4 my-8">
-                    <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                    <div className="flex flex-col gap-y-3">
+                        <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                    </div>
+
                     <div className="flex-1">
                         <div className="question-detail">
                             <MDEditor.Markdown

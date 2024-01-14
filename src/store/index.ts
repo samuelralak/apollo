@@ -3,6 +3,7 @@ import authReducer, {AuthState} from "../features/auth/auth-slice"
 import voteReducer from "../features/vote/vote-slice"
 import answerReducer from "../features/answer/answer-slice"
 import portalReducer from "../features/portal/portal-slice"
+import questionReducer from "../features/question/question-slice.ts"
 import {authListenerMiddleware} from "./middlewares";
 
 interface PreloadedState {
@@ -16,7 +17,8 @@ const configureAppStore = (preloadedState: PreloadedState) => {
             auth: authReducer,
             vote: voteReducer,
             answer: answerReducer,
-            portal: portalReducer
+            portal: portalReducer,
+            question: questionReducer,
         },
         middleware: getDefaultMiddleware =>
             getDefaultMiddleware({

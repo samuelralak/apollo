@@ -10,8 +10,14 @@ import {Fragment} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store";
 import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
+import {CheckCircleIcon} from "@heroicons/react/24/solid";
+import Question from "../../resources/question.ts";
 
-const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => void }) => {
+const AnswerItem = ({answer, question, editAction}: {
+    answer: Answer,
+    question: Question,
+    editAction?: () => void
+}) => {
     const auth = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch() as AppDispatch
 
@@ -24,11 +30,17 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
 
     return (
         <div className="flex flex-row gap-x-4 pt-4" key={answer.id}>
-            <Votes kind={constants.answerKind}
-                   eventId={answer.eventId}
-                   pubkey={answer.user.pubkey}
-                   refEvent={answer.referenceEventId}
-            />
+            <div className="flex flex-col gap-y-1.5 justify-center items-center">
+                <Votes kind={constants.answerKind}
+                       eventId={answer.eventId}
+                       pubkey={answer.user.pubkey}
+                       refEvent={answer.referenceEventId}
+                />
+                {auth.isLoggedIn && question.user.pubkey === auth.pubkey && (<button>
+                    <CheckCircleIcon className="h-6 w-6 text-slate-300 hover:text-slate-400 cursor-pointer"/>
+                </button>)}
+            </div>
+
 
             <div className="flex-1">
                 <div className="question-detail">

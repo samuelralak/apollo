@@ -93,7 +93,7 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
     }
 
     if (answer && !editing) {
-        return <AnswerItem answer={answer} editAction={onEditAction}/>
+        return <AnswerItem answer={answer} question={question} editAction={onEditAction}/>
     }
 
     return (
