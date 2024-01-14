@@ -12,17 +12,13 @@ import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
 import constants from "../../../constants";
 import ActionItems from "../../../components/shared/ActionItems.tsx";
 import SEOContainer from "../../../components/SEOContainer.tsx";
-import {nip19} from "nostr-tools";
 
 const Page = () => {
     const {questionId} = useParams()
     const [question, setQuestion] = useState<Question>()
 
     const handleQuestionEvent = (event: NDKEvent) => {
-        console.log({event})
-
         const questionFromEvent = questionTransformer(event)
-        console.log(nip19.naddrEncode({pubkey: event.pubkey, kind: constants.questionKind, identifier: questionFromEvent.id }))
         setQuestion(questionFromEvent)
     }
 

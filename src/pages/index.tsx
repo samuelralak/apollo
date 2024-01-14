@@ -10,10 +10,12 @@ import ZapPortal from "../components/portals/ZapPortal.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "../store";
 import {PortalID} from "../features/portal/portal-slice.ts";
+import {createPortal} from "react-dom";
+import SharePortal from "../components/portals/SharePortal.tsx";
 
 const Root = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth).isLoggedIn
-    const {visible, portalId, ...portal} = useSelector((state: RootState) => state.portal)
+    const {visible, portalId, eventCoordinate, ...portal} = useSelector((state: RootState) => state.portal)
     const helmetContext = {}
 
     return (
@@ -24,12 +26,19 @@ const Root = () => {
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                         <Outlet/>
                     </div>
-                    {isLoggedIn && (visible && portalId === PortalID.zap) && (
+                    {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
                         <ZapPortal
                             pubkey={portal.pubkey!}
                             eventId={portal.eventId}
-                            eventCoordinate={portal.eventCoordinate}
-                        />
+                            eventCoordinate={eventCoordinate}
+                        />, document.body
+                    )}
+
+                    {visible && portalId === PortalID.share && createPortal(
+                        <SharePortal visible={visible}
+                                     eventCoordinate={eventCoordinate!}
+                                     eventId={portal.eventId!}/>
+                        , document.body
                     )}
                 </NDKProvider>
             </ToastProvider>

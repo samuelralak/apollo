@@ -15,14 +15,12 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
     const auth = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch() as AppDispatch
 
-    const onZapClick = () => {
-        dispatch(showPortal({
-            portalId: PortalID.zap,
-            pubkey: answer.user.pubkey,
-            eventId: answer.eventId,
-            eventCoordinate: `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`
-        }))
-    }
+    const handleShowModal = (portalId: PortalID) => dispatch(showPortal({
+        portalId: portalId,
+        pubkey: answer.user.pubkey,
+        eventId: answer.eventId,
+        eventCoordinate: `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`
+    }))
 
     return (
         <div className="flex flex-row gap-x-4 pt-4" key={answer.id}>
@@ -58,13 +56,13 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                     </div>
 
                     <div className="flex flex-row gap-x-2 text-xs sm:text-sm font-medium text-slate-500">
-                        <a href="#"
+                        <a onClick={() => handleShowModal(PortalID.share)}
                            className="hidden sm:block items-center gap-x-1.5 w-auto hover:text-slate-700 cursor-pointer">
                             <span className="hidden sm:block">Share</span>
                         </a>
                         {auth.isLoggedIn && (
                             <>
-                                <a onClick={onZapClick}
+                                <a onClick={() => handleShowModal(PortalID.zap)}
                                    className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
                                     <span className="hidden sm:block">Zap</span>
                                 </a>
@@ -101,7 +99,7 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                                         <Menu.Item>
                                             {({active}) => (
                                                 <a
-                                                    href="#"
+                                                    onClick={() => handleShowModal(PortalID.share)}
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm'
@@ -115,7 +113,7 @@ const AnswerItem = ({answer, editAction}: { answer: Answer, editAction?: () => v
                                             <>
                                                 <Menu.Item>
                                                     <a
-                                                        onClick={onZapClick}
+                                                        onClick={() => handleShowModal(PortalID.zap)}
                                                         className='text-gray-700 block px-4 py-2 text-sm'
                                                     >
                                                         Zap

@@ -110,3 +110,18 @@ export const decodeNsec = (nsec: `nsec1${string}`): Uint8Array => {
     const {data} = nip19.decode(nsec)
     return data
 }
+
+
+/**
+ *
+ * @param text
+ * @param callback
+ */
+export const copyToClipboard = async (text: string, callback?: () => void) => {
+    if (window.navigator && window.isSecureContext) {
+        await window.navigator.clipboard.writeText(text)
+        if (callback) {
+            callback()
+        }
+    }
+}

@@ -14,7 +14,7 @@ import {nip19} from "nostr-tools";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store";
 import {hidePortal} from "../../features/portal/portal-slice.ts";
-import {tagFromEvents} from "../../utils";
+import {copyToClipboard, tagFromEvents} from "../../utils";
 import {ToastContext} from "../ToastProvider.tsx";
 
 interface Props {
@@ -83,6 +83,15 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                 }
             }
         }
+    }
+
+    const handleCopyToClipboard = async (text: string) => {
+        await copyToClipboard(text, () => {
+            showToast({
+                title: 'Copied to clipboard',
+                type: 'success'
+            })
+        })
     }
 
 
@@ -196,7 +205,7 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                                 <button
                                                     className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer"
                                                 >
-                                                    <DocumentDuplicateIcon className="h-5 w-5"/>
+                                                    <DocumentDuplicateIcon onClick={() => handleCopyToClipboard(invoice!)} className="h-5 w-5"/>
                                                 </button>
                                             </div>
                                         </div>
@@ -217,11 +226,11 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                                     <div
                                                         className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
                                                     >
-                                                <span className="text-slate-600 text-sm font-medium"
-                                                      id="price-currency"
-                                                >
-                                                    sats
-                                                </span>
+                                                        <span className="text-slate-600 text-sm font-medium"
+                                                              id="price-currency"
+                                                        >
+                                                            sats
+                                                        </span>
                                                     </div>
                                                 </div>
 
@@ -233,12 +242,13 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                             </div>
 
                                             <div className="mt-2">
-                                        <textarea
-                                            {...register('comment')}
-                                            rows={3}
-                                            placeholder="add an optional message"
-                                            className="block w-full bg-slate-100 focus:bg-white rounded-lg border-0 py-1.5 text-slate-900 ring-2 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 text-sm sm:leading-6"
-                                        />
+                                                <textarea
+                                                    {...register('comment')}
+                                                    rows={3}
+                                                    placeholder="add an optional message"
+                                                    className="block w-full bg-slate-100 focus:bg-white rounded-lg border-0 py-1.5 text-slate-900 ring-2 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 text-sm sm:leading-6"
+                                                />
+
                                                 {errors.comment && (
                                                     <p className="mt-2 text-sm text-red-600" id="email-error">
                                                         {errors.comment.message as ReactNode}

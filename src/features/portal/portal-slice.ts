@@ -11,6 +11,7 @@ interface PortalState {
     pubkey?: string;
     eventId?: string;
     eventCoordinate?: string;
+    content?: string;
 }
 
 const initialState: PortalState = {
