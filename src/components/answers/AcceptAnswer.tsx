@@ -19,7 +19,7 @@ const AcceptAnswer = ({answer, isAccepted}: { answer: Answer, isAccepted?: boole
 
         if (questionEvent) {
             await publishEvent(constants.questionKind, questionEvent.content, [
-                ...questionEvent.tags,
+                ...questionEvent.tags.filter((tag) => ["a", "accepted_answer"].indexOf(tag[0]) === -1),
                 ...[
                     ["accepted_answer", answer.eventId],
                     ["a", `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`, ""]
