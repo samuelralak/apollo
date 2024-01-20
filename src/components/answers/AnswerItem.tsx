@@ -10,8 +10,8 @@ import {Fragment} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store";
 import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
-import {CheckCircleIcon} from "@heroicons/react/24/solid";
 import Question from "../../resources/question.ts";
+import AcceptAnswer from "./AcceptAnswer.tsx";
 
 const AnswerItem = ({answer, question, editAction}: {
     answer: Answer,
@@ -33,14 +33,18 @@ const AnswerItem = ({answer, question, editAction}: {
             <div className="flex flex-col gap-y-1.5 justify-center items-center">
                 <Votes kind={constants.answerKind}
                        eventId={answer.eventId}
+                       identifier={answer.id ?? ""}
                        pubkey={answer.user.pubkey}
                        refEvent={answer.referenceEventId}
                 />
-                {auth.isLoggedIn && question.user.pubkey === auth.pubkey && (<button>
-                    <CheckCircleIcon className="h-6 w-6 text-slate-300 hover:text-slate-400 cursor-pointer"/>
-                </button>)}
-            </div>
 
+                {auth.isLoggedIn && question.user.pubkey === auth.pubkey && (
+                    <AcceptAnswer
+                        answer={answer}
+                        isAccepted={question?.acceptedAnswerId === answer.id}
+                    />
+                )}
+            </div>
 
             <div className="flex-1">
                 <div className="question-detail">

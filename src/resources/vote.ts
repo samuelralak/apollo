@@ -12,7 +12,8 @@ export default interface Vote {
     eventId: string;
     pubkey: string;
     createdAt: number;
-    referenceEventId: string
+    referenceEventId: string;
+    resourceId: string;
 }
 
 export const transformer = (event: NDKEvent): Vote => {
@@ -23,6 +24,7 @@ export const transformer = (event: NDKEvent): Vote => {
         eventId: event.id,
         pubkey: event.pubkey,
         createdAt: event.created_at!,
-        referenceEventId: tags['e'][tags['e'].length - 1]
+        referenceEventId: tags['e'][tags['e'].length - 1],
+        resourceId: (tags['a'] ?? [])[0]?.split(':')[2]
     }
 }

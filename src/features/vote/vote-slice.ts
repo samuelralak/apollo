@@ -29,9 +29,11 @@ const voteSlice = createSlice({
     initialState,
     reducers: {
         updateVote: (state, {payload}: PayloadAction<Vote>) => {
-            const existingVote = state[payload.referenceEventId]
+            console.log({payload})
+            const existingVote = state[payload.resourceId]
+
             if (!existingVote) {
-                state[payload.referenceEventId] = {
+                state[payload.resourceId] = {
                     total: 1,
                     downVotes: payload.vote === VoteType.DOWNVOTE ? 1 : 0,
                     upVotes: payload.vote === VoteType.UPVOTE ? 1 : 0,
@@ -44,13 +46,13 @@ const voteSlice = createSlice({
                 if (!userVote) {
                     existingVote.total += 1;
                     calculateVotes(payload, existingVote, 1);
-                    state[payload.referenceEventId] = existingVote
+                    state[payload.resourceId] = existingVote
                 } else {
                     if (userVote.vote !== payload.vote) {
                         calculateVotes(payload, existingVote, -1);
                         calculateVotes(payload, existingVote, 1);
                         existingVote.total = existingVote.upVotes + existingVote.downVotes
-                        state[payload.referenceEventId] = existingVote
+                        state[payload.resourceId] = existingVote
                     }
                 }
             }

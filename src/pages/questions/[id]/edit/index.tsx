@@ -1,18 +1,24 @@
 import {useParams} from "react-router-dom";
-import {useState} from "react";
-import Question, {transformer as questionTransformer} from "../../../../resources/question.ts";
+import {transformer as questionTransformer} from "../../../../resources/question.ts";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
 import useNDKSubscription from "../../../../hooks/useNDKSubscription.ts";
 import QuestionForm from "../../../../components/questions/QuestionForm.tsx";
 import constants from "../../../../constants";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../../../store";
+import {addQuestion} from "../../../../features/question/question-slice.ts";
 
 const Page = () => {
+    const dispatch = useDispatch<AppDispatch>()
     const {questionId} = useParams()
-    const [question, setQuestion] = useState<Question>()
+    const question = useSelector((state: RootState) => state.question).data[questionId!]
 
     const handleQuestionEvent = (event: NDKEvent) => {
         const questionFromEvent = questionTransformer(event)
-        setQuestion(questionFromEvent)
+
+        if (event.id !== question.eventId) {
+            dispatch(addQuestion(questionFromEvent))
+        }
     }
 
     useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)

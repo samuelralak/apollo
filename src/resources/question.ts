@@ -12,11 +12,16 @@ export default interface Question {
     user: {
         pubkey: string
     };
+    acceptedAnswerId?: string;
+    acceptedAnswerEventId?: string;
 }
 
 export const transformer = (event: NDKEvent) => {
     let content: string;
+
     const tags = tagFromEvents(event.tags)
+    const acceptedAnswerId = (tags['a'] ?? [])[0]?.split(':')[2]
+    const acceptedAnswerEvent = (tags["accepted_answer"] ?? [])[0]
 
     try {
         JSON.parse(event.content)
@@ -33,6 +38,8 @@ export const transformer = (event: NDKEvent) => {
         category: (tags['category'] ?? tags['l'] ?? [])[0],
         tags: (tags['t'] ?? []),
         createdAt: event.created_at,
+        acceptedAnswerEventId: acceptedAnswerEvent,
+        acceptedAnswerId: acceptedAnswerId,
         user: {
             pubkey: event.pubkey
         }

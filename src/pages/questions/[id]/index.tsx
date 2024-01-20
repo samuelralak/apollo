@@ -21,11 +21,15 @@ const Page = () => {
     const question = useSelector((state: RootState) => state.question).data[questionId!]
 
     const handleQuestionEvent = (event: NDKEvent) => {
+        console.log({event})
         const questionFromEvent = questionTransformer(event)
         dispatch(addQuestion(questionFromEvent))
     }
 
-    useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)
+    useNDKSubscription({
+        kinds: [constants.questionKind],
+        "#d": [questionId!]
+    }, {closeOnEose: false}, handleQuestionEvent)
 
     if (!question) {
         return <Loader loadingText={'Fetching question'}/>
@@ -60,7 +64,11 @@ const Page = () => {
                 </div>
                 <div className="flex flex-row gap-x-4 my-8">
                     <div className="flex flex-col gap-y-3">
-                        <Votes kind={constants.questionKind} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                        <Votes kind={constants.questionKind}
+                               eventId={question.eventId}
+                               pubkey={question.user.pubkey}
+                               identifier={question.id}
+                        />
                     </div>
 
                     <div className="flex-1">
