@@ -12,8 +12,8 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
         <div className="border-t border-gray-200 pb-3 pt-4">
             <div className="flex items-center px-4 sm:px-6">
                 <div className="flex-shrink-0">
-                    {auth.userProfile?.image ? (
-                        <img className="h-10 w-10 rounded-lg object-cover" src={auth.userProfile.image} alt="avatar"/>
+                    {auth.userProfile?.image || auth.userProfile?.picture ? (
+                        <img className="h-10 w-10 rounded-lg object-cover" src={auth.userProfile.image ?? auth.userProfile?.picture} alt="avatar"/>
                     ) : (
                         <span className="h-10 w-10 rounded-lg">
                             <svg className="h-10 w-10 text-gray-300" fill="currentColor" viewBox="0 0 24 24">

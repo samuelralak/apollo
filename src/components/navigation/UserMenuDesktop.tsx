@@ -41,8 +41,8 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                             className="relative flex rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <span className="absolute -inset-1.5"/>
                             <span className="sr-only">Open user menu</span>
-                            {auth?.userProfile?.image ? (
-                                <img src={auth?.userProfile?.image}
+                            {auth?.userProfile?.image || auth?.userProfile?.picture ? (
+                                <img src={auth?.userProfile?.image ?? auth?.userProfile?.picture}
                                      alt="cover"
                                      className="h-8 w-8 rounded-lg object-cover"
                                 />

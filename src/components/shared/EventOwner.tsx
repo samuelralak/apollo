@@ -21,10 +21,10 @@ const EventOwner = ({pubkey, mini}: { pubkey: string, mini?: boolean }) => {
         <a href="#" className="group block flex-shrink-0">
             <div className="flex items-center">
                 <div>
-                    {userProfile?.image ? (
+                    {userProfile?.image || userProfile?.picture ? (
                         <img
                             className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block object-cover')}
-                            src={userProfile.image}
+                            src={userProfile.image ?? userProfile.picture}
                             alt="avatar"
                         />
                     ) : (
@@ -41,7 +41,7 @@ const EventOwner = ({pubkey, mini}: { pubkey: string, mini?: boolean }) => {
                 </div>
                 <div className="ml-3">
                     <p className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">
-                        {userProfile?.displayName ?? userProfile?.name}
+                        {userProfile?.displayName ?? userProfile?.display_name ?? userProfile?.name}
                     </p>
 
                     {(userProfile?.nip05 && !mini) && (
