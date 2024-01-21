@@ -42,6 +42,19 @@
     border-radius: 0.5rem 0.5rem 0 0 !important;
 }
 
+.wmde-markdown p,
+.wmde-markdown blockquote,
+.wmde-markdown ul,
+.wmde-markdown ol,
+.wmde-markdown dl,
+.wmde-markdown table,
+.wmde-markdown pre,
+.wmde-markdown details,
+.wmde-markdown ul > li,
+.wmde-markdown ol > li {
+    margin-bottom: -0.3rem !important;
+}
+
 /*a {*/
 /*  font-weight: 500;*/
 /*  color: #646cff;*/
