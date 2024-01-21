@@ -48,12 +48,17 @@
 .wmde-markdown table,
 .wmde-markdown pre,
 .wmde-markdown details {
-    margin-bottom: -0.3rem !important;
+    margin-bottom: -0.5rem !important;
 }
 
 .wmde-markdown ul,
 .wmde-markdown ol {
     display: inline-grid !important;
+}
+
+.wmde-markdown ul > li,
+.wmde-markdown ol > li {
+    margin: 0 0.5em !important;
 }
 
 /*a {*/
