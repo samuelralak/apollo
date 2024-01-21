@@ -44,8 +44,6 @@
 
 .wmde-markdown p,
 .wmde-markdown blockquote,
-.wmde-markdown ul,
-.wmde-markdown ol,
 .wmde-markdown dl,
 .wmde-markdown table,
 .wmde-markdown pre,
@@ -53,8 +51,8 @@
     margin-bottom: -0.3rem !important;
 }
 
-.wmde-markdown ul > li,
-.wmde-markdown ol > li {
+.wmde-markdown ul,
+.wmde-markdown ol {
     display: inline-grid !important;
 }
 
