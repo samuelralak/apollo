@@ -12,6 +12,7 @@ import {AppDispatch, RootState} from "../../store";
 import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
 import Question from "../../resources/question.ts";
 import AcceptAnswer from "./AcceptAnswer.tsx";
+import {CheckCircleIcon} from "@heroicons/react/24/solid";
 
 const AnswerItem = ({answer, question, editAction}: {
     answer: Answer,
@@ -38,11 +39,10 @@ const AnswerItem = ({answer, question, editAction}: {
                        refEvent={answer.referenceEventId}
                 />
 
-                {auth.isLoggedIn && question.user.pubkey === auth.pubkey && (
-                    <AcceptAnswer
-                        answer={answer}
-                        isAccepted={question?.acceptedAnswerId === answer.id}
-                    />
+                {question?.acceptedAnswerId === answer.id ? (
+                    <CheckCircleIcon className="text-green-500 h-6 w-6 cursor-pointer" />
+                ) : auth.isLoggedIn && question.user.pubkey === auth.pubkey && (
+                    <AcceptAnswer answer={answer} />
                 )}
             </div>
 

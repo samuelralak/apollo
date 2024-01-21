@@ -3,10 +3,9 @@ import {CheckCircleIcon} from "@heroicons/react/24/solid";
 import {useContext, useState} from "react";
 import {NDKContext} from "../NDKProvider.tsx";
 import constants from "../../constants";
-import {classNames} from "../../utils";
 import {CogIcon} from "@heroicons/react/24/outline";
 
-const AcceptAnswer = ({answer, isAccepted}: { answer: Answer, isAccepted?: boolean }) => {
+const AcceptAnswer = ({answer}: { answer: Answer }) => {
     const {ndkInstance, publishEvent} = useContext(NDKContext) as NDKContext
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -34,7 +33,7 @@ const AcceptAnswer = ({answer, isAccepted}: { answer: Answer, isAccepted?: boole
         <button onClick={handleMarkAcceptedAnswer} disabled={isLoading}>
             {isLoading ? (<CogIcon className="animate-spin h-6 w-6 text-slate-200"/>) : (
                 <CheckCircleIcon
-                    className={classNames(isAccepted ? 'text-green-500' : 'text-slate-300 hover:text-slate-400', 'h-6 w-6 cursor-pointer')}
+                    className="text-slate-300 hover:text-slate-400 h-6 w-6 cursor-pointer"
                 />
             )}
         </button>
