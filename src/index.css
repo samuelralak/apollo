@@ -49,10 +49,13 @@
 .wmde-markdown dl,
 .wmde-markdown table,
 .wmde-markdown pre,
-.wmde-markdown details,
+.wmde-markdown details {
+    margin-bottom: -0.3rem !important;
+}
+
 .wmde-markdown ul > li,
 .wmde-markdown ol > li {
-    margin-bottom: -0.3rem !important;
+    display: inline-grid !important;
 }
 
 /*a {*/
