@@ -29,7 +29,6 @@ const voteSlice = createSlice({
     initialState,
     reducers: {
         updateVote: (state, {payload}: PayloadAction<Vote>) => {
-            console.log({payload})
             const existingVote = state[payload.resourceId]
 
             if (!existingVote) {

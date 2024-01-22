@@ -10,8 +10,8 @@ const EventOwner = ({pubkey, mini}: { pubkey: string, mini?: boolean }) => {
     useEffect(() => {
         (async () => {
             const userEvent = await ndkInstance().fetchEvent({kinds: [0], authors: [pubkey]})
+
             if (userEvent) {
-                console.log({userEvent})
                 setUserEvent(JSON.parse(userEvent.content))
             }
         })()

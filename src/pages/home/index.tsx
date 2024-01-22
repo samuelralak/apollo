@@ -1,31 +1,32 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {useContext, useEffect, useMemo, useState} from "react";
-import {NDKContext} from "../../components/NDKProvider";
 import {transformer as questionTransformer} from "../../resources/question";
 import Loader from "../../components/Loader";
 import QuestionsList from "../../components/questions/QuestionsList";
 import constants from "../../constants";
 import NoQuestion from '../../assets/no-questions.svg'
+import useNDKSubscription from "../../hooks/useNDKSubscription.ts";
+import {addQuestion, updateLastFetched} from "../../features/question/question-slice.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store";
 
 const Page = () => {
-    const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const [questionEvents, setQuestionEvents] = useState<NDKEvent[] | undefined>(undefined)
+    const dispatch = useDispatch<AppDispatch>()
+    const questions = useSelector((state: RootState) => state.question)
 
-    console.log(constants.questionKind)
-    const questions = useMemo(() => {
-        return (questionEvents ?? []).map(questionTransformer)
-    }, [questionEvents])
+    const handleQuestionEvent = (event: NDKEvent) => {
+        const questionFromEvent = questionTransformer(event)
+        dispatch(addQuestion(questionFromEvent))
+    }
 
-    useEffect(() => {
-        (async () => {
-            const questionEvents = await ndkInstance().fetchEvents({kinds: [constants.questionKind], limit: 1000})
-            setQuestionEvents([...questionEvents])
-        })()
-    }, [ndkInstance]);
+    useNDKSubscription({kinds: [constants.questionKind]}, {closeOnEose: false}, handleQuestionEvent, () => dispatch(updateLastFetched()))
 
-    return (
-        <div className="mx-auto max-w-3xl">
-            {questionEvents && questionEvents.length === 0 && (
+    if (questions.lastFetched === 0) {
+        return <Loader/>
+    }
+
+    if (Object.entries(questions.data).length === 0) {
+        return (
+            <div className="mx-auto max-w-3xl">
                 <div>
                     <img src={NoQuestion} alt={'placeholder'} className="h-72 w-72 mx-auto"/>
                     <h1 className="text-2xl text-slate-600 font-extrabold w-full text-center">
@@ -35,9 +36,13 @@ const Page = () => {
                         The Apollo community is here to help. Your curiosity fuels our collaborative spirit
                     </p>
                 </div>
-            )}
+            </div>
+        )
+    }
 
-            {questionEvents ? (<QuestionsList questions={questions}/>) : <Loader/>}
+    return (
+        <div className="mx-auto max-w-3xl">
+            <QuestionsList questions={[...Object.values(questions.data)]}/>
         </div>
     )
 }

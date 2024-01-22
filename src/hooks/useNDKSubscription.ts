@@ -2,7 +2,7 @@ import {NDKEvent, NDKFilter, NDKSubscription, NDKSubscriptionOptions} from "@nos
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../components/NDKProvider.tsx";
 
-const useNDKSubscription = (filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, callbackFn?: (event: NDKEvent) => void) => {
+const useNDKSubscription = (filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, callbackFn?: (event: NDKEvent) => void, eoseFn?: () => void) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
     const [ndkSubscription, setNDKSubscription] = useState<NDKSubscription | undefined>()
 
@@ -14,6 +14,7 @@ const useNDKSubscription = (filters: NDKFilter | NDKFilter[], opts?: NDKSubscrip
             setNDKSubscription(subscription)
 
             subscription.on('event', (event: NDKEvent) => callbackFn?.(event))
+            subscription.on('eose', () => eoseFn?.())
         })()
 
         return () => {

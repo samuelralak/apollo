@@ -21,7 +21,6 @@ const Page = () => {
     const question = useSelector((state: RootState) => state.question).data[questionId!]
 
     const handleQuestionEvent = (event: NDKEvent) => {
-        console.log({event})
         const questionFromEvent = questionTransformer(event)
         dispatch(addQuestion(questionFromEvent))
     }
