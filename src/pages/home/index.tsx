@@ -3,11 +3,11 @@ import {transformer as questionTransformer} from "../../resources/question";
 import Loader from "../../components/Loader";
 import QuestionsList from "../../components/questions/QuestionsList";
 import constants from "../../constants";
-import NoQuestion from '../../assets/no-questions.svg'
 import useNDKSubscription from "../../hooks/useNDKSubscription.ts";
 import {addQuestion, updateLastFetched} from "../../features/question/question-slice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store";
+import EmptyState from "../../components/questions/EmptyState.tsx";
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -25,19 +25,7 @@ const Page = () => {
     }
 
     if (Object.entries(questions.data).length === 0) {
-        return (
-            <div className="mx-auto max-w-3xl">
-                <div>
-                    <img src={NoQuestion} alt={'placeholder'} className="h-72 w-72 mx-auto"/>
-                    <h1 className="text-2xl text-slate-600 font-extrabold w-full text-center">
-                        Got a question? Ask Away!
-                    </h1>
-                    <p className="text-lg w-full text-center font-semibold max-w-xl mx-auto text-slate-400">
-                        The Apollo community is here to help. Your curiosity fuels our collaborative spirit
-                    </p>
-                </div>
-            </div>
-        )
+        return <EmptyState/>
     }
 
     return (
