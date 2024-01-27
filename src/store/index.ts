@@ -4,6 +4,7 @@ import voteReducer from "../features/vote/vote-slice"
 import answerReducer from "../features/answer/answer-slice"
 import portalReducer from "../features/portal/portal-slice"
 import questionReducer from "../features/question/question-slice.ts"
+import commentReducer from "../features/comments/comment-slice.ts"
 import {authListenerMiddleware} from "./middlewares";
 
 interface PreloadedState {
@@ -19,6 +20,7 @@ const configureAppStore = (preloadedState: PreloadedState) => {
             answer: answerReducer,
             portal: portalReducer,
             question: questionReducer,
+            comment: commentReducer
         },
         middleware: getDefaultMiddleware =>
             getDefaultMiddleware({

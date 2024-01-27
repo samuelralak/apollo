@@ -13,6 +13,8 @@ import {PortalID, showPortal} from "../../features/portal/portal-slice.ts";
 import Question from "../../resources/question.ts";
 import AcceptAnswer from "./AcceptAnswer.tsx";
 import {CheckCircleIcon} from "@heroicons/react/24/solid";
+import CommentsList from "../comments/CommentList.tsx";
+import PostCommentBox from "../comments/PostCommentBox.tsx";
 
 const AnswerItem = ({answer, question, editAction}: {
     answer: Answer,
@@ -31,7 +33,7 @@ const AnswerItem = ({answer, question, editAction}: {
 
     return (
         <div className="flex flex-row gap-x-4 pt-4" key={answer.id}>
-            <div className="flex flex-col gap-y-1.5 justify-center items-center">
+            <div className="flex flex-col gap-y-1.5 justify-start items-center">
                 <Votes kind={constants.answerKind}
                        eventId={answer.eventId}
                        identifier={answer.id ?? ""}
@@ -158,6 +160,9 @@ const AnswerItem = ({answer, question, editAction}: {
                         </Menu>
                     </div>
                 </div>
+
+                <CommentsList resource={answer} resourceKind={constants.answerKind} />
+                <PostCommentBox resource={answer} resourceKind={constants.answerKind} />
             </div>
         </div>
     )

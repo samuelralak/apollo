@@ -14,6 +14,8 @@ import SEOContainer from "../../../components/SEOContainer.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../store";
 import {addQuestion} from "../../../features/question/question-slice.ts";
+import CommentsList from "../../../components/comments/CommentList.tsx";
+import PostCommentBox from "../../../components/comments/PostCommentBox.tsx";
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -43,7 +45,7 @@ const Page = () => {
                 url={`/questions/${question?.id}`}
             />
 
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-2xl">
                 <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
                 <div className="flex flex-row gap-x-2 mt-1">
                     <p className="text-xs sm:text-sm font-medium text-slate-500">
@@ -61,8 +63,8 @@ const Page = () => {
                     </span>
                     ))}
                 </div>
-                <div className="flex flex-row gap-x-4 my-8">
-                    <div className="flex flex-col gap-y-3">
+                <div className="grid grid-cols-8 sm:grid-cols-12 gap-x-4 my-8">
+                    <div className="col-span-1 sm:col-span-1 gap-y-3">
                         <Votes kind={constants.questionKind}
                                eventId={question.eventId}
                                pubkey={question.user.pubkey}
@@ -70,7 +72,7 @@ const Page = () => {
                         />
                     </div>
 
-                    <div className="flex-1">
+                    <div className="col-span-7 sm:col-span-11">
                         <div className="question-detail">
                             <MDEditor.Markdown
                                 source={question?.description ?? ''}
@@ -81,7 +83,7 @@ const Page = () => {
                                     fontFamily: 'Public Sans, sans-serif'
                                 }}
                                 data-color-mode={'light'}
-                                className="bg-white prose prose-slate"
+                                className="bg-white prose prose-slate max-w-none"
                             />
                         </div>
 
@@ -98,6 +100,9 @@ const Page = () => {
 
                             <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
                         </div>
+
+                        <CommentsList resource={question} resourceKind={constants.questionKind} />
+                        <PostCommentBox resource={question} resourceKind={constants.questionKind} />
                     </div>
                 </div>
 
