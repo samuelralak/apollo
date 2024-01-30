@@ -1,5 +1,5 @@
 import {createBrowserRouter, LoaderFunction} from "react-router-dom";
-import Root, {EditQuestionPage, HomePage, NewQuestionPage, QuestionPage} from "../pages";
+import Root, {EditQuestionPage, HomePage, NewQuestionPage, ProfilePage, QuestionPage} from "../pages";
 import withAuthRequired from "../components/hocs/withAuthRequired";
 import {validate as isUUID} from 'uuid'
 
@@ -35,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: 'questions/new',
                 element: withAuthRequired(NewQuestionPage),
+            },
+            {
+                path: 'user/:pubkey',
+                element: <ProfilePage />,
             }
         ]
     }

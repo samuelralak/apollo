@@ -1,4 +1,5 @@
 import HomePage from './home'
+import ProfilePage from "./profile";
 import {EditQuestionPage, NewQuestionPage, QuestionPage} from "./questions";
 
 import MainNavigation from "../components/MainNavigation.tsx";
@@ -46,6 +47,6 @@ const Root = () => {
     )
 }
 
-export {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage}
+export {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage, ProfilePage}
 
 export default Root
