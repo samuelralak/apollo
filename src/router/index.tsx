@@ -2,7 +2,12 @@ import {createBrowserRouter, LoaderFunction} from "react-router-dom";
 import Root, {EditQuestionPage, HomePage, NewQuestionPage, ProfilePage, QuestionPage} from "../pages";
 import withAuthRequired from "../components/hocs/withAuthRequired";
 import {validate as isUUID} from 'uuid'
-import SettingsPage, {UserProfileSettingsPage} from "../pages/settings";
+import SettingsPage, {
+    NetworkSettingsPage,
+    NotificationsSettingsPage,
+    SecuritySettingsPage, TranslationSettingsPage,
+    UserProfileSettingsPage
+} from "../pages/settings";
 
 const uuidLoader: LoaderFunction = ({params}) => {
     const {questionId} = params;
@@ -44,6 +49,22 @@ const router = createBrowserRouter([
                     {
                         path: "user-profile",
                         element: <UserProfileSettingsPage />,
+                    },
+                    {
+                        path: "network",
+                        element: <NetworkSettingsPage />,
+                    },
+                    {
+                        path: "notifications",
+                        element: <NotificationsSettingsPage />,
+                    },
+                    {
+                        path: "security",
+                        element: <SecuritySettingsPage />,
+                    },
+                    {
+                        path: "translation",
+                        element: <TranslationSettingsPage />,
                     }
                 ]
 
