@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import {PlusIcon} from "@heroicons/react/20/solid";
+import {ChatBubbleOvalLeftEllipsisIcon} from "@heroicons/react/20/solid";
 import {BellIcon} from "@heroicons/react/24/outline";
 import {Menu, Transition} from "@headlessui/react";
 import {Fragment} from "react";
@@ -17,9 +17,9 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
             <div className="flex-shrink-0">
                 <Link
                     to={'/questions/new'}
-                    className="relative inline-flex items-center gap-x-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    className="relative inline-flex items-center gap-x-1.5 rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
                 >
-                    <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true"/>
+                    <ChatBubbleOvalLeftEllipsisIcon className="-ml-0.5 h-5 w-5" aria-hidden="true"/>
                     Ask Question
                 </Link>
             </div>
