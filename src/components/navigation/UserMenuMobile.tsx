@@ -41,14 +41,14 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
             <div className="mt-3 space-y-1">
                 <Disclosure.Button
                     as="a"
-                    href="#"
+                    href={`/user/${auth.pubkey}`}
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                     Your Profile
                 </Disclosure.Button>
                 <Disclosure.Button
                     as="a"
-                    href="#"
+                    href="/settings/user-profile"
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                     Settings

@@ -12,10 +12,9 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-    {name: 'Activity', href: '#', current: true},
+    {name: 'About', href: '#', current: true},
     {name: '0 Answers', href: '#', current: false},
     {name: '0 Questions', href: '#', current: false},
-    {name: 'About', href: '#', current: false},
 ]
 
 const ProfilePage = () => {
