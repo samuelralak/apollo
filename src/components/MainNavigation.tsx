@@ -34,10 +34,10 @@ const MainNavigation = () => {
                                     <h1 className="text-slate-700 font-extrabold font-['Poppins'] text-lg">[APOLLO]</h1>
                                 </div>
                                 <div className="hidden md:ml-6 md:flex md:space-x-8">
-                                    {/* Current: "border-blue-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+                                    {/* Current: "border-slate-700text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                                     <NavLink
                                         to="/"
-                                        className="inline-flex items-center border-b-2 border-blue-500 px-1 pt-1 text-sm font-medium text-gray-900"
+                                        className="inline-flex items-center border-b-2 border-slate-700px-1 pt-1 text-sm font-medium text-gray-900"
                                     >
                                         Home
                                     </NavLink>
@@ -51,11 +51,11 @@ const MainNavigation = () => {
 
                     <Disclosure.Panel className="md:hidden">
                         <div className="space-y-1 pb-3 pt-2">
-                            {/* Current: "bg-blue-50 border-blue-500 text-blue-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
+                            {/* Current: "bg-blue-50 border-slate-700text-blue-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
                             <Disclosure.Button
                                 as="a"
                                 href="/"
-                                className="block border-l-4 border-blue-500 bg-blue-50 py-2 pl-3 pr-4 text-base font-medium text-blue-700 sm:pl-5 sm:pr-6"
+                                className="block border-l-4 border-slate-700bg-blue-50 py-2 pl-3 pr-4 text-base font-medium text-blue-700 sm:pl-5 sm:pr-6"
                             >
                                 Home
                             </Disclosure.Button>

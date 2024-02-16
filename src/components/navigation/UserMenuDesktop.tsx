@@ -27,7 +27,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
             <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                 <button
                     type="button"
-                    className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
                 >
                     <span className="absolute -inset-1.5"/>
                     <span className="sr-only">View notifications</span>
@@ -38,7 +38,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                 <Menu as="div" className="relative ml-3">
                     <div>
                         <Menu.Button
-                            className="relative flex rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            className="relative flex rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                             <span className="absolute -inset-1.5"/>
                             <span className="sr-only">Open user menu</span>
                             {auth?.userProfile?.image || auth?.userProfile?.picture ? (

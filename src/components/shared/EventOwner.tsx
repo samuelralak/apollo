@@ -2,6 +2,7 @@ import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../NDKProvider.tsx";
 import {classNames} from "../../utils";
+import {Link} from "react-router-dom";
 
 const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean, hideAvatar?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
@@ -18,7 +19,7 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
     }, [pubkey]);
 
     return (
-        <a href="#" className="group block flex-shrink-0">
+        <Link to={`/user/${pubkey}`} className="group block flex-shrink-0">
             <div className="flex items-center space-x-3">
                 {!hideAvatar && (
                     <div>
@@ -53,7 +54,7 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
                     )}
                 </div>
             </div>
-        </a>
+        </Link>
     )
 }
 
