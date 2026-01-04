@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useParams} from "react-router";
 import {transformer as questionTransformer} from "../../../../resources/question.ts";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
 import useNDKSubscription from "../../../../hooks/useNDKSubscription.ts";

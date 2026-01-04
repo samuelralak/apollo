@@ -1,5 +1,5 @@
-import {Dialog, Transition} from "@headlessui/react";
-import {Fragment, useContext, useEffect, useState} from "react";
+import {Dialog, DialogPanel, DialogTitle, DialogBackdrop} from "@headlessui/react";
+import {useContext, useEffect, useState} from "react";
 import {DocumentDuplicateIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store";
@@ -127,126 +127,104 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
     console.log({selectedTab})
 
     return (
-        <Transition.Root show={visible} as={Fragment}>
-            <Dialog as="div" className="relative z-10" static onClose={() => {
-            }}>
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
-                </Transition.Child>
+        <Dialog open={visible} onClose={() => {}} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+            />
 
-                <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-                    <div
-                        className="flex min-h-full justify-center p-4 text-center items-start">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                            enterTo="opacity-100 translate-y-0 sm:scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div
+                    className="flex min-h-full justify-center p-4 text-center items-start">
+                    <DialogPanel
+                        transition
+                        className="relative transform overflow-hidden rounded-xl bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 w-full sm:max-w-xl sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
+                    >
+                        <DialogTitle as="h2"
+                                      className="font-bold leading-6 text-slate-600 text-xl flex justify-between items-center"
                         >
-                            <Dialog.Panel
-                                className="relative transform overflow-hidden rounded-xl bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all my-8 w-full sm:max-w-xl sm:p-6"
-                            >
-                                <Dialog.Title as="h2"
-                                              className="font-bold leading-6 text-slate-600 text-xl flex justify-between items-center"
+                            Share
+                            <XMarkIcon onClick={handleHidePortal} className="h-5 w-5"/>
+                        </DialogTitle>
+
+                        <div className="mt-5">
+                            <div className="sm:hidden">
+                                <label htmlFor="tabs" className="sr-only">
+                                    Select a tab
+                                </label>
+                                <select
+                                    id="tabs"
+                                    name="tabs"
+                                    onChange={(event) => handleTabChange(event.currentTarget.value as TabID)}
+                                    className="block w-full rounded-lg border-slate-300 border-2 text-sm py-3 focus:border-slate-600 focus:ring-slate-600"
+                                    defaultValue={selectedTab.name}
                                 >
-                                    Share
-                                    <XMarkIcon onClick={handleHidePortal} className="h-5 w-5"/>
-                                </Dialog.Title>
-
-                                <div className="mt-5">
-                                    <div className="sm:hidden">
-                                        <label htmlFor="tabs" className="sr-only">
-                                            Select a tab
-                                        </label>
-                                        {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-                                        <select
-                                            id="tabs"
-                                            name="tabs"
-                                            onChange={(event) => handleTabChange(event.currentTarget.value as TabID)}
-                                            className="block w-full rounded-lg border-slate-300 border-2 text-sm py-3 focus:border-slate-600 focus:ring-slate-600"
-                                            defaultValue={selectedTab.name}
+                                    {Object.values(shareTabs).map((tab) => (
+                                        <option value={tab.id} key={tab.name}>{tab.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="hidden sm:block">
+                                <nav className="flex space-x-4" aria-label="Tabs">
+                                    {Object.values(shareTabs).map((tab) => (
+                                        <a
+                                            key={tab.name}
+                                            onClick={() => handleTabChange(tab.id)}
+                                            className={classNames(
+                                                tab.id === selectedTab.id ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700',
+                                                'rounded-md px-3 py-2 text-sm font-medium cursor-pointer'
+                                            )}
+                                            aria-current={tab.id === selectedTab.id ? 'page' : undefined}
                                         >
-                                            {Object.values(shareTabs).map((tab) => (
-                                                <option value={tab.id} key={tab.name}>{tab.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="hidden sm:block">
-                                        <nav className="flex space-x-4" aria-label="Tabs">
-                                            {Object.values(shareTabs).map((tab) => (
-                                                <a
-                                                    key={tab.name}
-                                                    onClick={() => handleTabChange(tab.id)}
-                                                    className={classNames(
-                                                        tab.id === selectedTab.id ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700',
-                                                        'rounded-md px-3 py-2 text-sm font-medium cursor-pointer'
-                                                    )}
-                                                    aria-current={tab.id === selectedTab.id ? 'page' : undefined}
-                                                >
-                                                    {tab.name}
-                                                </a>
-                                            ))}
-                                        </nav>
-                                    </div>
+                                            {tab.name}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </div>
+                        </div>
+
+                        <div className="mt-5">
+                            <div className="flex gap-x-2 items-center justify-center my-5">
+                                <input
+                                    value={selectedTab.shareUrl || ''}
+                                    disabled={true}
+                                    readOnly={true}
+                                    placeholder="lnb1..."
+                                    className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
+                                />
+                                <button
+                                    className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer"
+                                >
+                                    <DocumentDuplicateIcon
+                                        onClick={() => handleCopyToClipboard(selectedTab.shareUrl || '')}
+                                        className="h-5 w-5"/>
+                                </button>
+                            </div>
+
+                            {selectedTab.id === TabID.nostr && (
+                                <div className="flex gap-2">
+                                    <button type="button"
+                                            onClick={() => handleShareEvent(constants.shareKind)}
+                                            disabled={sharing}
+                                            className="border-0 bg-slate-700 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24"
+                                    >
+                                        Share
+                                    </button>
+
+                                    <button type="button"
+                                            onClick={() => handleShareEvent(constants.noteKind)}
+                                            disabled={sharing}
+                                            className="border-0 bg-white py-3 px-2 text-sm rounded-lg font-semibold text-slate-700 my-3 min-w-24"
+                                    >
+                                        Publish note
+                                    </button>
                                 </div>
-
-                                <div className="mt-5">
-                                    <div className="flex gap-x-2 items-center justify-center my-5">
-                                        <input
-                                            value={selectedTab.shareUrl || ''}
-                                            disabled={true}
-                                            readOnly={true}
-                                            placeholder="lnb1..."
-                                            className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
-                                        />
-                                        <button
-                                            className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer"
-                                        >
-                                            <DocumentDuplicateIcon
-                                                onClick={() => handleCopyToClipboard(selectedTab.shareUrl || '')}
-                                                className="h-5 w-5"/>
-                                        </button>
-                                    </div>
-
-
-                                    {selectedTab.id === TabID.nostr && (
-                                        <div className="flex gap-2">
-                                            <button type="button"
-                                                    onClick={() => handleShareEvent(constants.shareKind)}
-                                                    disabled={sharing}
-                                                    className="border-0 bg-slate-700 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24"
-                                            >
-                                                Share
-                                            </button>
-
-                                            <button type="button"
-                                                    onClick={() => handleShareEvent(constants.noteKind)}
-                                                    disabled={sharing}
-                                                    className="border-0 bg-white py-3 px-2 text-sm rounded-lg font-semibold text-slate-700 my-3 min-w-24"
-                                            >
-                                                Publish note
-                                            </button>
-                                        </div>
-
-                                    )}
-                                </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
-                    </div>
+                            )}
+                        </div>
+                    </DialogPanel>
                 </div>
-            </Dialog>
-        </Transition.Root>
+            </div>
+        </Dialog>
     )
 }
 

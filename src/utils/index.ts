@@ -1,12 +1,4 @@
-import {
-    differenceInDays,
-    differenceInHours,
-    differenceInMinutes,
-    differenceInMonths,
-    differenceInSeconds,
-    differenceInYears,
-    format
-} from "date-fns";
+import dayjs from "dayjs";
 import {NDKTag} from "@nostr-dev-kit/ndk";
 import {nip19} from "nostr-tools";
 
@@ -79,22 +71,21 @@ export const validatePrivateKey = (key: string): boolean => {
  */
 export const formatDateTime = (unixTimestamp: number | undefined): string => {
     if (unixTimestamp) {
-        const now = new Date();
-        const timestampDate = new Date(unixTimestamp * 1000);
+        const now = dayjs();
+        const timestampDate = dayjs.unix(unixTimestamp);
 
-        const diffInSeconds = differenceInSeconds(now, timestampDate);
-        const diffInMinutes = differenceInMinutes(now, timestampDate);
-        const diffInHours = differenceInHours(now, timestampDate);
-        const diffInDays = differenceInDays(now, timestampDate);
-        const diffInMonths = differenceInMonths(now, timestampDate);
-        const diffInYears = differenceInYears(now, timestampDate);
+        const diffInSeconds = now.diff(timestampDate, 'second');
+        const diffInMinutes = now.diff(timestampDate, 'minute');
+        const diffInHours = now.diff(timestampDate, 'hour');
+        const diffInDays = now.diff(timestampDate, 'day');
+        const diffInMonths = now.diff(timestampDate, 'month');
+        const diffInYears = now.diff(timestampDate, 'year');
 
         if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
         if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
         if (diffInHours < 24) return `${diffInHours} hours ago`;
         if (diffInDays < 3) return `${diffInDays} days ago`;
-        // if (diffInMonths < 11) return format(timestampDate, "d MMM, h:mm a");
-        if (diffInMonths < 11) return format(timestampDate, "d MMM");
+        if (diffInMonths < 11) return timestampDate.format("D MMM");
         if (diffInMonths >= 11 || diffInYears >= 1)
             return `${diffInYears} years ago`;
     }

@@ -9,7 +9,7 @@ import {NDKContext} from "../../../components/NDKProvider.tsx";
 import {ToastContext} from "../../../components/ToastProvider.tsx";
 
 const displayNameFromProfile = (userProfile: NDKUserProfile) => {
-    const name = (userProfile?.displayName ?? userProfile?.display_name ?? "").split(" ")
+    const name = String(userProfile?.displayName ?? userProfile?.display_name ?? "").split(" ")
     const [firstName, ...rest] = name
     const lastName = (rest ?? []).join(" ")
 

@@ -26,7 +26,7 @@ export const transformer = (event: NDKEvent) => {
     try {
         JSON.parse(event.content)
         content = ''
-    } catch (_) {
+    } catch {
         content = event.content
     }
 

@@ -24,16 +24,30 @@ export const NDKContext = createContext<NDKContext | null>(null)
 
 const NDKProvider = ({children}: { children: ReactNode }) => {
     const auth = useSelector((state: RootState) => state.auth)
-    const ndk = useRef<NDK | undefined>()
+    const ndk = useRef<NDK | undefined>(undefined)
     const [ndkConnected, setNDKConnected] = useState<boolean>(false)
 
     const connectNDK = async () => {
         try {
             ndk.current = new NDK({explicitRelayUrls: relays});
-            ndk.current.connect(3000)
-            setNDKConnected(true)
-        } catch (e) {
-            setNDKConnected(false)
+            await ndk.current.connect(5000)
+
+            // Wait a bit for relays to establish connections, then check if any connected
+            await new Promise(resolve => setTimeout(resolve, 1000))
+
+            const connectedRelays = Array.from(ndk.current.pool.relays.values())
+                .filter(relay => relay.connectivity.status === 1)
+
+            if (connectedRelays.length > 0) {
+                console.log(`Connected to ${connectedRelays.length} relay(s)`)
+                setNDKConnected(true)
+            } else {
+                console.warn('No relays connected, but proceeding anyway')
+                setNDKConnected(true) // Still allow app to load
+            }
+        } catch (error) {
+            console.error('NDK connection error:', error)
+            setNDKConnected(true) // Allow app to load even on error
         }
     }
 
@@ -98,6 +112,7 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial connection to external NDK service
         connectNDK().catch(console.error)
     }, [])
 

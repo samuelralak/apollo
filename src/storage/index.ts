@@ -1,4 +1,4 @@
-import * as localforage from "localforage";
+import localforage from "localforage";
 
 const storeNames: { SESSION: string } = {
     SESSION: 'session'

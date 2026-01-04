@@ -4,7 +4,7 @@ import MDEditor from "@uiw/react-md-editor";
 import {commandsFilter} from "../../utils/md-editor.ts";
 import {classNames} from "../../utils";
 import {MinusSmallIcon, PlusSmallIcon, XMarkIcon} from "@heroicons/react/24/outline";
-import {Disclosure} from "@headlessui/react";
+import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/react";
 import {Category} from "../../resources/category.ts";
 import categories from "../../data/categories.json";
 import {Guideline} from "../../resources/guideline.ts";
@@ -15,7 +15,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import questionSchema from "../../schemas/question-schema.ts";
 import {NDKContext} from "../NDKProvider.tsx";
 import {ToastContext} from "../ToastProvider.tsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router";
 import {v4 as uuidv4} from "uuid";
 import constants from "../../constants";
 
@@ -98,7 +98,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                 type: 'success'
             })
             navigate(`/questions/${questionId}`)
-        } catch (e) {
+        } catch {
             setPublishing(false)
             // TODO: handle error response
         }
@@ -271,7 +271,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                     {({open}) => (
                                         <>
                                             <dt>
-                                                <Disclosure.Button
+                                                <DisclosureButton
                                                     className="flex w-full items-start justify-between text-left text-slate-900">
                                                         <span
                                                             className="text-base font-semibold leading-7"
@@ -285,9 +285,9 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                                             <PlusSmallIcon className="h-6 w-6" aria-hidden="true"/>
                                                         )}
                                                     </span>
-                                                </Disclosure.Button>
+                                                </DisclosureButton>
                                             </dt>
-                                            <Disclosure.Panel as="dd" className="mt-2 pl-5">
+                                            <DisclosurePanel as="dd" className="mt-2 pl-5">
                                                 <ul className="list-disc">
                                                     {guideline.points.map((point, idx) => (
                                                         <li key={`${point}-${idx}`}
@@ -297,7 +297,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                                     ))}
                                                 </ul>
 
-                                            </Disclosure.Panel>
+                                            </DisclosurePanel>
                                         </>
                                     )}
                                 </Disclosure>

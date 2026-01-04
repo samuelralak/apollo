@@ -1,5 +1,5 @@
 import Question from "../../resources/question";
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 import {memo} from "react";
 import {formatDateTime, markdownToText} from "../../utils";
 import EventOwner from "../shared/EventOwner";

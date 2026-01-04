@@ -5,7 +5,7 @@ import NetworkSettingsPage from "./network";
 import NotificationsSettingsPage from "./notifications";
 import SecuritySettingsPage from "./security";
 import TranslationSettingsPage from "./translation";
-import {NavLink, Outlet} from "react-router-dom";
+import {NavLink, Outlet} from "react-router";
 
 const secondaryNavigation = [
     {name: 'General', href: '/settings/user-profile', icon: UserCircleIcon, current: true},

@@ -1,5 +1,5 @@
 import {BellIcon} from "@heroicons/react/24/outline";
-import {Disclosure} from "@headlessui/react";
+import {DisclosureButton} from "@headlessui/react";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store";
 import {AuthState, signOut} from "../../features/auth/auth-slice.ts";
@@ -39,27 +39,27 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
                 </button>
             </div>
             <div className="mt-3 space-y-1">
-                <Disclosure.Button
+                <DisclosureButton
                     as="a"
                     href={`/user/${auth.pubkey}`}
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                     Your Profile
-                </Disclosure.Button>
-                <Disclosure.Button
+                </DisclosureButton>
+                <DisclosureButton
                     as="a"
                     href="/settings/user-profile"
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                     Settings
-                </Disclosure.Button>
-                <Disclosure.Button
+                </DisclosureButton>
+                <DisclosureButton
                     as="a"
                     onClick={onSignOut}
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 sm:px-6"
                 >
                     Sign out
-                </Disclosure.Button>
+                </DisclosureButton>
             </div>
         </div>
     )

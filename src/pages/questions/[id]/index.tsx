@@ -1,6 +1,6 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
 import {transformer as questionTransformer} from "../../../resources/question";
-import {useParams} from "react-router-dom";
+import {useParams} from "react-router";
 import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../components/Loader";

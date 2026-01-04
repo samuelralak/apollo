@@ -3,7 +3,7 @@ import ProfilePage from "./profile";
 import {EditQuestionPage, NewQuestionPage, QuestionPage} from "./questions";
 
 import MainNavigation from "../components/MainNavigation.tsx";
-import {Outlet} from "react-router-dom";
+import {Outlet} from "react-router";
 import NDKProvider from "../components/NDKProvider.tsx";
 import ToastProvider from "../components/ToastProvider.tsx";
 import {HelmetProvider} from "react-helmet-async";

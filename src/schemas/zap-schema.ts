@@ -1,8 +1,7 @@
 import {z} from "zod";
 
-export default z.object({
+const zapSchema = z.object({
     amount: z
-        .coerce
         .number()
         .positive()
         .min(21)
@@ -11,3 +10,6 @@ export default z.object({
         .string()
         .trim()
 })
+
+export type ZapSchemaType = z.infer<typeof zapSchema>
+export default zapSchema

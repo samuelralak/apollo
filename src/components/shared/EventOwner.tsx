@@ -2,7 +2,7 @@ import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../NDKProvider.tsx";
 import {classNames} from "../../utils";
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 
 const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean, hideAvatar?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext

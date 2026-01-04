@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useParams} from "react-router";
 import {useContext, useEffect, useState} from "react";
 import {NDKContext} from "../../components/NDKProvider.tsx";
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
