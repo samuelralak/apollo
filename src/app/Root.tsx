@@ -10,6 +10,7 @@ import {PortalID} from "../shared/store/portal.slice";
 import {createPortal} from "react-dom";
 import SharePortal from "../shared/components/portal/SharePortal";
 import GetStartedPortal from "../shared/components/portal/GetStartedPortal";
+import MobileMenuPortal from "../shared/components/portal/MobileMenuPortal";
 
 const Root = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth).isLoggedIn
@@ -43,6 +44,10 @@ const Root = () => {
 
                     {!isLoggedIn && visible && portalId === PortalID.auth && createPortal(
                         <GetStartedPortal />, document.body
+                    )}
+
+                    {visible && portalId === PortalID.mobileMenu && createPortal(
+                        <MobileMenuPortal />, document.body
                     )}
                 </NDKProvider>
             </ToastProvider>

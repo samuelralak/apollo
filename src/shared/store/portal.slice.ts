@@ -3,7 +3,8 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 export enum PortalID {
     share = 'share',
     zap = 'zap',
-    auth = 'auth'
+    auth = 'auth',
+    mobileMenu = 'mobileMenu'
 }
 
 export interface PortalState {
