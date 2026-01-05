@@ -1,10 +1,5 @@
 import {BellIcon, CursorArrowRaysIcon, FingerPrintIcon, GlobeAltIcon, UserCircleIcon} from '@heroicons/react/24/outline'
-import {classNames} from "../../utils";
-import UserProfileSettingsPage from "./user-profile";
-import NetworkSettingsPage from "./network";
-import NotificationsSettingsPage from "./notifications";
-import SecuritySettingsPage from "./security";
-import TranslationSettingsPage from "./translation";
+import {classNames} from "../../../../utils";
 import {NavLink, Outlet} from "react-router";
 
 const secondaryNavigation = [
@@ -61,11 +56,3 @@ const SettingsPage = () => {
 }
 
 export default SettingsPage
-
-export {
-    UserProfileSettingsPage,
-    NetworkSettingsPage,
-    NotificationsSettingsPage,
-    SecuritySettingsPage,
-    TranslationSettingsPage
-}

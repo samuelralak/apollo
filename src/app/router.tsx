@@ -1,13 +1,17 @@
 import {createBrowserRouter, LoaderFunction} from "react-router";
-import Root, {EditQuestionPage, HomePage, NewQuestionPage, ProfilePage, QuestionPage} from "../pages";
-import withAuthRequired from "../domains/auth/components/withAuthRequired";
-import {validate as isUUID} from 'uuid'
-import SettingsPage, {
+import Root from "./Root";
+import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
+import {ProfilePage} from "../domains/user/pages";
+import {
+    SettingsPage,
+    UserProfileSettingsPage,
     NetworkSettingsPage,
     NotificationsSettingsPage,
-    SecuritySettingsPage, TranslationSettingsPage,
-    UserProfileSettingsPage
-} from "../pages/settings";
+    SecuritySettingsPage,
+    TranslationSettingsPage
+} from "../domains/user/pages/settings";
+import withAuthRequired from "../domains/auth/components/withAuthRequired";
+import {validate as isUUID} from 'uuid'
 
 const uuidLoader: LoaderFunction = ({params}) => {
     const {questionId} = params;

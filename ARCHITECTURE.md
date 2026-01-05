@@ -6,9 +6,6 @@ This document describes the Domain-Driven Design (DDD) architecture used in the 
 
 ```
 src/
-├── app/                          # Application setup
-│   └── store.ts                  # Redux store configuration
-│
 ├── lib/                          # Third-party integrations
 │   ├── ndk/                      # NDK (Nostr Dev Kit) integration
 │   │   └── NDKProvider.tsx       # NDK context provider
@@ -27,11 +24,17 @@ src/
 │   │   │   └── question.schema.ts
 │   │   ├── store/                # Redux slice
 │   │   │   └── question.slice.ts
-│   │   └── components/           # Domain-specific UI components
-│   │       ├── QuestionForm.tsx
-│   │       ├── QuestionsList.tsx
-│   │       ├── QuestionStats.tsx
-│   │       └── EmptyState.tsx
+│   │   ├── components/           # Domain-specific UI components
+│   │   │   ├── QuestionForm.tsx
+│   │   │   ├── QuestionsList.tsx
+│   │   │   ├── QuestionStats.tsx
+│   │   │   └── EmptyState.tsx
+│   │   └── pages/                # Domain route pages
+│   │       ├── HomePage.tsx
+│   │       ├── QuestionPage.tsx
+│   │       ├── EditQuestionPage.tsx
+│   │       ├── NewQuestionPage.tsx
+│   │       └── index.ts
 │   ├── answer/
 │   │   ├── types/
 │   │   ├── services/
@@ -66,17 +69,22 @@ src/
 │   │       ├── UserMenuMobile.tsx
 │   │       ├── AuthRequired.tsx
 │   │       └── withAuthRequired.tsx
-│   ├── portal/
-│   │   ├── store/
-│   │   │   └── portal.slice.ts
-│   │   └── components/
-│   │       ├── ZapPortal.tsx
-│   │       └── SharePortal.tsx
 │   └── user/
 │       ├── schemas/
 │       │   └── user-profile.schema.ts
-│       └── components/
-│           └── EventOwner.tsx
+│       ├── components/
+│       │   └── EventOwner.tsx
+│       └── pages/
+│           ├── ProfilePage.tsx
+│           ├── settings/
+│           │   ├── SettingsPage.tsx
+│           │   ├── UserProfileSettingsPage.tsx
+│           │   ├── NetworkSettingsPage.tsx
+│           │   ├── NotificationsSettingsPage.tsx
+│           │   ├── SecuritySettingsPage.tsx
+│           │   ├── TranslationSettingsPage.tsx
+│           │   └── index.ts
+│           └── index.ts
 │
 ├── shared/                       # Truly shared code
 │   ├── types/                    # Shared types used across domains
@@ -84,20 +92,26 @@ src/
 │   │   └── category.types.ts     # Category, Guideline
 │   ├── schemas/                  # Cross-cutting schemas
 │   │   └── zap.schema.ts         # Zap validation (works on any event)
+│   ├── store/                    # Cross-cutting Redux slices
+│   │   └── portal.slice.ts       # Modal/portal state management
 │   ├── components/
 │   │   ├── feedback/             # Loader, ToastProvider
 │   │   ├── forms/                # SelectMenu
 │   │   ├── layout/               # MainNavigation
+│   │   ├── portal/               # ZapPortal, SharePortal
 │   │   ├── ActionItems.tsx
 │   │   ├── AvatarPlaceholder.tsx
 │   │   └── SEOContainer.tsx
 │   └── hooks/                    # useNDKSubscription
 │
-├── pages/                        # Route pages
+├── app/                          # Application setup
+│   ├── store.ts                  # Redux store configuration
+│   ├── router.tsx                # React Router configuration
+│   └── Root.tsx                  # Root layout component
+│
 ├── utils/                        # Pure utility functions
 ├── constants/                    # App constants (Nostr kinds, relays)
 ├── data/                         # Static data (categories, guidelines)
-├── router/                       # React Router configuration
 └── assets/                       # Static assets
 ```
 
@@ -208,6 +222,9 @@ domains/[domain-name]/
 │   └── [domain].transformer.ts
 ├── components/           # Domain-specific UI components
 │   └── [Component].tsx
+├── pages/                # Route pages for this domain (optional)
+│   ├── [Feature]Page.tsx
+│   └── index.ts
 ├── hooks/                # Domain-specific hooks (optional)
 │   └── use[Domain].ts
 ├── schemas/              # Zod validation schemas (optional)
@@ -231,7 +248,7 @@ Where does my new code go?
 ├─ Is it a React component?
 │  ├─ Used by only one domain? → /domains/[domain]/components/
 │  ├─ Used by multiple domains? → /shared/components/
-│  └─ A page/route? → /pages/[route]/
+│  └─ A page/route? → /domains/[primary-domain]/pages/
 │
 ├─ Is it a type/interface?
 │  ├─ Domain-specific? → /domains/[domain]/types/
@@ -268,9 +285,11 @@ Where does my new code go?
 | **Form validation** | `/domains/[domain]/schemas/` | `question.schema.ts` |
 | **Cross-cutting schemas** | `/shared/schemas/` | `zap.schema.ts` |
 | **Domain components** | `/domains/[domain]/components/` | `QuestionForm.tsx` |
-| **Route pages** | `/pages/` | `pages/home/index.tsx` |
+| **Route pages** | `/domains/[domain]/pages/` | `QuestionPage.tsx`, `HomePage.tsx` |
+| **Root layout** | `/app/Root.tsx` | `Root.tsx` (providers, layout) |
 | **Domain hooks** | `/domains/[domain]/hooks/` | `useQuestions.ts` |
 | **Shared components** | `/shared/components/` | `Loader.tsx`, `SelectMenu.tsx` |
+| **Shared store (cross-cutting)** | `/shared/store/` | `portal.slice.ts` |
 | **Shared hooks** | `/shared/hooks/` | `useNDKSubscription.ts` |
 | **Third-party wrappers** | `/lib/` | `NDKProvider.tsx`, `storage/` |
 | **Pure utilities** | `/utils/` | `formatDateTime.ts`, `classNames.ts` |
@@ -285,9 +304,28 @@ Organize shared components by category:
 | **Feedback** | `/shared/components/feedback/` | `Loader.tsx`, `ToastProvider.tsx` |
 | **Forms** | `/shared/components/forms/` | `SelectMenu.tsx` |
 | **Layout** | `/shared/components/layout/` | `MainNavigation.tsx` |
+| **Portal/Modals** | `/shared/components/portal/` | `ZapPortal.tsx`, `SharePortal.tsx` |
 | **Generic** | `/shared/components/` (root) | `ActionItems.tsx`, `SEOContainer.tsx` |
 
 **Rule:** If 3+ components share a category, create a subfolder.
+
+### Page Organization
+
+Pages (route components) live in their primary domain's `pages/` folder:
+
+| Page | Primary Domain | Location |
+|------|---------------|----------|
+| Home (question list) | `question` | `domains/question/pages/HomePage.tsx` |
+| Question detail | `question` | `domains/question/pages/QuestionPage.tsx` |
+| New question | `question` | `domains/question/pages/NewQuestionPage.tsx` |
+| User profile | `user` | `domains/user/pages/ProfilePage.tsx` |
+| Settings | `user` | `domains/user/pages/settings/SettingsPage.tsx` |
+
+**Page naming:** `[Feature]Page.tsx` (e.g., `QuestionPage.tsx`, `HomePage.tsx`)
+
+**Root layout:** The app shell (providers, navigation) lives at `/app/Root.tsx`
+
+**Router:** Routes are defined in `/app/router.tsx` and import from domain pages
 
 ---
 
@@ -580,5 +618,6 @@ The codebase migration to Domain-Driven Design is complete. All legacy folders h
 - ~~`src/hooks/`~~ → Hooks moved to `src/shared/hooks/`
 - ~~`src/store/`~~ → Store configuration moved to `src/app/store.ts`
 - ~~`src/storage/`~~ → Storage utilities moved to `src/lib/storage/`
+- ~~`src/pages/`~~ → Pages moved to `src/domains/*/pages/` and `src/app/Root.tsx`
 
 All imports now use the new domain-based paths.

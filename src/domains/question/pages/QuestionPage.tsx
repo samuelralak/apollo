@@ -1,23 +1,23 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {questionTransformer} from "../../../domains/question/services/question.transformer";
+import {questionTransformer} from "../services/question.transformer";
 import {useParams} from "react-router";
 import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
 import Loader from "../../../shared/components/feedback/Loader";
-import EventOwner from "../../../domains/user/components/EventOwner";
-import AnswersContainer from "../../../domains/answer/components/AnswersContainer";
-import Votes from "../../../domains/vote/components/Votes";
+import EventOwner from "../../user/components/EventOwner";
+import AnswersContainer from "../../answer/components/AnswersContainer";
+import Votes from "../../vote/components/Votes";
 import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
 import constants from "../../../constants";
 import ActionItems from "../../../shared/components/ActionItems";
 import SEOContainer from "../../../shared/components/SEOContainer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
-import {addQuestion} from "../../../domains/question/store/question.slice";
-import CommentsList from "../../../domains/comment/components/CommentList";
-import PostCommentBox from "../../../domains/comment/components/PostCommentBox";
+import {addQuestion} from "../store/question.slice";
+import CommentsList from "../../comment/components/CommentList";
+import PostCommentBox from "../../comment/components/PostCommentBox";
 
-const Page = () => {
+const QuestionPage = () => {
     const dispatch = useDispatch<AppDispatch>()
     const {questionId} = useParams()
     const question = useSelector((state: RootState) => state.question).data[questionId!]
@@ -113,4 +113,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default QuestionPage

@@ -5,16 +5,16 @@ import {DocumentDuplicateIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {BoltIcon} from "@heroicons/react/24/solid";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import zapSchema, {ZapSchemaType} from "../../../shared/schemas/zap.schema";
+import zapSchema, {ZapSchemaType} from "../../schemas/zap.schema";
 import constants from "../../../constants";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import {NDKZapper} from "@nostr-dev-kit/ndk";
 import {nip19} from "nostr-tools";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
-import {hidePortal} from "../store/portal.slice";
+import {hidePortal} from "../../store/portal.slice";
 import {copyToClipboard, tagFromEvents} from "../../../utils";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
+import {ToastContext} from "../feedback/ToastProvider";
 
 interface Props {
     pubkey: string;

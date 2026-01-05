@@ -1,12 +1,12 @@
 import {useSelector} from "react-redux";
-import {RootState} from "../../../app/store";
+import {RootState} from "../../../../app/store";
 import {SubmitHandler, useForm} from "react-hook-form";
-import userProfileSchema, {UserProfileSchemaType} from "../../../domains/user/schemas/user-profile.schema";
+import userProfileSchema, {UserProfileSchemaType} from "../../schemas/user-profile.schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {ReactNode, useContext, useState} from "react";
-import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
+import {NDKContext} from "../../../../lib/ndk/NDKProvider";
+import {ToastContext} from "../../../../shared/components/feedback/ToastProvider";
 
 const displayNameFromProfile = (userProfile: NDKUserProfile) => {
     const name = String(userProfile?.displayName ?? userProfile?.display_name ?? "").split(" ")

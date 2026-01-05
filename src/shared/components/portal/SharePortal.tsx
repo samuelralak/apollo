@@ -3,17 +3,17 @@ import {useContext, useEffect, useState} from "react";
 import {DocumentDuplicateIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
-import {hidePortal} from "../store/portal.slice";
+import {hidePortal} from "../../store/portal.slice";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import type {Question} from "../../question/types/question.types";
-import {questionTransformer} from "../../question/services/question.transformer";
-import type {Answer} from "../../answer/types/answer.types";
-import {answerTransformer} from "../../answer/services/answer.transformer";
+import type {Question} from "../../../domains/question/types/question.types";
+import {questionTransformer} from "../../../domains/question/services/question.transformer";
+import type {Answer} from "../../../domains/answer/types/answer.types";
+import {answerTransformer} from "../../../domains/answer/services/answer.transformer";
 import constants from "../../../constants";
 import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
 import {classNames, copyToClipboard} from "../../../utils";
 import {nip19} from "nostr-tools";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
+import {ToastContext} from "../feedback/ToastProvider";
 
 type Resource = Question | Answer
 

@@ -1,15 +1,15 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {questionTransformer} from "../../domains/question/services/question.transformer";
-import Loader from "../../shared/components/feedback/Loader";
-import QuestionsList from "../../domains/question/components/QuestionsList";
-import constants from "../../constants";
-import useNDKSubscription from "../../shared/hooks/useNDKSubscription";
-import {addQuestion, updateLastFetched} from "../../domains/question/store/question.slice";
+import {questionTransformer} from "../services/question.transformer";
+import Loader from "../../../shared/components/feedback/Loader";
+import QuestionsList from "../components/QuestionsList";
+import constants from "../../../constants";
+import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import {addQuestion, updateLastFetched} from "../store/question.slice";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../app/store";
-import EmptyState from "../../domains/question/components/EmptyState";
+import {AppDispatch, RootState} from "../../../app/store";
+import EmptyState from "../components/EmptyState";
 
-const Page = () => {
+const HomePage = () => {
     const dispatch = useDispatch<AppDispatch>()
     const questions = useSelector((state: RootState) => state.question)
 
@@ -35,4 +35,4 @@ const Page = () => {
     )
 }
 
-export default Page;
+export default HomePage

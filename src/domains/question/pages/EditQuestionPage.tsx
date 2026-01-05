@@ -1,14 +1,14 @@
 import {useParams} from "react-router";
-import {questionTransformer} from "../../../../domains/question/services/question.transformer";
+import {questionTransformer} from "../services/question.transformer";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import useNDKSubscription from "../../../../shared/hooks/useNDKSubscription";
-import QuestionForm from "../../../../domains/question/components/QuestionForm";
-import constants from "../../../../constants";
+import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import QuestionForm from "../components/QuestionForm";
+import constants from "../../../constants";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../../../app/store";
-import {addQuestion} from "../../../../domains/question/store/question.slice";
+import {AppDispatch, RootState} from "../../../app/store";
+import {addQuestion} from "../store/question.slice";
 
-const Page = () => {
+const EditQuestionPage = () => {
     const dispatch = useDispatch<AppDispatch>()
     const {questionId} = useParams()
     const question = useSelector((state: RootState) => state.question).data[questionId!]
@@ -38,4 +38,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default EditQuestionPage

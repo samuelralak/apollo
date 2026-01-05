@@ -4,7 +4,7 @@ import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
 import {Link} from "react-router";
-import {PortalID, showPortal} from "../../domains/portal/store/portal.slice";
+import {PortalID, showPortal} from "../store/portal.slice";
 import constants from "../../constants";
 
 const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => {

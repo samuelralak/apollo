@@ -1,18 +1,14 @@
-import HomePage from './home'
-import ProfilePage from "./profile";
-import {EditQuestionPage, NewQuestionPage, QuestionPage} from "./questions";
-
 import MainNavigation from "../shared/components/layout/MainNavigation";
 import {Outlet} from "react-router";
 import NDKProvider from "../lib/ndk/NDKProvider";
 import ToastProvider from "../shared/components/feedback/ToastProvider";
 import {HelmetProvider} from "react-helmet-async";
-import ZapPortal from "../domains/portal/components/ZapPortal";
+import ZapPortal from "../shared/components/portal/ZapPortal";
 import {useSelector} from "react-redux";
-import {RootState} from "../app/store";
-import {PortalID} from "../domains/portal/store/portal.slice";
+import {RootState} from "./store";
+import {PortalID} from "../shared/store/portal.slice";
 import {createPortal} from "react-dom";
-import SharePortal from "../domains/portal/components/SharePortal";
+import SharePortal from "../shared/components/portal/SharePortal";
 
 const Root = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth).isLoggedIn
@@ -46,7 +42,5 @@ const Root = () => {
         </HelmetProvider>
     )
 }
-
-export {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage, ProfilePage}
 
 export default Root

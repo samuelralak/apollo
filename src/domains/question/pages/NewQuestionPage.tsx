@@ -1,6 +1,6 @@
-import QuestionForm from "../../../domains/question/components/QuestionForm";
+import QuestionForm from "../components/QuestionForm";
 
-const Page = () => {
+const NewQuestionPage = () => {
     return (
         <div className="mx-auto max-w-7xl">
             <div className="md:flex md:items-center md:justify-between">
@@ -16,4 +16,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default NewQuestionPage

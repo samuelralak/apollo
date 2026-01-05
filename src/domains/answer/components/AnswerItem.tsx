@@ -8,7 +8,7 @@ import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
 import {EllipsisVerticalIcon} from "@heroicons/react/20/solid";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
-import {PortalID, showPortal} from "../../portal/store/portal.slice";
+import {PortalID, showPortal} from "../../../shared/store/portal.slice";
 import type {Question} from "../../question/types/question.types";
 import AcceptAnswer from "./AcceptAnswer";
 import {CheckCircleIcon} from "@heroicons/react/24/solid";

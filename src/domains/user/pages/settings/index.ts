@@ -1,0 +1,6 @@
+export { default as SettingsPage } from './SettingsPage'
+export { default as UserProfileSettingsPage } from './UserProfileSettingsPage'
+export { default as NetworkSettingsPage } from './NetworkSettingsPage'
+export { default as NotificationsSettingsPage } from './NotificationsSettingsPage'
+export { default as SecuritySettingsPage } from './SecuritySettingsPage'
+export { default as TranslationSettingsPage } from './TranslationSettingsPage'
