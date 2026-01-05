@@ -113,7 +113,7 @@ const AboutPage = () => {
             </section>
 
             {/* Footer accent - subtle, not a "section" */}
-            <div className="py-8 border-t border-slate-200 dark:border-slate-700">
+            <div className="py-8 border-t border-slate-200 dark:border-slate-700 space-y-4">
                 <p className="text-xs text-slate-400 dark:text-slate-500 flex flex-wrap items-center gap-x-1">
                     <span className="text-purple-600 dark:text-purple-400 font-semibold">NOSTR</span>
                     <span>+</span>
@@ -124,6 +124,22 @@ const AboutPage = () => {
                     <span className="mx-2">·</span>
                     <span>Built on The Bitcoin Standard</span>
                 </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                    <Link to="/privacy" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                        Privacy Policy
+                    </Link>
+                    <Link to="/terms" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                        Terms of Use
+                    </Link>
+                    <a
+                        href="https://github.com/anthropics/apollo"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    >
+                        GitHub
+                    </a>
+                </div>
             </div>
         </div>
     );

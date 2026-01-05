@@ -2,7 +2,7 @@ import {createBrowserRouter, LoaderFunction} from "react-router";
 import Root from "./Root";
 import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
 import {ProfilePage} from "../domains/user/pages";
-import {AboutPage} from "../domains/website/pages";
+import {AboutPage, PrivacyPolicyPage, TermsOfUsePage} from "../domains/website/pages";
 import {
     SettingsPage,
     UserProfileSettingsPage,
@@ -86,6 +86,14 @@ const router = createBrowserRouter([
             {
                 path: 'about',
                 element: <AboutPage/>,
+            },
+            {
+                path: 'privacy',
+                element: <PrivacyPolicyPage/>,
+            },
+            {
+                path: 'terms',
+                element: <TermsOfUsePage/>,
             }
         ]
     }
