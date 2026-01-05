@@ -1,4 +1,5 @@
 import MainNavigation from "../shared/components/layout/MainNavigation";
+import Footer from "../shared/components/layout/Footer";
 import {Outlet} from "react-router";
 import NDKProvider from "../lib/ndk/NDKProvider";
 import ToastRenderer from "../shared/components/feedback/ToastRenderer";
@@ -31,11 +32,12 @@ const Root = () => {
     return (
         <HelmetProvider context={helmetContext}>
             <NDKProvider>
-                <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
+                <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
                     <MainNavigation/>
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+                    <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8">
                         <Outlet/>
-                    </div>
+                    </main>
+                    <Footer/>
                 </div>
                 {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
                     <ZapPortal
