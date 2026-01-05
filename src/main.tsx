@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import {configureAppStore} from "./app/store";
 import {preloadAuth} from "./domains/auth/store/auth.slice";
 import {ThemeProvider} from "./shared/theme";
+import ErrorBoundary from "./shared/components/ErrorBoundary";
 
 (async () => {
     const preloadedAuth = await preloadAuth()
@@ -18,7 +19,9 @@ import {ThemeProvider} from "./shared/theme";
         <React.StrictMode>
             <Provider store={store}>
                 <ThemeProvider>
-                    <RouterProvider router={router}/>
+                    <ErrorBoundary>
+                        <RouterProvider router={router}/>
+                    </ErrorBoundary>
                 </ThemeProvider>
             </Provider>
         </React.StrictMode>,

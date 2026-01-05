@@ -1,5 +1,6 @@
 import {Dialog, DialogPanel, DialogTitle, DialogBackdrop} from "@headlessui/react";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useCallback, useState} from "react";
+import {useMountEffect, useIsMounted} from "@react-hookz/web";
 import {DocumentDuplicateIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
@@ -73,7 +74,10 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
     const dispatch = useDispatch() as AppDispatch
     const {showToast} = useContext(ToastContext) as ToastContext
     const {ndkInstance, publishEvent} = useContext(NDKContext) as NDKContext
-    const [resource, setResource] = useState<Resource>()
+    const isMounted = useIsMounted()
+
+    // State for async operations - use isMounted() checks before updating
+    const [resource, setResource] = useState<Resource | undefined>(undefined)
     const [selectedTab, setSelectedTab] = useState<Tab>(shareTabs.nostr)
     const [sharing, setSharing] = useState<boolean>(false)
 
@@ -86,27 +90,38 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
             const shareUrl = origin + getShareUrl(resource)
             const content = kind === constants.noteKind ? `${shareUrl}\n\n${selectedTab.shareUrl}` : resource?.description
             await publishEvent(kind, content, kind === constants.shareKind ? [...tags, ...[["r", shareUrl]]] : tags)
-            showToast({title: 'Post successfully shared!', type: 'success'})
+            if (isMounted()) {
+                showToast({title: 'Post successfully shared!', type: 'success'})
+            }
         }
-        setSharing(false)
+        if (isMounted()) {
+            setSharing(false)
+        }
     }
 
-    const handleTabChange = (tabId: TabID) => {
-        const changedTab: Tab = shareTabs[tabId]
-        changedTab.shareUrl ||= changedTab.id === TabID.nostr ? naddrEncode(resource!.id!, eventCoordinate) : origin + getShareUrl(resource!)
+    const handleTabChange = useCallback((tabId: TabID) => {
+        if (!resource) return
+
+        const changedTab: Tab = {...shareTabs[tabId]}
+        changedTab.shareUrl = changedTab.shareUrl || (
+            changedTab.id === TabID.nostr
+                ? naddrEncode(resource.id!, eventCoordinate)
+                : origin + getShareUrl(resource)
+        )
         setSelectedTab(changedTab)
-    }
+    }, [resource, eventCoordinate, setSelectedTab])
 
-    const handleCopyToClipboard = async (text: string) => {
+    const handleCopyToClipboard = useCallback(async (text: string) => {
         await copyToClipboard(text, () => {
             showToast({
                 title: 'Copied to clipboard',
                 type: 'success'
             })
         })
-    }
+    }, [showToast])
 
-    useEffect(() => {
+    // Fetch resource on mount with isMounted check
+    useMountEffect(() => {
         (async () => {
             const [kind, author] = eventCoordinate.split(":")
             const resourceEvent = await ndkInstance().fetchEvent({
@@ -115,18 +130,22 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                 authors: [author]
             })
 
+            if (!isMounted()) return
+
             if (resourceEvent) {
                 const resourceFromEvent = transformEvent(resourceEvent)
 
                 if (resourceFromEvent) {
-                    selectedTab.shareUrl = naddrEncode(resourceFromEvent.id!, eventCoordinate)
+                    // Update selectedTab via state setter instead of direct mutation
+                    setSelectedTab((prev: Tab) => ({
+                        ...prev,
+                        shareUrl: naddrEncode(resourceFromEvent.id!, eventCoordinate)
+                    }))
                     setResource(resourceFromEvent)
                 }
             }
         })()
-    }, []);
-
-    console.log({selectedTab})
+    })
 
     return (
         <Dialog open={visible} onClose={() => {}} className="relative z-10">

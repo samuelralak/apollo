@@ -1,5 +1,5 @@
 import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
-import {createContext, ReactNode, useEffect, useRef, useState} from "react";
+import {createContext, ReactNode, useEffect, useRef, useState, useCallback} from "react";
 import Loader from "../../shared/components/feedback/Loader";
 import {useSelector, useDispatch} from "react-redux";
 import {RootState, AppDispatch} from "../../app/store";
@@ -27,6 +27,7 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch<AppDispatch>()
     const ndk = useRef<NDK | undefined>(undefined)
+    const currentSignerRef = useRef<NDKSigner | null>(null)
     const [ndkConnected, setNDKConnected] = useState<boolean>(false)
 
     const connectNDK = async () => {
@@ -80,43 +81,40 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
         return ndkEvent.id
     }
 
-    const signer = (): NDKSigner | null => {
+    // Helper function to create signer based on auth method - single source of truth
+    const createSigner = useCallback((): NDKSigner | null => {
         if (auth.signerMethod === SignerMethod.NIP07) {
-            return (new NDKNip07Signer(3000))
+            return new NDKNip07Signer(3000)
         }
 
         if (auth.signerMethod === SignerMethod.PRIVATE_KEY) {
             const {nsec} = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec: string }
             const decodedKey = decodeNsec(nsec as `nsec1${string}`)
-            return (new NDKPrivateKeySigner(decodedKey as unknown as string))
+            return new NDKPrivateKeySigner(decodedKey as unknown as string)
         }
 
         return null
-    }
+    }, [auth.signerMethod])
+
+    // Returns cached signer instance
+    const signer = (): NDKSigner | null => currentSignerRef.current
 
     const ndkInstance = (): NDK => ndk.current!
-    const removeNDKSigner = () => setNDKSigner(undefined)
 
-    const setNDKSigner = (signer?: NDKSigner | undefined) => {
-        if (signer) {
-            ndk.current!.signer = signer
-        } else {
-            switch (auth.signerMethod) {
-                case SignerMethod.NIP07: {
-                    setNDKSigner(new NDKNip07Signer(3000))
-                    break;
-                }
-                case SignerMethod.PRIVATE_KEY: {
-                    const {nsec} = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec: string }
-                    const decodedKey = decodeNsec(nsec as `nsec1${string}`)
-                    setNDKSigner(new NDKPrivateKeySigner(decodedKey as unknown as string))
-                    break;
-                }
-                default:
-                    ndk.current!.signer = undefined
-            }
-        }
-    }
+    // Set or clear the NDK signer - non-recursive, clear logic
+    const setNDKSigner = useCallback((signerInstance?: NDKSigner) => {
+        // Use provided signer or create one based on auth method
+        const signerToSet = signerInstance ?? createSigner()
+
+        // Update NDK and cache
+        ndk.current!.signer = signerToSet ?? undefined
+        currentSignerRef.current = signerToSet
+    }, [createSigner])
+
+    const removeNDKSigner = useCallback(() => {
+        ndk.current!.signer = undefined
+        currentSignerRef.current = null
+    }, [])
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial connection to external NDK service
