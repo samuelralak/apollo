@@ -21,7 +21,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
         <button
             type="button"
             onClick={toggleTheme}
-            className={`relative rounded-full p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors ${className}`}
+            className={`relative rounded-full p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors ${className}`}
             aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
         >
             <span className="sr-only">

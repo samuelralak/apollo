@@ -8,16 +8,14 @@ const GetStarted = () => {
     const handleClick = () => dispatch(showPortal({portalId: PortalID.auth}))
 
     return (
-        <div className="flex-shrink-0">
-            <button
-                id="get-started"
-                type="button"
-                onClick={handleClick}
-                className="relative inline-flex items-center rounded-lg bg-transparent px-3 py-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-transparent focus-visible:outline-none"
-            >
-                Get started
-            </button>
-        </div>
+        <button
+            id="get-started"
+            type="button"
+            onClick={handleClick}
+            className="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+        >
+            Get started
+        </button>
     )
 }
 
