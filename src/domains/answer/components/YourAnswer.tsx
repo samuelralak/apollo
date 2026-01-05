@@ -10,7 +10,8 @@ import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../app/store";
-import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Alert02Icon} from "@hugeicons-pro/core-twotone-rounded";
 import constants from "../../../constants";
 import type {Answer} from "../types/answer.types";
 import AnswerItem from "./AnswerItem";
@@ -71,7 +72,7 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
             <div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-100 dark:border-yellow-800 p-4 my-5">
                 <div className="flex">
                     <div className="flex-shrink-0">
-                        <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 dark:text-yellow-400" aria-hidden="true"/>
+                        <HugeiconsIcon icon={Alert02Icon} className="text-yellow-500 dark:text-yellow-400" size={20} aria-hidden="true" />
                     </div>
                     <div className="ml-3 flex-1 md:flex md:justify-between">
                         <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">

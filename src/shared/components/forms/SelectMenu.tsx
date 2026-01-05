@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import {Listbox, ListboxButton, ListboxLabel, ListboxOptions, ListboxOption} from '@headlessui/react'
-import {CheckIcon, ChevronDownIcon} from '@heroicons/react/20/solid'
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Tick02Icon, ArrowDown01Icon} from "@hugeicons-pro/core-twotone-rounded";
 
 interface Option {
     [key: string]: string | undefined;
@@ -41,7 +42,7 @@ const SelectMenu = <T extends Option>({
                 <ListboxButton
                     className="inline-flex w-full items-center justify-between rounded-lg bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-200 dark:ring-slate-700 p-3.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900">
                     <span>{selected?.title ?? placeholder}</span>
-                    <ChevronDownIcon className="h-6 w-6 text-slate-600 dark:text-slate-400" aria-hidden="true"/>
+                    <HugeiconsIcon icon={ArrowDown01Icon} className="text-slate-600 dark:text-slate-400" size={24} aria-hidden="true" />
                 </ListboxButton>
 
                 <ListboxOptions
@@ -60,7 +61,7 @@ const SelectMenu = <T extends Option>({
 
                                         {selected ? (
                                             <span className="text-teal-600 dark:text-teal-500 data-[focus]:text-white">
-                                                <CheckIcon className="h-5 w-5" aria-hidden="true"/>
+                                                <HugeiconsIcon icon={Tick02Icon} size={20} aria-hidden="true" />
                                             </span>
                                         ) : null}
                                     </div>

@@ -1,4 +1,5 @@
-import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Alert02Icon} from "@hugeicons-pro/core-twotone-rounded";
 
 const SecuritySettingsPage = () => {
     return (
@@ -12,7 +13,7 @@ const SecuritySettingsPage = () => {
                 <div className="border-l-4 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 p-4">
                     <div className="flex">
                         <div className="flex-shrink-0">
-                            <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 dark:text-yellow-400" aria-hidden="true"/>
+                            <HugeiconsIcon icon={Alert02Icon} className="text-yellow-500 dark:text-yellow-400" size={20} aria-hidden="true" />
                         </div>
                         <div className="ml-3">
                             <p className="text-sm text-yellow-700 dark:text-yellow-300">

@@ -1,14 +1,16 @@
-import {BellIcon, CursorArrowRaysIcon, FingerPrintIcon, GlobeAltIcon, UserCircleIcon, SwatchIcon} from '@heroicons/react/24/outline'
+import {HugeiconsIcon} from "@hugeicons/react";
+import type {IconSvgElement} from "@hugeicons/react";
+import {UserCircleIcon, FingerPrintIcon, Notification03Icon, Cursor02Icon, LanguageSkillIcon, ColorsIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {classNames} from "../../../../utils";
 import {NavLink, Outlet} from "react-router";
 
-const secondaryNavigation = [
+const secondaryNavigation: {name: string; href: string; icon: IconSvgElement; current: boolean}[] = [
     {name: 'General', href: '/settings/user-profile', icon: UserCircleIcon, current: true},
     {name: 'Security', href: '/settings/security', icon: FingerPrintIcon, current: false},
-    {name: 'Notifications', href: '/settings/notifications', icon: BellIcon, current: false},
-    {name: 'Network', href: '/settings/network', icon: CursorArrowRaysIcon, current: false},
-    {name: 'Translation', href: '/settings/translation', icon: GlobeAltIcon, current: false},
-    {name: 'Appearance', href: '/settings/appearance', icon: SwatchIcon, current: false},
+    {name: 'Notifications', href: '/settings/notifications', icon: Notification03Icon, current: false},
+    {name: 'Network', href: '/settings/network', icon: Cursor02Icon, current: false},
+    {name: 'Translation', href: '/settings/translation', icon: LanguageSkillIcon, current: false},
+    {name: 'Appearance', href: '/settings/appearance', icon: ColorsIcon, current: false},
 ]
 
 const SettingsPage = () => {
@@ -31,11 +33,13 @@ const SettingsPage = () => {
                                 >
                                     {({isActive}) => (
                                         <>
-                                            <item.icon
+                                            <HugeiconsIcon
+                                                icon={item.icon}
                                                 className={classNames(
                                                     isActive ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200',
-                                                    'h-6 w-6 shrink-0 transition-colors'
+                                                    'shrink-0 transition-colors'
                                                 )}
+                                                size={24}
                                                 aria-hidden="true"
                                             />
                                             {item.name}

@@ -1,7 +1,7 @@
 import {createContext, ReactNode, useState} from "react";
 import {createPortal} from "react-dom";
-import {CheckCircleIcon} from '@heroicons/react/24/outline'
-import {XMarkIcon} from '@heroicons/react/20/solid'
+import {HugeiconsIcon} from "@hugeicons/react";
+import {CheckmarkCircle02Icon, Cancel01Icon} from "@hugeicons-pro/core-twotone-rounded";
 
 const TOAST_TIMEOUT = 3000
 
@@ -59,7 +59,7 @@ const ToastProvider = ({children}: { children: ReactNode }) => {
                             <div className="p-4">
                                 <div className="flex items-start">
                                     <div className="flex-shrink-0">
-                                        <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400" aria-hidden="true"/>
+                                        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="text-green-500 dark:text-green-400" size={24} aria-hidden="true" />
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
                                         <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{toastVisible.title}!</p>
@@ -76,7 +76,7 @@ const ToastProvider = ({children}: { children: ReactNode }) => {
                                             onClick={dismissToast}
                                         >
                                             <span className="sr-only">Close</span>
-                                            <XMarkIcon className="h-5 w-5" aria-hidden="true"/>
+                                            <HugeiconsIcon icon={Cancel01Icon} size={20} aria-hidden="true" />
                                         </button>
                                     </div>
                                 </div>

@@ -1,8 +1,8 @@
 import {FormEvent, useContext, useState} from "react";
 import {Dialog, DialogPanel, DialogTitle, DialogBackdrop} from "@headlessui/react";
-import {XMarkIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Cancel01Icon, Alert01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Link} from "react-router";
-import {ExclamationTriangleIcon} from "@heroicons/react/20/solid";
 import {NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
@@ -88,7 +88,7 @@ const GetStartedPortal = () => {
                                      className="font-semibold leading-6 text-slate-700 dark:text-slate-200 text-base flex justify-between items-center"
                         >
                             Get started
-                            <XMarkIcon onClick={handleClose} className="h-5 w-5 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
+                            <HugeiconsIcon icon={Cancel01Icon} size={20} onClick={handleClose} className="cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
                         </DialogTitle>
 
                         <div className="mt-3">
@@ -139,9 +139,8 @@ const GetStartedPortal = () => {
 
                             <div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/30 py-3 px-1.5 my-3 border-2 border-yellow-100 dark:border-yellow-800">
                                 <div className="flex">
-                                    <div className="flex-shrink-0">
-                                        <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 dark:text-yellow-400"
-                                                                 aria-hidden="true"/>
+                                    <div className="shrink-0">
+                                        <HugeiconsIcon icon={Alert01Icon} size={20} className="text-yellow-500 dark:text-yellow-400" />
                                     </div>
 
                                     <div className="ml-3">

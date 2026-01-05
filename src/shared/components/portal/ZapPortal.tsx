@@ -2,8 +2,8 @@ import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/re
 import { ReactNode, useContext, useRef } from "react";
 import { useUpdateEffect } from "@react-hookz/web";
 import QRCode from "qrcode";
-import { DocumentDuplicateIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { BoltIcon } from "@heroicons/react/24/solid";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Copy01Icon, Cancel01Icon, FlashIcon } from "@hugeicons-pro/core-twotone-rounded";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import zapSchema, { ZapSchemaType } from "../../schemas/zap.schema";
@@ -125,9 +125,11 @@ const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
                             className="font-bold leading-6 text-slate-700 dark:text-slate-200 text-xl flex justify-between items-center"
                         >
                             Zap
-                            <XMarkIcon
+                            <HugeiconsIcon
+                                icon={Cancel01Icon}
+                                size={20}
                                 onClick={handleClose}
-                                className="h-5 w-5 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                                className="cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                             />
                         </DialogTitle>
 
@@ -190,7 +192,7 @@ const InvoiceDisplay = ({ invoice, canvasRef, onCopy }: InvoiceDisplayProps) => 
                 onClick={onCopy}
                 className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             >
-                <DocumentDuplicateIcon className="h-5 w-5" />
+                <HugeiconsIcon icon={Copy01Icon} size={20} />
             </button>
         </div>
     </div>
@@ -209,7 +211,7 @@ const ZapForm = ({ register, errors, onSubmit, onCancel, isLoading }: ZapFormPro
         {/* Amount input */}
         <div className="relative mt-2 rounded-lg bg-slate-200 dark:bg-slate-700">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-                <BoltIcon className="h-4 w-4 text-amber-500" />
+                <HugeiconsIcon icon={FlashIcon} size={16} className="text-amber-500" />
             </div>
             <input
                 {...register('amount')}

@@ -1,4 +1,5 @@
-import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Alert02Icon, ArrowReloadHorizontalIcon} from "@hugeicons-pro/core-twotone-rounded";
 
 interface ErrorFallbackProps {
     error?: Error | null;
@@ -9,7 +10,7 @@ const ErrorFallback = ({ error, onRetry }: ErrorFallbackProps) => {
     return (
         <div className="flex min-h-[400px] flex-col items-center justify-center px-4 py-16">
             <div className="text-center">
-                <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-amber-500" />
+                <HugeiconsIcon icon={Alert02Icon} className="mx-auto text-amber-500" size={48} />
                 <h2 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
                     Something went wrong
                 </h2>
@@ -21,7 +22,7 @@ const ErrorFallback = ({ error, onRetry }: ErrorFallbackProps) => {
                         onClick={onRetry}
                         className="mt-6 inline-flex items-center gap-2 rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors"
                     >
-                        <ArrowPathIcon className="h-4 w-4" />
+                        <HugeiconsIcon icon={ArrowReloadHorizontalIcon} size={16} />
                         Try again
                     </button>
                 )}

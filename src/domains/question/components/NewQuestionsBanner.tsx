@@ -1,4 +1,5 @@
-import { ArrowUpIcon } from "@heroicons/react/20/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {ArrowUp01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 interface NewQuestionsBannerProps {
@@ -29,7 +30,7 @@ const NewQuestionsBanner = ({ count, onLoad, onLoadCallback }: NewQuestionsBanne
                        hover:shadow-xl hover:scale-105
                        animate-fade-in"
         >
-            <ArrowUpIcon className="h-4 w-4" />
+            <HugeiconsIcon icon={ArrowUp01Icon} size={16} />
             <span>
                 {count === 1
                     ? "1 new question"

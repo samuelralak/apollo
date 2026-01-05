@@ -1,7 +1,8 @@
 import {Dialog, DialogPanel, DialogTitle, DialogBackdrop} from "@headlessui/react";
 import {useContext, useCallback, useState} from "react";
 import {useMountEffect, useIsMounted} from "@react-hookz/web";
-import {DocumentDuplicateIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Copy01Icon, Cancel01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
 import {hidePortal} from "../../store/portal.slice";
@@ -165,7 +166,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                       className="font-bold leading-6 text-slate-700 dark:text-slate-200 text-xl flex justify-between items-center"
                         >
                             Share
-                            <XMarkIcon onClick={handleHidePortal} className="h-5 w-5 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
+                            <HugeiconsIcon icon={Cancel01Icon} size={20} onClick={handleHidePortal} className="cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
                         </DialogTitle>
 
                         <div className="mt-5">
@@ -214,11 +215,10 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                     className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-600 bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                                 <button
+                                    onClick={() => handleCopyToClipboard(selectedTab.shareUrl || '')}
                                     className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                                 >
-                                    <DocumentDuplicateIcon
-                                        onClick={() => handleCopyToClipboard(selectedTab.shareUrl || '')}
-                                        className="h-5 w-5"/>
+                                    <HugeiconsIcon icon={Copy01Icon} size={20} />
                                 </button>
                             </div>
 

@@ -1,5 +1,6 @@
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
-import {EllipsisHorizontalIcon} from "@heroicons/react/20/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {MoreHorizontalIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
 import {Link} from "react-router";
@@ -60,7 +61,7 @@ const ActionItems = ({id, eventId, pubkey, kind, editAction, editPath}: ActionIt
             <Menu as="div" className="relative sm:hidden">
                 <MenuButton className="p-1 -m-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
                     <span className="sr-only">Actions</span>
-                    <EllipsisHorizontalIcon className="h-5 w-5" />
+                    <HugeiconsIcon icon={MoreHorizontalIcon} size={20} />
                 </MenuButton>
                 <MenuItems className="absolute right-0 z-10 mt-1 w-32 origin-top-right rounded-md bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
                     <div className="py-1">

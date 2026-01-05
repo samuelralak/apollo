@@ -1,6 +1,7 @@
 import type {ReactNode} from "react";
 import type {UseFormReturn} from "react-hook-form";
-import {XMarkIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Cancel01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {classNames} from "../../../../utils";
 import useTagsInput from "../../hooks/useTagsInput";
 import type {QuestionFormValues} from "../../hooks/useQuestionForm";
@@ -40,7 +41,7 @@ const TagsInput = ({form}: Props) => {
                                 className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-white/20"
                             >
                                 <span className="sr-only">Remove</span>
-                                <XMarkIcon className="h-3.5 w-3.5"/>
+                                <HugeiconsIcon icon={Cancel01Icon} size={14} />
                                 <span className="absolute -inset-1"/>
                             </button>
                         </span>

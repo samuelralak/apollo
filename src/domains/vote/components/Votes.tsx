@@ -1,4 +1,5 @@
-import {ArrowDownCircleIcon, ArrowUpCircleIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {ThumbsUpIcon, ThumbsDownIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {useContext, useCallback, useMemo} from "react";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import type {NDKFilter, NDKKind, NDKEvent} from "@nostr-dev-kit/ndk";
@@ -12,12 +13,11 @@ import {voteTransformer} from "../services/vote.transformer";
 import {updateVote} from "../store/vote.slice";
 import {classNames} from "../../../utils";
 
-const voteActionClassName = (myVote: Vote, voteType: VoteType, horizontal?: boolean) =>
+const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
     classNames(
         myVote && myVote.vote === voteType
             ? 'text-green-500'
             : 'text-slate-400 dark:text-slate-500',
-        horizontal ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8',
         'cursor-pointer hover:text-slate-500 dark:hover:text-slate-400 transition-colors'
     );
 
@@ -77,8 +77,10 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
             'flex items-center'
         )}>
             <button type="button" onClick={() => onVote(VoteType.UPVOTE)}>
-                <ArrowUpCircleIcon
-                    className={voteActionClassName(myVote, VoteType.UPVOTE, horizontal)}
+                <HugeiconsIcon
+                    icon={ThumbsUpIcon}
+                    size={horizontal ? 18 : 22}
+                    className={voteActionClassName(myVote, VoteType.UPVOTE)}
                 />
             </button>
 
@@ -88,8 +90,10 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
             )}>{vote?.total ?? 0}</p>
 
             <button onClick={() => onVote(VoteType.DOWNVOTE)}>
-                <ArrowDownCircleIcon
-                    className={voteActionClassName(myVote, VoteType.DOWNVOTE, horizontal)}
+                <HugeiconsIcon
+                    icon={ThumbsDownIcon}
+                    size={horizontal ? 18 : 22}
+                    className={voteActionClassName(myVote, VoteType.DOWNVOTE)}
                 />
             </button>
         </div>

@@ -1,6 +1,6 @@
 import {Link} from "react-router";
-import {ChatBubbleOvalLeftEllipsisIcon} from "@heroicons/react/20/solid";
-import {BellIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {MessageAdd01Icon, Notification01Icon, UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
 import {classNames} from "../../../utils";
 import {useDispatch} from "react-redux";
@@ -18,7 +18,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                 className="inline-flex items-center gap-x-1.5 rounded-lg bg-teal-600 dark:bg-teal-500 p-2 md:px-3 md:py-2 text-sm font-semibold text-white hover:bg-teal-700 dark:hover:bg-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
                 aria-label="Ask Question"
             >
-                <ChatBubbleOvalLeftEllipsisIcon className="h-5 w-5 md:-ml-0.5" aria-hidden="true"/>
+                <HugeiconsIcon icon={MessageAdd01Icon} size={20} className="md:-ml-0.5" />
                 <span className="hidden md:inline">Ask Question</span>
             </Link>
 
@@ -27,7 +27,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                 className="hidden md:block relative rounded-full p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors"
             >
                 <span className="sr-only">View notifications</span>
-                <BellIcon className="h-5 w-5" aria-hidden="true"/>
+                <HugeiconsIcon icon={Notification01Icon} size={20} />
             </button>
 
             {/* Profile dropdown */}
@@ -41,10 +41,8 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                             className="h-8 w-8 rounded-lg object-cover"
                         />
                     ) : (
-                        <span className="h-8 w-8 rounded-lg">
-                            <svg className="h-full w-full text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
+                        <span className="h-8 w-8 rounded-lg flex items-center justify-center bg-slate-200 dark:bg-slate-700">
+                            <HugeiconsIcon icon={UserCircleIcon} size={24} className="text-slate-400 dark:text-slate-500" />
                         </span>
                     )}
                 </MenuButton>

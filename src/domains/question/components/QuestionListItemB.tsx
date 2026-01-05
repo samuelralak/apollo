@@ -1,6 +1,7 @@
 import {memo} from "react";
 import {Link} from "react-router";
-import {CheckCircleIcon} from "@heroicons/react/16/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {CheckmarkCircle02Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {useSelector} from "react-redux";
 import type {Question} from "../types/question.types";
 import {formatDateTime, markdownToText} from "../../../utils";
@@ -78,7 +79,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                                 : ''
                     }`}>
                         {hasAcceptedAnswer && (
-                            <CheckCircleIcon className="h-3.5 w-3.5" />
+                            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={14} />
                         )}
                         {answerCount} {answerCount === 1 ? 'answer' : 'answers'}
                     </span>

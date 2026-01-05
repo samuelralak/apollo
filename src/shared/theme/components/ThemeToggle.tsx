@@ -1,4 +1,5 @@
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Sun01Icon, Moon01Icon } from '@hugeicons-pro/core-twotone-rounded';
 import { useTheme } from '../hooks/useTheme';
 
 interface ThemeToggleProps {
@@ -28,9 +29,9 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
                 Switch to {resolvedTheme === 'dark' ? 'light' : 'dark'} mode
             </span>
             {resolvedTheme === 'dark' ? (
-                <SunIcon className="h-5 w-5" aria-hidden="true" />
+                <HugeiconsIcon icon={Sun01Icon} size={20} />
             ) : (
-                <MoonIcon className="h-5 w-5" aria-hidden="true" />
+                <HugeiconsIcon icon={Moon01Icon} size={20} />
             )}
         </button>
     );

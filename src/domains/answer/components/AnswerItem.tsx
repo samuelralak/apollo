@@ -9,7 +9,8 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../../app/store";
 import type {Question} from "../../question/types/question.types";
 import AcceptAnswer from "./AcceptAnswer";
-import {CheckCircleIcon} from "@heroicons/react/24/solid";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {CheckmarkCircle02Icon} from "@hugeicons-pro/core-twotone-rounded";
 import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
 import ActionItems from "../../../shared/components/ActionItems";
@@ -37,7 +38,9 @@ const AnswerItem = memo(({answer, question, editAction}: AnswerItemProps) => {
                     refEvent={answer.referenceEventId}
                 />
                 {isAccepted && (
-                    <CheckCircleIcon className="text-green-500 h-4 w-4 sm:h-5 sm:w-5" title="Accepted answer" />
+                    <span title="Accepted answer">
+                        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="text-green-500" size={20} />
+                    </span>
                 )}
                 {canAccept && <AcceptAnswer answer={answer} question={question} />}
             </div>

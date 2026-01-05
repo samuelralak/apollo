@@ -1,26 +1,27 @@
 import { useTheme } from '../../../../shared/theme';
 import type { Theme } from '../../../../shared/theme';
-import { SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
-import { CheckIcon } from '@heroicons/react/24/solid';
+import {HugeiconsIcon} from "@hugeicons/react";
+import type {IconSvgElement} from "@hugeicons/react";
+import {Sun03Icon, Moon02Icon, Computer, Tick02Icon} from "@hugeicons-pro/core-twotone-rounded";
 
-const themeOptions: { value: Theme; label: string; description: string; icon: typeof SunIcon }[] = [
+const themeOptions: { value: Theme; label: string; description: string; icon: IconSvgElement }[] = [
     {
         value: 'light',
         label: 'Light',
         description: 'Always use light mode',
-        icon: SunIcon,
+        icon: Sun03Icon,
     },
     {
         value: 'dark',
         label: 'Dark',
         description: 'Always use dark mode',
-        icon: MoonIcon,
+        icon: Moon02Icon,
     },
     {
         value: 'system',
         label: 'System',
         description: 'Follow your system preference',
-        icon: ComputerDesktopIcon,
+        icon: Computer,
     },
 ];
 
@@ -54,15 +55,15 @@ const AppearanceSettingsPage = () => {
                                 >
                                     {theme === option.value && (
                                         <span className="absolute right-2 top-2">
-                                            <CheckIcon className="h-5 w-5 text-teal-600 dark:text-teal-500" />
+                                            <HugeiconsIcon icon={Tick02Icon} className="text-teal-600 dark:text-teal-500" size={20} />
                                         </span>
                                     )}
-                                    <option.icon
-                                        className={`h-8 w-8 ${
-                                            theme === option.value
-                                                ? 'text-teal-600 dark:text-teal-500'
-                                                : 'text-slate-500 dark:text-slate-400'
-                                        }`}
+                                    <HugeiconsIcon
+                                        icon={option.icon}
+                                        className={theme === option.value
+                                            ? 'text-teal-600 dark:text-teal-500'
+                                            : 'text-slate-500 dark:text-slate-400'}
+                                        size={32}
                                     />
                                     <span
                                         className={`mt-2 text-sm font-medium ${

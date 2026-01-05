@@ -5,6 +5,8 @@ import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import Loader from "../../../shared/components/feedback/Loader";
 import {classNames} from "../../../utils";
 import BannerPlaceholder from '../../../assets/banner-placeholder.png'
+import {HugeiconsIcon} from "@hugeicons/react";
+import {UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
 
 interface Tab {
     name: string;
@@ -51,12 +53,9 @@ const ProfilePage = () => {
                                 <img className="h-24 w-24 rounded-lg ring-4 ring-white dark:ring-slate-900 sm:h-32 sm:w-32 object-cover" src={profile?.image ?? profile?.picture} alt=""/>
                             ) : (
                                 <span
-                                    className="h-24 w-24 rounded-lg sm:h-32 sm:w-32 inline-block overflow-hidden bg-slate-100 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"
+                                    className="h-24 w-24 rounded-lg sm:h-32 sm:w-32 inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"
                                 >
-                                    <svg className="h-full w-full text-slate-300 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                    </svg>
+                                    <HugeiconsIcon icon={UserCircleIcon} className="h-full w-full text-slate-300 dark:text-slate-500" size={128} />
                                 </span>
                             )}
                         </div>

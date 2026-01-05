@@ -1,5 +1,6 @@
 import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
-import {UserCircleIcon, Cog6ToothIcon, ArrowRightStartOnRectangleIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {UserCircleIcon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Link} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
@@ -20,7 +21,6 @@ const MobileMenuPortal = () => {
 
     const linkClass = "block px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
     const iconLinkClass = "flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-    const iconClass = "h-5 w-5 text-slate-400 dark:text-slate-500"
 
     return (
         <Dialog open={visible} onClose={handleClose} className="relative z-50 md:hidden">
@@ -42,15 +42,15 @@ const MobileMenuPortal = () => {
                         <>
                             <div className="border-t border-slate-100 dark:border-slate-700" />
                             <Link to={`/user/${auth.pubkey}`} onClick={handleClose} className={iconLinkClass}>
-                                <UserCircleIcon className={iconClass} />
+                                <HugeiconsIcon icon={UserCircleIcon} size={20} className="text-slate-400 dark:text-slate-500" />
                                 Your Profile
                             </Link>
                             <Link to="/settings/user-profile" onClick={handleClose} className={iconLinkClass}>
-                                <Cog6ToothIcon className={iconClass} />
+                                <HugeiconsIcon icon={Settings01Icon} size={20} className="text-slate-400 dark:text-slate-500" />
                                 Settings
                             </Link>
                             <button type="button" onClick={handleSignOut} className={`${iconLinkClass} w-full`}>
-                                <ArrowRightStartOnRectangleIcon className={iconClass} />
+                                <HugeiconsIcon icon={Logout01Icon} size={20} className="text-slate-400 dark:text-slate-500" />
                                 Sign out
                             </button>
                         </>

@@ -1,5 +1,6 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/react";
-import {MinusSmallIcon, PlusSmallIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {MinusSignIcon, PlusSignIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {Guideline} from "../../../../shared/types/category.types";
 import guidelineData from "../../../../data/guidelines.json";
 
@@ -37,9 +38,9 @@ const GuidelinesPanel = ({category}: Props) => {
                                                 </span>
                                                 <span className="ml-6 flex h-7 items-center text-slate-600 dark:text-slate-400">
                                                     {open ? (
-                                                        <MinusSmallIcon className="h-6 w-6" aria-hidden="true"/>
+                                                        <HugeiconsIcon icon={MinusSignIcon} size={24} aria-hidden="true"/>
                                                     ) : (
-                                                        <PlusSmallIcon className="h-6 w-6" aria-hidden="true"/>
+                                                        <HugeiconsIcon icon={PlusSignIcon} size={24} aria-hidden="true"/>
                                                     )}
                                                 </span>
                                             </DisclosureButton>

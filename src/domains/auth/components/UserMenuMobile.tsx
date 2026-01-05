@@ -1,4 +1,5 @@
-import {BellIcon} from "@heroicons/react/24/outline";
+import {HugeiconsIcon} from "@hugeicons/react";
+import {Notification03Icon, UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
 import {DisclosureButton} from "@headlessui/react";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
@@ -15,11 +16,8 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
                     {auth.userProfile?.image || auth.userProfile?.picture ? (
                         <img className="h-10 w-10 rounded-lg object-cover" src={auth.userProfile.image ?? auth.userProfile?.picture} alt="avatar"/>
                     ) : (
-                        <span className="h-10 w-10 rounded-lg">
-                            <svg className="h-10 w-10 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
+                        <span className="h-10 w-10 rounded-lg flex items-center justify-center">
+                            <HugeiconsIcon icon={UserCircleIcon} className="text-slate-400 dark:text-slate-500" size={40} />
                         </span>
                     )}
                 </div>
@@ -35,7 +33,7 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
                 >
                     <span className="absolute -inset-1.5"/>
                     <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true"/>
+                    <HugeiconsIcon icon={Notification03Icon} size={24} aria-hidden="true" />
                 </button>
             </div>
             <div className="mt-3 space-y-1">
