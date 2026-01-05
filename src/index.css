@@ -6,6 +6,9 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
+/* Enable class-based dark mode (requires 'dark' class on html element) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
     font-family: 'Public Sans', sans-serif;
     font-synthesis: none;

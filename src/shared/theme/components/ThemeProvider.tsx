@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { useEffect, useState, useCallback, type ReactNode } from 'react';
 import { ThemeContext } from '../hooks/useTheme';
 import type { Theme, ResolvedTheme } from '../types';
 import { THEME_STORAGE_KEY } from '../types';
@@ -28,7 +28,6 @@ function resolveTheme(theme: Theme): ResolvedTheme {
 
 function applyThemeToDOM(resolved: ResolvedTheme) {
   const root = document.documentElement;
-  root.classList.remove('no-transitions');
 
   if (resolved === 'dark') {
     root.classList.add('dark');
@@ -42,13 +41,16 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
     return getStoredTheme() ?? defaultTheme;
   });
 
-  // Compute resolved theme from current theme
-  const resolvedTheme = useMemo(() => resolveTheme(theme), [theme]);
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => {
+    return resolveTheme(getStoredTheme() ?? defaultTheme);
+  });
 
-  // Apply theme class to DOM whenever resolved theme changes
+  // Update resolved theme and DOM when theme changes
   useEffect(() => {
-    applyThemeToDOM(resolvedTheme);
-  }, [resolvedTheme]);
+    const resolved = resolveTheme(theme);
+    setResolvedTheme(resolved);
+    applyThemeToDOM(resolved);
+  }, [theme]);
 
   // Listen for system theme changes when in 'system' mode
   useEffect(() => {
@@ -56,36 +58,36 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
-      // Force a re-render to pick up new system theme
-      setThemeState((prev) => (prev === 'system' ? 'system' : prev));
-      applyThemeToDOM(getSystemTheme());
+      const resolved = getSystemTheme();
+      setResolvedTheme(resolved);
+      applyThemeToDOM(resolved);
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  // Prevent flash on initial load
+  // Apply theme on initial mount
   useEffect(() => {
-    document.documentElement.classList.add('no-transitions');
-    const timeout = setTimeout(() => {
-      document.documentElement.classList.remove('no-transitions');
-    }, 100);
-    return () => clearTimeout(timeout);
+    const resolved = resolveTheme(theme);
+    applyThemeToDOM(resolved);
   }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {
+    // Update state
     setThemeState(newTheme);
+
+    // Immediately apply to DOM (don't wait for effect)
+    const resolved = resolveTheme(newTheme);
+    setResolvedTheme(resolved);
+    applyThemeToDOM(resolved);
+
+    // Persist to localStorage
     localStorage.setItem(THEME_STORAGE_KEY, newTheme);
   }, []);
 
-  const value = useMemo(
-    () => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme]
-  );
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
