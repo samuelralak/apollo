@@ -187,14 +187,11 @@ class SubscriptionManager {
      * Handle incoming event
      */
     private handleEvent(managed: ManagedSubscription, event: NDKEvent): void {
-        // Event deduplication - check both local and global
-        if (managed.seenEventIds.has(event.id) || this.globalSeenEventIds.has(event.id)) {
+        // Local deduplication within this subscription
+        if (managed.seenEventIds.has(event.id)) {
             return;
         }
-
-        // Mark as seen
         managed.seenEventIds.add(event.id);
-        this.addToGlobalSeen(event.id);
 
         // Notify all subscribers based on their mode
         managed.callbacks.forEach((callbacks) => {
@@ -202,8 +199,11 @@ class SubscriptionManager {
                 // Immediate mode: call the callback directly
                 callbacks.onEvent?.(event);
             } else {
-                // Buffered mode: store for later and update pending count
-                this.bufferEvent(event, callbacks.resourceType, callbacks.context);
+                // Buffered mode: check global dedup to avoid duplicate buffering
+                if (!this.globalSeenEventIds.has(event.id)) {
+                    this.addToGlobalSeen(event.id);
+                    this.bufferEvent(event, callbacks.resourceType, callbacks.context);
+                }
             }
         });
     }

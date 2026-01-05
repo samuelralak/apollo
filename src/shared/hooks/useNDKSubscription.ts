@@ -1,5 +1,6 @@
 import type { NDKEvent, NDKFilter, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
+import { useSyncedRef, useConditionalEffect } from "@react-hookz/web";
 import {
     SubscriptionManager,
     EventHandlingMode,
@@ -51,33 +52,17 @@ const useNDKSubscription = (
         enabled = true
     } = options;
 
-    // Store callbacks in refs to avoid stale closures
-    const onEventRef = useRef(onEvent);
-    const onEoseRef = useRef(onEose);
-
-    // Keep refs updated
-    useEffect(() => {
-        onEventRef.current = onEvent;
-    }, [onEvent]);
-
-    useEffect(() => {
-        onEoseRef.current = onEose;
-    }, [onEose]);
-
-    // Stable callback wrappers
-    const handleEvent = useCallback((event: NDKEvent) => {
-        onEventRef.current?.(event);
-    }, []);
-
-    const handleEose = useCallback(() => {
-        onEoseRef.current?.();
-    }, []);
+    // Synced refs to avoid stale closures and unnecessary re-subscriptions
+    const onEventRef = useSyncedRef(onEvent);
+    const onEoseRef = useSyncedRef(onEose);
+    const contextRef = useSyncedRef(context);
+    const ndkOptionsRef = useSyncedRef(ndkOptions);
+    const filtersRef = useSyncedRef(filters);
 
     // Memoize filter hash to detect actual filter changes
     const filterHash = useMemo(() => hashFilter(filters), [filters]);
 
     // Generate stable subscription ID per component instance
-    // Using == null pattern for safe lazy initialization during render
     const subscriptionIdRef = useRef<string | null>(null);
     if (subscriptionIdRef.current == null) {
         subscriptionIdRef.current = generateSubscriptionId('hook');
@@ -86,32 +71,31 @@ const useNDKSubscription = (
     // Track subscription handle for cleanup
     const handleRef = useRef<SubscriptionHandle | null>(null);
 
-    useEffect(() => {
-        const manager = SubscriptionManager.getInstance();
+    const managerInitialized = SubscriptionManager.getInstance().isInitialized();
 
-        // Don't subscribe if disabled or manager not initialized
-        if (!enabled || !manager.isInitialized()) {
-            return;
-        }
+    useConditionalEffect(
+        () => {
+            const manager = SubscriptionManager.getInstance();
 
-        // Subscribe through the manager
-        handleRef.current = manager.subscribe({
-            id: subscriptionIdRef.current!,
-            filters,
-            options: ndkOptions,
-            mode,
-            resourceType,
-            context,
-            onEvent: handleEvent,
-            onEose: handleEose
-        });
+            handleRef.current = manager.subscribe({
+                id: subscriptionIdRef.current!,
+                filters: filtersRef.current,
+                options: ndkOptionsRef.current,
+                mode,
+                resourceType,
+                context: contextRef.current,
+                onEvent: (event) => onEventRef.current?.(event),
+                onEose: () => onEoseRef.current?.()
+            });
 
-        // Cleanup on unmount or when dependencies change
-        return () => {
-            handleRef.current?.unsubscribe();
-            handleRef.current = null;
-        };
-    }, [filterHash, enabled, mode, resourceType, context, ndkOptions, handleEvent, handleEose]);
+            return () => {
+                handleRef.current?.unsubscribe();
+                handleRef.current = null;
+            };
+        },
+        [filterHash, mode, resourceType],
+        [enabled, managerInitialized]
+    );
 };
 
 export default useNDKSubscription;
