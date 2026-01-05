@@ -37,6 +37,9 @@ const MobileMenuPortal = () => {
                     <Link to="/" onClick={handleClose} className={linkClass}>
                         Home
                     </Link>
+                    <Link to="/about" onClick={handleClose} className={linkClass}>
+                        About
+                    </Link>
 
                     {auth.isLoggedIn && (
                         <>

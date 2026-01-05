@@ -36,9 +36,28 @@ const MainNavigation = () => {
                         <div className="hidden md:ml-6 md:flex md:space-x-8">
                             <NavLink
                                 to="/"
-                                className="inline-flex items-center border-b-2 border-teal-600 dark:border-teal-500 px-1 pt-1 text-sm font-medium text-slate-900 dark:text-slate-100"
+                                end
+                                className={({isActive}) =>
+                                    `inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                                        isActive
+                                            ? 'border-teal-600 dark:border-teal-500 text-slate-900 dark:text-slate-100'
+                                            : 'border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-700 dark:hover:text-slate-300'
+                                    }`
+                                }
                             >
                                 Home
+                            </NavLink>
+                            <NavLink
+                                to="/about"
+                                className={({isActive}) =>
+                                    `inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                                        isActive
+                                            ? 'border-teal-600 dark:border-teal-500 text-slate-900 dark:text-slate-100'
+                                            : 'border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-700 dark:hover:text-slate-300'
+                                    }`
+                                }
+                            >
+                                About
                             </NavLink>
                         </div>
                     </div>

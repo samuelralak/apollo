@@ -4,7 +4,8 @@ export enum PortalID {
     share = 'share',
     zap = 'zap',
     auth = 'auth',
-    mobileMenu = 'mobileMenu'
+    mobileMenu = 'mobileMenu',
+    welcome = 'welcome'
 }
 
 export interface PortalState {
