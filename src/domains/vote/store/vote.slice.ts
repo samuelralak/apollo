@@ -36,11 +36,21 @@ const voteSlice = createSlice({
             // Apply delta: new - old (handles new votes, changes, and same votes)
             resource.total += newValue - oldValue;
             resource.data[pubkey] = payload;
+        },
+        revertVote: (state, { payload }: PayloadAction<{ resourceId: string; pubkey: string }>) => {
+            const { resourceId, pubkey } = payload;
+            const resource = state[resourceId];
+
+            if (resource?.data[pubkey]) {
+                const oldValue = voteValue(resource.data[pubkey].vote);
+                resource.total -= oldValue;
+                delete resource.data[pubkey];
+            }
         }
     }
 })
 
-export const {updateVote} = voteSlice.actions
+export const {updateVote, revertVote} = voteSlice.actions
 export {
     type VoteState,
     type VoteData

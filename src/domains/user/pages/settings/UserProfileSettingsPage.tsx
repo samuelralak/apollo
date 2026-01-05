@@ -51,8 +51,7 @@ const UserProfileSettingsPage = () => {
                 title: 'Event published successfully!',
                 type: 'success'
             })
-        } catch (e) {
-            console.log({e})
+        } catch {
             showToast({
                 title: 'Error publishing event! Please sign out and sign back in!',
                 type: 'error'

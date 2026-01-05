@@ -10,6 +10,11 @@ import constants from "../../constants";
 import {decodeNsec} from "../../utils";
 import {SubscriptionManager} from "../subscriptions";
 
+export interface RelayInfo {
+    url: string;
+    status: 'connected' | 'connecting' | 'disconnected';
+}
+
 export interface NDKContext {
     signer: () => NDKSigner | null;
     ndkConnected: boolean;
@@ -18,6 +23,7 @@ export interface NDKContext {
     removeNDKSigner: () => void;
     buildEvent: (kind: number, content: string, tags?: string[][]) => NDKEvent;
     publishEvent: (kind: number, content: string, tags?: string[][]) => Promise<string>;
+    getRelays: () => RelayInfo[];
 }
 
 export const NDKContext = createContext<NDKContext | null>(null)
@@ -29,7 +35,12 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     const signerRef = useRef<NDKSigner | null>(null)
     const [ndkConnected, setNDKConnected] = useState(false)
 
-    const ndkInstance = (): NDK => ndkRef.current!
+    const ndkInstance = (): NDK => {
+        if (!ndkRef.current) {
+            throw new Error('NDK not initialized');
+        }
+        return ndkRef.current;
+    }
     const signer = (): NDKSigner | null => signerRef.current
 
     const connectNDK = async () => {
@@ -105,14 +116,28 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
 
     const setNDKSigner = useCallback((signerInstance?: NDKSigner) => {
         const newSigner = signerInstance ?? createSigner()
-        ndkRef.current!.signer = newSigner ?? undefined
+        if (ndkRef.current) {
+            ndkRef.current.signer = newSigner ?? undefined
+        }
         signerRef.current = newSigner
     }, [createSigner])
 
     const removeNDKSigner = useCallback(() => {
-        ndkRef.current!.signer = undefined
+        if (ndkRef.current) {
+            ndkRef.current.signer = undefined
+        }
         signerRef.current = null
     }, [])
+
+    const getRelays = useCallback((): RelayInfo[] => {
+        if (!ndkRef.current) return [];
+        return Array.from(ndkRef.current.pool.relays.entries()).map(([url, relay]) => ({
+            url,
+            status: relay.connectivity.status === 1 ? 'connected'
+                : relay.connectivity.status === 0 ? 'connecting'
+                : 'disconnected'
+        }));
+    }, []);
 
     useMountEffect(() => {
         connectNDK().catch(console.error)
@@ -127,7 +152,7 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     }
 
     return (
-        <NDKContext.Provider value={{signer, ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, buildEvent, publishEvent}}>
+        <NDKContext.Provider value={{signer, ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, buildEvent, publishEvent, getRelays}}>
             {children}
         </NDKContext.Provider>
     )

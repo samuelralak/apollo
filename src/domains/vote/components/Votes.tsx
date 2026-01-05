@@ -11,8 +11,9 @@ import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubs
 import type {Vote} from "../types/vote.types";
 import {VoteType} from "../types/vote.types";
 import {voteTransformer} from "../services/vote.transformer";
-import {updateVote} from "../store/vote.slice";
+import {updateVote, revertVote} from "../store/vote.slice";
 import {classNames} from "../../../utils";
+import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
 
 const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
     classNames(
@@ -39,20 +40,47 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
     }), [aTag, pubkey]);
 
     const {publishEvent} = useContext(NDKContext) as NDKContext
+    const {showToast} = useContext(ToastContext) as ToastContext
     const auth = useSelector((state: RootState) => state.auth);
     const vote = useSelector((state: RootState) => state.vote)[identifier];
     const dispatch = useDispatch() as AppDispatch
     const myVote = vote?.data[auth.pubkey ?? ""]
 
     const onVote = async (voteType: VoteType) => {
-        if (auth.isLoggedIn) {
-            const refTag = refEvent ? [["e", refEvent]] : []
+        if (!auth.isLoggedIn || !auth.pubkey) return;
+
+        // Store old state for rollback
+        const oldVote = myVote;
+
+        // Optimistic update
+        const tempVote: Vote = {
+            vote: voteType,
+            eventId: `temp_${Date.now()}`,
+            pubkey: auth.pubkey,
+            createdAt: Math.floor(Date.now() / 1000),
+            referenceEventId: refEvent ?? '',
+            resourceId: identifier
+        };
+        dispatch(updateVote(tempVote));
+
+        try {
+            const refTag = refEvent ? [["e", refEvent]] : [];
             await publishEvent(constants.voteKind, voteType, [
                 ["a", aTag],
                 ...refTag,
                 ["e", eventId],
                 ["p", pubkey],
-                ["k", `${kind}`]])
+                ["k", `${kind}`]
+            ]);
+            // Real event will arrive via subscription and update the store
+        } catch {
+            // Rollback on error
+            if (oldVote) {
+                dispatch(updateVote(oldVote));
+            } else {
+                dispatch(revertVote({ resourceId: identifier, pubkey: auth.pubkey }));
+            }
+            showToast({ title: 'Vote failed', type: 'error' });
         }
     }
 
