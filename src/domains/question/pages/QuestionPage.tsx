@@ -47,14 +47,14 @@ const QuestionPage = () => {
 
             <div className="max-w-3xl">
                 {/* Header */}
-                <header className="mb-6">
-                    <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+                <header className="mb-4 sm:mb-6">
+                    <h1 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 leading-snug">
                         {question?.title}
                     </h1>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
-                        <span>Asked {formatDateTime(question?.createdAt)}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                        <EventOwner pubkey={question.user?.pubkey} mini={true} inline={true} />
                         <span>·</span>
-                        <EventOwner pubkey={question.user?.pubkey} mini={true} />
+                        <span>{formatDateTime(question?.createdAt)}</span>
                     </div>
                 </header>
 
@@ -86,11 +86,11 @@ const QuestionPage = () => {
 
                         {/* Tags */}
                         {question?.tags && question.tags.length > 0 && (
-                            <div className="flex gap-1.5 mt-6 flex-wrap">
+                            <div className="flex gap-1 sm:gap-1.5 mt-4 sm:mt-6 flex-wrap">
                                 {question.tags.map((tag, index) => (
                                     <span
                                         key={`${tag}-${index}-${question?.id}`}
-                                        className="inline-flex items-center rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors"
+                                        className="inline-flex items-center rounded bg-slate-100 dark:bg-slate-800 px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors"
                                     >
                                         {tag}
                                     </span>
@@ -98,8 +98,8 @@ const QuestionPage = () => {
                             </div>
                         )}
 
-                        {/* Footer: actions + mobile votes */}
-                        <div className="flex items-center gap-4 mt-6 text-xs font-medium text-slate-500 dark:text-slate-400">
+                        {/* Footer: votes + actions */}
+                        <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-4 mt-4 sm:mt-6 text-xs font-medium text-slate-500 dark:text-slate-400">
                             {/* Mobile votes */}
                             <div className="sm:hidden">
                                 <Votes
@@ -107,6 +107,7 @@ const QuestionPage = () => {
                                     eventId={question.eventId}
                                     pubkey={question.user.pubkey}
                                     identifier={question.id}
+                                    horizontal={true}
                                 />
                             </div>
                             <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey} />

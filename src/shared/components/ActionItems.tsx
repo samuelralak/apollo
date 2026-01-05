@@ -47,7 +47,7 @@ const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => 
                     <span className="sr-only">Actions</span>
                     <EllipsisHorizontalIcon className="h-5 w-5" />
                 </MenuButton>
-                <MenuItems className="absolute left-0 z-10 mt-1 w-32 origin-top-left rounded-md bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
+                <MenuItems className="absolute right-0 z-10 mt-1 w-32 origin-top-right rounded-md bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
                     <div className="py-1">
                         <MenuItem>
                             <a

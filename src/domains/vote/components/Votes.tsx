@@ -12,20 +12,22 @@ import {voteTransformer} from "../services/vote.transformer";
 import {updateVote} from "../store/vote.slice";
 import {classNames} from "../../../utils";
 
-const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
+const voteActionClassName = (myVote: Vote, voteType: VoteType, horizontal?: boolean) =>
     classNames(
         myVote && myVote.vote === voteType
             ? 'text-green-500'
             : 'text-slate-400 dark:text-slate-500',
-        'h-8 w-8 cursor-pointer hover:text-slate-500 dark:hover:text-slate-400 transition-colors'
+        horizontal ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8',
+        'cursor-pointer hover:text-slate-500 dark:hover:text-slate-400 transition-colors'
     );
 
-const Votes = ({kind, eventId, pubkey, identifier, refEvent}: {
+const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
     kind: NDKKind,
     eventId: string,
     pubkey: string,
     identifier: string,
-    refEvent?: string
+    refEvent?: string,
+    horizontal?: boolean
 }) => {
     const aTag = `${kind}:${eventId}:${identifier}`
     const voteFilters = {kinds: [constants.voteKind], "#a": [aTag], "#p": [pubkey]}
@@ -53,22 +55,26 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent}: {
     })
 
     return (
-        <div className="w-8 flex flex-col items-center">
+        <div className={classNames(
+            horizontal ? 'flex-row gap-1' : 'w-6 sm:w-8 flex-col',
+            'flex items-center'
+        )}>
             <button type="button" onClick={() => onVote(VoteType.UPVOTE)}>
                 <ArrowUpCircleIcon
-                    className={voteActionClassName(myVote, VoteType.UPVOTE)}
+                    className={voteActionClassName(myVote, VoteType.UPVOTE, horizontal)}
                 />
             </button>
 
-
-            <p className="w-full text-center font-medium text-lg text-slate-500 dark:text-slate-400">{vote?.total ?? 0}</p>
+            <p className={classNames(
+                horizontal ? 'text-sm min-w-[1.5rem]' : 'w-full text-base sm:text-lg',
+                'text-center font-medium text-slate-500 dark:text-slate-400'
+            )}>{vote?.total ?? 0}</p>
 
             <button onClick={() => onVote(VoteType.DOWNVOTE)}>
                 <ArrowDownCircleIcon
-                    className={voteActionClassName(myVote, VoteType.DOWNVOTE)}
+                    className={voteActionClassName(myVote, VoteType.DOWNVOTE, horizontal)}
                 />
             </button>
-
         </div>
     )
 }

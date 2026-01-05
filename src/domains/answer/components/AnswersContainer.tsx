@@ -29,15 +29,15 @@ const AnswersContainer = ({question}: { question: Question }) => {
     })
 
     return (
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200 dark:border-slate-700">
             {/* Answers header */}
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 sm:mb-4">
                 {answers.length} {answers.length === 1 ? 'Answer' : 'Answers'}
             </h2>
 
             {/* Answers list */}
             {answers.length === 0 ? (
-                <p className="text-sm text-slate-500 dark:text-slate-400 py-4">
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-3 sm:py-4">
                     No answers yet. Be the first to answer!
                 </p>
             ) : (
@@ -49,8 +49,8 @@ const AnswersContainer = ({question}: { question: Question }) => {
             )}
 
             {/* Your Answer section */}
-            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200 dark:border-slate-700">
+                <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
                     Your Answer
                 </h2>
                 <YourAnswer

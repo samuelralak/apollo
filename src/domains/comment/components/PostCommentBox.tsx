@@ -69,15 +69,15 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
     }, [watchComment]);
 
     return (
-        <form onSubmit={handleSubmit(handleCommentSubmit)} className="mt-3">
+        <form onSubmit={handleSubmit(handleCommentSubmit)} className="mt-2 sm:mt-3">
             <textarea
                 {...register('comment')}
                 onInput={() => trigger('comment')}
                 rows={2}
-                className="block w-full rounded-md border border-slate-200 dark:border-slate-700 bg-transparent px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:focus:border-teal-500"
+                className="block w-full rounded-md border border-slate-200 dark:border-slate-700 bg-transparent px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:focus:border-teal-500"
                 placeholder="Add a comment..."
             />
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-between mt-1.5 sm:mt-2">
                 <span className={classNames(
                     fieldState?.invalid && fieldState?.isDirty ? "text-red-400" : "text-slate-400",
                     "text-xs"

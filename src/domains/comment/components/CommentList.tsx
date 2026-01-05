@@ -36,13 +36,13 @@ const CommentsList = ({resource, resourceKind}: Props) => {
     }
 
     return (
-        <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <ul role="list" className="space-y-3">
+        <div className="mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800">
+            <ul role="list" className="space-y-2 sm:space-y-3">
                 {commentList.map((comment) => (
-                    <li key={comment.id} className="flex gap-3 text-sm text-slate-600 dark:text-slate-400">
+                    <li key={comment.id} className="flex gap-2 sm:gap-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                         <div className="w-0.5 shrink-0 bg-slate-200 dark:bg-slate-700 rounded-full" />
-                        <p className="flex-1">
-                            <span className="text-slate-700 dark:text-slate-300">{comment.content}</span>
+                        <p className="flex-1 min-w-0">
+                            <span className="text-slate-700 dark:text-slate-300 break-words">{comment.content}</span>
                             {' – '}
                             <EventOwner pubkey={comment.pubkey} mini={true} hideAvatar={true} inline={true} />
                             <span className="text-xs text-slate-400 dark:text-slate-500">
