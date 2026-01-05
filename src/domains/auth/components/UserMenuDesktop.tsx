@@ -1,6 +1,6 @@
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
-import {MessageAdd01Icon, Notification01Icon, UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
+import {MessageAdd01Icon, Notification01Icon, UserCircleIcon} from "@hugeicons-pro/core-duotone-rounded";
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
 import {classNames} from "../../../utils";
 import {useDispatch} from "react-redux";

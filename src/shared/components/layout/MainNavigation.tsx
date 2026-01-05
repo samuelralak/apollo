@@ -1,5 +1,5 @@
 import {HugeiconsIcon} from "@hugeicons/react";
-import {Menu01Icon, GithubIcon} from "@hugeicons-pro/core-twotone-rounded";
+import {Menu01Icon, Github01Icon} from "@hugeicons-pro/core-duotone-rounded";
 import {NavLink} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
@@ -50,7 +50,7 @@ const MainNavigation = () => {
                             className="relative rounded-full p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             aria-label="View on GitHub"
                         >
-                            <HugeiconsIcon icon={GithubIcon} size={20} />
+                            <HugeiconsIcon icon={Github01Icon} size={22} />
                         </a>
                         <div className="hidden md:block">
                             <ThemeToggle />

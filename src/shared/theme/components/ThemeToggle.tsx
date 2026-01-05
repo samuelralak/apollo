@@ -1,5 +1,5 @@
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Sun01Icon, Moon01Icon } from '@hugeicons-pro/core-twotone-rounded';
+import { Sun01Icon, Moon01Icon } from '@hugeicons-pro/core-duotone-rounded';
 import { useTheme } from '../hooks/useTheme';
 
 interface ThemeToggleProps {
