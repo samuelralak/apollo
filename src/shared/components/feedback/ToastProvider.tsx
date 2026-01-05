@@ -55,16 +55,16 @@ const ToastProvider = ({children}: { children: ReactNode }) => {
                     <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
                         {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
                         <div
-                            className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 transform transition ease-out duration-300">
+                            className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 transform transition ease-out duration-300">
                             <div className="p-4">
                                 <div className="flex items-start">
                                     <div className="flex-shrink-0">
-                                        <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true"/>
+                                        <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400" aria-hidden="true"/>
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">
-                                        <p className="text-sm font-medium text-gray-900">{toastVisible.title}!</p>
+                                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{toastVisible.title}!</p>
                                         {toastVisible?.subtitle && (
-                                            <p className="mt-1 text-sm text-gray-500">
+                                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                                                 {toastVisible.subtitle}
                                             </p>
                                         )}
@@ -72,7 +72,7 @@ const ToastProvider = ({children}: { children: ReactNode }) => {
                                     <div className="ml-4 flex flex-shrink-0">
                                         <button
                                             type="button"
-                                            className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                            className="inline-flex rounded-md bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-500 dark:hover:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
                                             onClick={dismissToast}
                                         >
                                             <span className="sr-only">Close</span>

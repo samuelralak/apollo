@@ -87,7 +87,7 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
             <div className="w-full sm:flex-1">
                 <form onSubmit={handleSubmit(handleCommentSubmit)} className="relative">
                     <div
-                        className="overflow-hidden rounded-lg ring-2 ring-inset ring-slate-300 focus-within:ring-2 focus-within:ring-slate-600">
+                        className="overflow-hidden rounded-lg ring-2 ring-inset ring-slate-300 dark:ring-slate-600 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-teal-500">
                         <label htmlFor="comment" className="sr-only">
                             Add your comment
                         </label>
@@ -95,7 +95,7 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
                             {...register('comment')}
                             onInput={() => trigger('comment')}
                             rows={1}
-                            className="block w-full resize-none border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 placeholder:text-sm focus:ring-0 text-sm"
+                            className="block w-full resize-none border-0 bg-transparent py-1.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 placeholder:text-sm focus:ring-0 text-sm"
                             placeholder="Ask for clarification or suggest improvements..."
                         />
 
@@ -125,7 +125,7 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
                             <button
                                 disabled={publishing}
                                 type="submit"
-                                className="inline-flex items-center rounded-md bg-slate-600 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+                                className="inline-flex items-center rounded-md bg-teal-600 dark:bg-teal-500 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-700 dark:hover:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-600"
                             >
                                 {publishing ? "publishing..." : "Add comment"}
                             </button>

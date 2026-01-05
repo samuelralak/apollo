@@ -132,7 +132,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
         <Dialog open={visible} onClose={() => {}} className="relative z-10">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+                className="fixed inset-0 bg-slate-900/75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
             />
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -140,13 +140,13 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                     className="flex min-h-full justify-center p-4 text-center items-start">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-xl bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 w-full sm:max-w-xl sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
+                        className="relative transform overflow-hidden rounded-xl bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 w-full sm:max-w-xl sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
                     >
                         <DialogTitle as="h2"
-                                      className="font-bold leading-6 text-slate-600 text-xl flex justify-between items-center"
+                                      className="font-bold leading-6 text-slate-700 dark:text-slate-200 text-xl flex justify-between items-center"
                         >
                             Share
-                            <XMarkIcon onClick={handleHidePortal} className="h-5 w-5"/>
+                            <XMarkIcon onClick={handleHidePortal} className="h-5 w-5 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
                         </DialogTitle>
 
                         <div className="mt-5">
@@ -158,7 +158,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                     id="tabs"
                                     name="tabs"
                                     onChange={(event) => handleTabChange(event.currentTarget.value as TabID)}
-                                    className="block w-full rounded-lg border-slate-300 border-2 text-sm py-3 focus:border-slate-600 focus:ring-slate-600"
+                                    className="block w-full rounded-lg border-slate-300 dark:border-slate-600 border-2 text-sm py-3 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:border-teal-600 dark:focus:border-teal-500 focus:ring-teal-600 dark:focus:ring-teal-500"
                                     defaultValue={selectedTab.name}
                                 >
                                     {Object.values(shareTabs).map((tab) => (
@@ -173,8 +173,8 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                             key={tab.name}
                                             onClick={() => handleTabChange(tab.id)}
                                             className={classNames(
-                                                tab.id === selectedTab.id ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700',
-                                                'rounded-md px-3 py-2 text-sm font-medium cursor-pointer'
+                                                tab.id === selectedTab.id ? 'bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
+                                                'rounded-md px-3 py-2 text-sm font-medium cursor-pointer transition-colors'
                                             )}
                                             aria-current={tab.id === selectedTab.id ? 'page' : undefined}
                                         >
@@ -192,10 +192,10 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                     disabled={true}
                                     readOnly={true}
                                     placeholder="lnb1..."
-                                    className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
+                                    className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-600 bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                                 <button
-                                    className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer"
+                                    className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                                 >
                                     <DocumentDuplicateIcon
                                         onClick={() => handleCopyToClipboard(selectedTab.shareUrl || '')}
@@ -208,7 +208,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                     <button type="button"
                                             onClick={() => handleShareEvent(constants.shareKind)}
                                             disabled={sharing}
-                                            className="border-0 bg-slate-700 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24"
+                                            className="border-0 bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 dark:hover:bg-teal-400 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24 transition-colors"
                                     >
                                         Share
                                     </button>
@@ -216,7 +216,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
                                     <button type="button"
                                             onClick={() => handleShareEvent(constants.noteKind)}
                                             disabled={sharing}
-                                            className="border-0 bg-white py-3 px-2 text-sm rounded-lg font-semibold text-slate-700 my-3 min-w-24"
+                                            className="border-0 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 py-3 px-2 text-sm rounded-lg font-semibold text-slate-700 dark:text-slate-200 my-3 min-w-24 transition-colors"
                                     >
                                         Publish note
                                     </button>

@@ -158,7 +158,7 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
         <Dialog open={visible} onClose={() => {}} className="relative z-10">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+                className="fixed inset-0 bg-slate-900/75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
             />
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -166,35 +166,35 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                     className="flex min-h-full justify-center p-4 text-center items-start">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 w-full sm:max-w-sm sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
+                        className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 w-full sm:max-w-sm sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
                     >
                         <DialogTitle as="h2"
-                                      className="font-bold leading-6 text-slate-600 text-xl flex justify-between items-center"
+                                      className="font-bold leading-6 text-slate-700 dark:text-slate-200 text-xl flex justify-between items-center"
                         >
                             Zap
 
-                            <XMarkIcon onClick={() => dispatch(hidePortal())} className="h-5 w-5"/>
+                            <XMarkIcon onClick={() => dispatch(hidePortal())} className="h-5 w-5 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"/>
                         </DialogTitle>
 
                         <div className="mt-5">
                             <div className="flex my-5 w-full justify-center">
-                                <h1 className="text-3xl font-bold ordinal tabular-nums text-center text-slate-700">{amount ?? 0}</h1>
-                                <span className="text-sm font-medium text-slate-500">sats</span>
+                                <h1 className="text-3xl font-bold ordinal tabular-nums text-center text-slate-700 dark:text-slate-200">{amount ?? 0}</h1>
+                                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">sats</span>
                             </div>
 
                             {(invoice && !weblnEnabled) ? (
                                 <div>
-                                    <canvas id="invoice" className="mx-auto"/>
+                                    <canvas id="invoice" className="mx-auto bg-white rounded-lg"/>
                                     <div className="flex gap-x-2 items-center justify-center my-5">
                                         <input
                                             value={invoice}
                                             disabled={true}
                                             readOnly={true}
                                             placeholder="lnb1..."
-                                            className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
+                                            className="flex-1 block w-full border-0 focus:border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-600 bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                         />
                                         <button
-                                            className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer"
+                                            className="flex items-center justify-center p-3 border-0 rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                                         >
                                             <DocumentDuplicateIcon onClick={() => handleCopyToClipboard(invoice!)} className="h-5 w-5"/>
                                         </button>
@@ -203,21 +203,21 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                             ) : (
                                 <div>
                                     <div>
-                                        <div className="relative mt-2 rounded-lg bg-slate-200">
+                                        <div className="relative mt-2 rounded-lg bg-slate-200 dark:bg-slate-700">
                                             <div
                                                 className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
-                                                <BoltIcon className="h-4 w-4 text-slate-700"/>
+                                                <BoltIcon className="h-4 w-4 text-amber-500"/>
                                             </div>
                                             <input
                                                 {...register('amount')}
-                                                className="block w-full  bg-slate-100 focus:bg-white rounded-lg border-0 py-3 pl-7 pr-12 text-slate-900 ring-2 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 text-sm sm:leading-6"
+                                                className="block w-full bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 rounded-lg border-0 py-3 pl-7 pr-12 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
                                                 placeholder="0"
                                                 aria-describedby="sats"
                                             />
                                             <div
                                                 className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
                                             >
-                                                <span className="text-slate-600 text-sm font-medium"
+                                                <span className="text-slate-600 dark:text-slate-400 text-sm font-medium"
                                                       id="price-currency"
                                                 >
                                                     sats
@@ -226,7 +226,7 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                         </div>
 
                                         {errors.amount && (
-                                            <p className="mt-2 text-sm text-red-600" id="email-error">
+                                            <p className="mt-2 text-sm text-red-500" id="email-error">
                                                 {errors.amount.message as ReactNode}
                                             </p>
                                         )}
@@ -237,11 +237,11 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                             {...register('comment')}
                                             rows={3}
                                             placeholder="add an optional message"
-                                            className="block w-full bg-slate-100 focus:bg-white rounded-lg border-0 py-1.5 text-slate-900 ring-2 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 text-sm sm:leading-6"
+                                            className="block w-full bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 rounded-lg border-0 py-1.5 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
                                         />
 
                                         {errors.comment && (
-                                            <p className="mt-2 text-sm text-red-600" id="email-error">
+                                            <p className="mt-2 text-sm text-red-500" id="email-error">
                                                 {errors.comment.message as ReactNode}
                                             </p>
                                         )}
@@ -252,13 +252,13 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                                                 onClick={() => {
                                                     dispatch(hidePortal())
                                                 }}
-                                                className="text-sm font-semibold py-3 px-3 text-slate-600"
+                                                className="text-sm font-semibold py-3 px-3 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                                         >
                                             Cancel
                                         </button>
                                         <button type="button"
                                                 onClick={handleSubmit(onZapSubmit)}
-                                                className="border-0 bg-slate-700 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24"
+                                                className="border-0 bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 dark:hover:bg-teal-400 py-3 px-2 text-sm rounded-lg font-semibold text-white my-3 min-w-24 transition-colors"
                                         >
                                             Zap!
                                         </button>
@@ -267,7 +267,7 @@ const ZapPortal = ({pubkey, eventId, eventCoordinate}: Props) => {
                             )}
 
                             {waitingForResponse && (
-                                <button className="text-slate-600 w-full text-center py-3.5 animate-pulse">
+                                <button className="text-slate-600 dark:text-slate-400 w-full text-center py-3.5 animate-pulse">
                                     waiting for response...
                                 </button>
                             )}

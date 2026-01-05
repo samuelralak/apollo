@@ -4,10 +4,10 @@ const EmptyState = () => (
     <div className="mx-auto max-w-3xl">
         <div>
             <img src={NoQuestion} alt={'placeholder'} className="h-72 w-72 mx-auto"/>
-            <h1 className="text-2xl text-slate-600 font-extrabold w-full text-center">
+            <h1 className="text-2xl text-slate-700 dark:text-slate-200 font-extrabold w-full text-center">
                 Got a question? Ask Away!
             </h1>
-            <p className="text-lg w-full text-center font-semibold max-w-xl mx-auto text-slate-400">
+            <p className="text-lg w-full text-center font-semibold max-w-xl mx-auto text-slate-500 dark:text-slate-400">
                 The Apollo community is here to help. Your curiosity fuels our collaborative spirit
             </p>
         </div>

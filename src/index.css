@@ -12,23 +12,33 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
     line-height: 1.5;
     font-weight: 400;
-
-    /*color-scheme: light dark;*/
-    /*color: rgba(255, 255, 255, 0.87);*/
-    /*background-color: #242424;*/
 }
+
+/* ==========================================================================
+   Question Detail Styling
+   ========================================================================== */
 
 .question-detail > p {
     padding-bottom: 20px;
 }
 
+.question-detail > div > pre > code > .code-line {
+    @apply block;
+    @apply w-52;
+    @apply sm:w-auto;
+}
+
+/* ==========================================================================
+   MD Editor Styling - Light Mode
+   ========================================================================== */
+
 .w-md-editor {
     border-radius: 0.5rem !important;
     box-shadow: none !important;
     border: 2px solid var(--color-border-default) !important;
+    background-color: var(--color-bg-tertiary) !important;
 }
 
 .w-md-editor-show-edit {
@@ -42,6 +52,37 @@
 .w-md-editor > .w-md-editor-toolbar {
     min-height: 3rem !important;
     border-radius: 0.5rem 0.5rem 0 0 !important;
+    background-color: var(--color-bg-secondary) !important;
+    border-bottom: 1px solid var(--color-border-default) !important;
+}
+
+.w-md-editor-toolbar li > button {
+    color: var(--color-text-secondary) !important;
+}
+
+.w-md-editor-toolbar li > button:hover {
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-bg-hover) !important;
+}
+
+.w-md-editor-text-input,
+.w-md-editor-text-pre > code,
+.w-md-editor-text {
+    color: var(--color-text-primary) !important;
+}
+
+.w-md-editor-text-input::placeholder {
+    color: var(--color-text-muted) !important;
+}
+
+.w-md-editor-preview {
+    background-color: var(--color-bg-primary) !important;
+}
+
+/* MD Editor content styling */
+.wmde-markdown {
+    background-color: transparent !important;
+    color: var(--color-text-primary) !important;
 }
 
 .wmde-markdown p,
@@ -63,59 +104,49 @@
     margin: 0 0 0.5em 0 !important;
 }
 
-/*a {*/
-/*  font-weight: 500;*/
-/*  color: #646cff;*/
-/*  text-decoration: inherit;*/
-/*}*/
-/*a:hover {*/
-/*  color: #535bf2;*/
-/*}*/
+.wmde-markdown code {
+    background-color: var(--color-bg-tertiary) !important;
+    color: var(--color-text-primary) !important;
+}
 
-/*body {*/
-/*  margin: 0;*/
-/*  display: flex;*/
-/*  place-items: center;*/
-/*  min-width: 320px;*/
-/*  min-height: 100vh;*/
-/*}*/
+.wmde-markdown pre {
+    background-color: var(--color-bg-secondary) !important;
+    border: 1px solid var(--color-border-default) !important;
+}
 
-/*h1 {*/
-/*  font-size: 3.2em;*/
-/*  line-height: 1.1;*/
-/*}*/
+.wmde-markdown pre code {
+    background-color: transparent !important;
+}
 
-/*button {*/
-/*  border-radius: 8px;*/
-/*  border: 1px solid transparent;*/
-/*  padding: 0.6em 1.2em;*/
-/*  font-size: 1em;*/
-/*  font-weight: 500;*/
-/*  font-family: inherit;*/
-/*  background-color: #1a1a1a;*/
-/*  cursor: pointer;*/
-/*  transition: border-color 0.25s;*/
-/*}*/
-/*button:hover {*/
-/*  border-color: #646cff;*/
-/*}*/
-/*button:focus,*/
-/*button:focus-visible {*/
-/*  outline: 4px auto -webkit-focus-ring-color;*/
-/*}*/
+.wmde-markdown blockquote {
+    border-left-color: var(--color-border-strong) !important;
+    color: var(--color-text-secondary) !important;
+}
 
-/*@media (prefers-color-scheme: light) {*/
-/*  :root {*/
-/*    color: #213547;*/
-/*    background-color: #ffffff;*/
-/*  }*/
-/*  a:hover {*/
-/*    color: #747bff;*/
-/*  }*/
-/*  button {*/
-/*    background-color: #f9f9f9;*/
-/*  }*/
-/*}*/
+.wmde-markdown a {
+    color: var(--color-primary) !important;
+}
+
+.wmde-markdown a:hover {
+    color: var(--color-primary-hover) !important;
+}
+
+.wmde-markdown hr {
+    border-color: var(--color-border-default) !important;
+}
+
+.wmde-markdown table th,
+.wmde-markdown table td {
+    border-color: var(--color-border-default) !important;
+}
+
+.wmde-markdown table tr:nth-child(2n) {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+/* ==========================================================================
+   Loader Animation
+   ========================================================================== */
 
 .loader-dots div {
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
@@ -168,13 +199,10 @@
     }
 }
 
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
 .copied {
     visibility: visible !important;
-}
-
-.question-detail > div > pre > code > .code-line {
-    @apply block;
-    @apply w-52;
-    @apply sm:w-auto;
-
 }

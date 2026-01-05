@@ -30,16 +30,16 @@ const AnswersContainer = ({question}: { question: Question }) => {
         <>
             {answers.length >= 0 && !questionAnswers?.data[pubkey ?? ''] && (
                 <div className="mb-5">
-                    <h1 className="text-lg font-bold text-slate-600">{answers.length ?? 0} Answers</h1>
+                    <h1 className="text-lg font-bold text-slate-700 dark:text-slate-200">{answers.length ?? 0} Answers</h1>
 
                     {answers.length === 0 ? (
-                        <div className="bg-slate-50 rounded-lg w-full h-20 flex items-center justify-center mt-3">
-                            <p className="font-semibold text-lg text-slate-400 text-center">
+                        <div className="bg-slate-50 dark:bg-slate-800 rounded-lg w-full h-20 flex items-center justify-center mt-3">
+                            <p className="font-semibold text-lg text-slate-400 dark:text-slate-500 text-center">
                                 No answers? Your insights could be the missing piece!
                             </p>
                         </div>
                     ) : (
-                        <div className="flex flex-col divide-y divide-slate-200 gap-y-4">
+                        <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-700 gap-y-4">
                             {answers.length > 0 && answers.map((answer) => (
                                 <Fragment key={answer.id}>
                                     {answer.user.pubkey !== pubkey && (<AnswerItem question={question} answer={answer}/>)}
@@ -51,7 +51,7 @@ const AnswersContainer = ({question}: { question: Question }) => {
             )}
 
             <div className="pt-5">
-                <h1 className="text-lg font-bold text-slate-600">Your Answer</h1>
+                <h1 className="text-lg font-bold text-slate-700 dark:text-slate-200">Your Answer</h1>
                 <YourAnswer
                     answer={questionAnswers?.data[pubkey ?? '']}
                     question={question}

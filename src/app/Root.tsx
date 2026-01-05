@@ -19,7 +19,7 @@ const Root = () => {
         <HelmetProvider context={helmetContext}>
             <ToastProvider>
                 <NDKProvider>
-                    <div className="min-h-screen bg-background-primary text-foreground-primary transition-colors">
+                    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
                         <MainNavigation/>
                         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                             <Outlet/>

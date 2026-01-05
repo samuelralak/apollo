@@ -112,53 +112,6 @@
 }
 
 /* ==========================================================================
-   Tailwind v4 Theme Extension (@theme directive)
-   ========================================================================== */
-
-@theme {
-  /* Background colors */
-  --color-background-primary: var(--color-bg-primary);
-  --color-background-secondary: var(--color-bg-secondary);
-  --color-background-tertiary: var(--color-bg-tertiary);
-  --color-background-elevated: var(--color-bg-elevated);
-  --color-background-hover: var(--color-bg-hover);
-  --color-background-active: var(--color-bg-active);
-
-  /* Foreground (text) colors */
-  --color-foreground-primary: var(--color-text-primary);
-  --color-foreground-secondary: var(--color-text-secondary);
-  --color-foreground-muted: var(--color-text-muted);
-  --color-foreground-disabled: var(--color-text-disabled);
-  --color-foreground-inverse: var(--color-text-inverse);
-
-  /* Border colors */
-  --color-border-default: var(--color-border-default);
-  --color-border-strong: var(--color-border-strong);
-  --color-border-focus: var(--color-border-focus);
-
-  /* Primary brand color */
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-hover);
-  --color-primary-active: var(--color-primary-active);
-  --color-primary-light: var(--color-primary-light);
-  --color-primary-bg: var(--color-primary-bg);
-
-  /* Feedback colors */
-  --color-success: var(--color-success);
-  --color-success-bg: var(--color-success-bg);
-  --color-warning: var(--color-warning);
-  --color-warning-bg: var(--color-warning-bg);
-  --color-error: var(--color-error);
-  --color-error-bg: var(--color-error-bg);
-  --color-info: var(--color-info);
-  --color-info-bg: var(--color-info-bg);
-
-  /* Ring colors */
-  --color-ring: var(--color-ring);
-  --color-ring-offset: var(--color-ring-offset);
-}
-
-/* ==========================================================================
    Smooth Theme Transitions
    ========================================================================== */
 

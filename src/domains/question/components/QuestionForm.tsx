@@ -109,9 +109,9 @@ const QuestionForm = ({question}: { question?: Question }) => {
             className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2 lg:col-start-1">
                 <div className="sm:col-span-4">
-                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900">
+                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
                         Category
-                        <p className="mt-1 text-sm text-slate-500 font-normal">
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                             Please choose the appropriate section for your question
                         </p>
                     </label>
@@ -128,16 +128,16 @@ const QuestionForm = ({question}: { question?: Question }) => {
                         />
                     </div>
                     {errors.category && (
-                        <p className="mt-2 text-sm text-red-600" id="email-error">
+                        <p className="mt-2 text-sm text-red-500" id="email-error">
                             {errors.category.message as ReactNode}
                         </p>
                     )}
                 </div>
 
                 <div className="sm:col-span-4">
-                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900">
+                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
                         Question Title
-                        <p className="mt-1 text-sm text-slate-500 font-normal">
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                             Imagine you are asking a question to another person
                         </p>
                     </label>
@@ -147,20 +147,20 @@ const QuestionForm = ({question}: { question?: Question }) => {
                             defaultValue={question?.title ?? ''}
                             type="text"
                             placeholder={`e.g ${placeholderTitleExamples[questionCategory] ?? ''}`}
-                            className="block w-full border-0 focus:border-0 rounded-lg py-4 px-2 text-sm text-slate-900 ring-2 outline-none ring-slate-200 bg-slate-100 focus:bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-700 leading-6 "
+                            className="block w-full border-0 focus:border-0 rounded-lg py-4 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                         />
                     </div>
                     {errors.title && (
-                        <p className="mt-2 text-sm text-red-600" id="email-error">
+                        <p className="mt-2 text-sm text-red-500" id="email-error">
                             {errors.title.message as ReactNode}
                         </p>
                     )}
                 </div>
 
                 <div className="sm:col-span-4">
-                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900">
+                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
                         Details
-                        <p className="mt-1 text-sm text-slate-500 font-normal">
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                             Include all the information someone would need to answer your question
                         </p>
                     </label>
@@ -170,44 +170,40 @@ const QuestionForm = ({question}: { question?: Question }) => {
                             onChange={onEditorValueChange}
                             commandsFilter={commandsFilter}
                             preview={'edit'}
-                            data-color-mode={'light'}
-                            textareaProps={{
-                                style: {color: "black"}
-                            }}
-                            className="prose prose-slate max-w-none prose-code:text-slate-700"
+                            className="prose prose-slate dark:prose-invert max-w-none"
                         />
                     </div>
                     {errors.description && (
-                        <p className="mt-2 text-sm text-red-600 " id="email-error">
+                        <p className="mt-2 text-sm text-red-500" id="email-error">
                             {errors.description.message as ReactNode}
                         </p>
                     )}
                 </div>
 
                 <div className="sm:col-span-4">
-                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900">
+                    <label htmlFor="username" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
                         Tags
-                        <p className="mt-1 text-sm text-slate-500 font-normal">
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                             Add up to 5 tags to describe what your question is about:
                         </p>
                     </label>
                     <div className="mt-5 w-full">
                         <div
                             className={classNames(
-                                tokenInputFocus ? "" : 'bg-slate-100',
-                                "flex flex-wrap rounded-lg ring-2 ring-inset ring-slate-200 focus-within:ring-2 focus-within:ring-inset focus-within:ring-slate-200 w-full"
+                                tokenInputFocus ? "bg-white dark:bg-slate-700" : 'bg-slate-100 dark:bg-slate-800',
+                                "flex flex-wrap rounded-lg ring-2 ring-inset ring-slate-200 dark:ring-slate-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-teal-600 dark:focus-within:ring-teal-500 w-full"
                             )}
                         >
 
                             {questionTags.map((tag: string, index: number) => (
                                 <span
                                     key={`${tag}-${index}`}
-                                    className="flex select-none items-center gap-x-0.5 rounded-md bg-slate-800 px-2 py-1 text-xs font-medium text-slate-50 my-2 h-7 self-center ml-2"
+                                    className="flex select-none items-center gap-x-0.5 rounded-md bg-teal-600 dark:bg-teal-500 px-2 py-1 text-xs font-medium text-white my-2 h-7 self-center ml-2"
                                 >
                                         {tag}
                                     <button type="button"
                                             onClick={() => onRemoveToken(index)}
-                                            className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-slate-500/20"
+                                            className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-white/20"
                                     >
                                             <span className="sr-only">Remove</span>
                                             <XMarkIcon className="h-3.5 w-3.5"/>
@@ -219,7 +215,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                             <input
                                 type="text"
                                 name="tags"
-                                className="block flex-1 border-0 bg-transparent py-4 text-sm pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
+                                className="block flex-1 border-0 bg-transparent py-4 text-sm pl-1 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
                                 placeholder="comma or space seperated values "
                                 onInput={onTokenInputKeyDown}
                                 onFocus={onToggleFocus}
@@ -227,17 +223,17 @@ const QuestionForm = ({question}: { question?: Question }) => {
                             />
                         </div>
                         {errors.tags && (
-                            <p className="mt-2 text-sm text-red-600" id="email-error">
+                            <p className="mt-2 text-sm text-red-500" id="email-error">
                                 {errors.tags.message as ReactNode}
                             </p>
                         )}
                     </div>
                 </div>
 
-                <div className="mt-6 flex items-center justify-end gap-x-6 border-t border-slate-900/10 pt-6">
+                <div className="mt-6 flex items-center justify-end gap-x-6 border-t border-slate-200 dark:border-slate-700 pt-6">
                     <button disabled={publishing}
                             type="button"
-                            className="text-sm font-semibold leading-6 text-slate-900 disabled:text-slate-300 text-center"
+                            className="text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100 disabled:text-slate-400 text-center"
                     >
                         Cancel
                     </button>
@@ -245,7 +241,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                         type="submit"
                         disabled={publishing}
                         onClick={handleSubmit(onQuestionSubmit)}
-                        className="rounded-lg bg-slate-600 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 disabled:text-slate-300 hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+                        className="rounded-lg bg-teal-600 dark:bg-teal-500 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 disabled:text-slate-300 hover:bg-teal-700 dark:hover:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
                     >
                         {publishing ? 'Publishing...' : 'Publish your question'}
                     </button>
@@ -253,18 +249,18 @@ const QuestionForm = ({question}: { question?: Question }) => {
             </div>
 
             <section className="lg:col-span-1 lg:col-start-3">
-                <div className="divide-y divide-slate-200 overflow-hidden rounded-lg bg-white shadow">
+                <div className="divide-y divide-slate-200 dark:divide-slate-700 overflow-hidden rounded-lg bg-white dark:bg-slate-800 shadow dark:shadow-slate-900/50">
                     <div className="px-4 py-5 sm:px-6">
-                        <h3 className="text-base font-semibold leading-6 text-slate-900">
+                        <h3 className="text-base font-semibold leading-6 text-slate-900 dark:text-slate-100">
                             Craft your question
                         </h3>
                     </div>
                     <div className="px-4 py-5 sm:p-6">
-                        <p className="text text-slate-600">
+                        <p className="text text-slate-600 dark:text-slate-400">
                             Navigate through these simple steps to tailor your queries.
                         </p>
 
-                        <dl className="space-y-6 divide-y divide-slate-900/10">
+                        <dl className="space-y-6 divide-y divide-slate-200 dark:divide-slate-700">
                             {guidelines[questionCategory] ? guidelines[questionCategory]?.map((guideline, index) => (
                                 <Disclosure as="div" key={`${guideline.summary}-${index}`} className="pt-6"
                                             defaultOpen={index === 0}>
@@ -272,13 +268,13 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                         <>
                                             <dt>
                                                 <DisclosureButton
-                                                    className="flex w-full items-start justify-between text-left text-slate-900">
+                                                    className="flex w-full items-start justify-between text-left text-slate-900 dark:text-slate-100">
                                                         <span
                                                             className="text-base font-semibold leading-7"
                                                         >
                                                             {index + 1}. {guideline.summary}
                                                         </span>
-                                                    <span className="ml-6 flex h-7 items-center">
+                                                    <span className="ml-6 flex h-7 items-center text-slate-600 dark:text-slate-400">
                                                         {open ? (
                                                             <MinusSmallIcon className="h-6 w-6" aria-hidden="true"/>
                                                         ) : (
@@ -291,7 +287,7 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                                 <ul className="list-disc">
                                                     {guideline.points.map((point, idx) => (
                                                         <li key={`${point}-${idx}`}
-                                                            className="text-base leading-7 text-slate-600">
+                                                            className="text-base leading-7 text-slate-600 dark:text-slate-400">
                                                             {point}
                                                         </li>
                                                     ))}
@@ -303,8 +299,8 @@ const QuestionForm = ({question}: { question?: Question }) => {
                                 </Disclosure>
                             )) : (
                                 <div
-                                    className="w-full py-4 my-6 rounded-xl border-2 border-slate-200 border-dashed">
-                                    <p className="text-center text-slate-600">
+                                    className="w-full py-4 my-6 rounded-xl border-2 border-slate-200 dark:border-slate-700 border-dashed">
+                                    <p className="text-center text-slate-600 dark:text-slate-400">
                                         Select a category for guidelines
                                     </p>
                                 </div>

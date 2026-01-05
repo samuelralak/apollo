@@ -46,9 +46,9 @@ const QuestionPage = () => {
             />
 
             <div className="mx-auto max-w-2xl">
-                <h1 className="text-2xl font-extrabold text-slate-700">{question?.title}</h1>
+                <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{question?.title}</h1>
                 <div className="flex flex-row gap-x-2 mt-1">
-                    <p className="text-xs sm:text-sm font-medium text-slate-500">
+                    <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                         Asked {formatDateTime(question?.createdAt)}
                     </p>
                 </div>
@@ -57,7 +57,7 @@ const QuestionPage = () => {
                     {question?.tags?.map((tag, index) => (
                         <span
                             key={`${tag}-${index}-${question?.id}`}
-                            className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600"
+                            className="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300"
                         >
                         {tag}
                     </span>
@@ -73,26 +73,23 @@ const QuestionPage = () => {
                     </div>
 
                     <div className="col-span-7 sm:col-span-11">
-                        <div className="question-detail">
+                        <div className="question-detail prose prose-slate dark:prose-invert max-w-none">
                             <MDEditor.Markdown
                                 source={question?.description ?? ''}
                                 style={{
                                     whiteSpace: 'pre-wrap',
-                                    backgroundColor: 'white',
-                                    color: '#334155',
                                     fontFamily: 'Public Sans, sans-serif'
                                 }}
-                                data-color-mode={'light'}
-                                className="bg-white prose prose-slate max-w-none"
+                                className="!bg-transparent !text-slate-700 dark:!text-slate-300"
                             />
                         </div>
 
 
                         <div className="flex flex-row py-3 align-middle justify-between mt-5 items-center">
                             <div>
-                                <p className="text-xs font-semibold text-slate-500 pb-1">
+                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 pb-1">
                                 <span
-                                    className="font-bold text-slate-700">asked</span> {formatDateTime(question?.createdAt)}
+                                    className="font-bold text-slate-700 dark:text-slate-300">asked</span> {formatDateTime(question?.createdAt)}
                                 </p>
                                 <EventOwner pubkey={question.user?.pubkey}/>
                             </div>

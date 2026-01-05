@@ -31,9 +31,9 @@ const AcceptAnswer = ({answer}: { answer: Answer }) => {
 
     return (
         <button onClick={handleMarkAcceptedAnswer} disabled={isLoading}>
-            {isLoading ? (<CogIcon className="animate-spin h-6 w-6 text-slate-200"/>) : (
+            {isLoading ? (<CogIcon className="animate-spin h-6 w-6 text-slate-400 dark:text-slate-500"/>) : (
                 <CheckCircleIcon
-                    className="text-slate-300 hover:text-slate-400 h-6 w-6 cursor-pointer"
+                    className="text-slate-300 dark:text-slate-600 hover:text-green-500 dark:hover:text-green-400 h-6 w-6 cursor-pointer transition-colors"
                 />
             )}
         </button>

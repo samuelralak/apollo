@@ -16,8 +16,8 @@ const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
     classNames(
         myVote && myVote.vote === voteType
             ? 'text-green-500'
-            : 'text-slate-400',
-        'h-8 w-8 cursor-pointer'
+            : 'text-slate-400 dark:text-slate-500',
+        'h-8 w-8 cursor-pointer hover:text-slate-500 dark:hover:text-slate-400 transition-colors'
     );
 
 const Votes = ({kind, eventId, pubkey, identifier, refEvent}: {
@@ -61,7 +61,7 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent}: {
             </button>
 
 
-            <p className="w-full text-center font-medium text-lg text-slate-500">{vote?.total ?? 0}</p>
+            <p className="w-full text-center font-medium text-lg text-slate-500 dark:text-slate-400">{vote?.total ?? 0}</p>
 
             <button onClick={() => onVote(VoteType.DOWNVOTE)}>
                 <ArrowDownCircleIcon

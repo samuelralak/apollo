@@ -48,44 +48,41 @@ const AnswerItem = ({answer, question, editAction}: {
             </div>
 
             <div className="flex-1">
-                <div className="question-detail">
+                <div className="question-detail prose prose-slate dark:prose-invert max-w-none">
                     <MDEditor.Markdown
                         source={answer?.description ?? ''}
                         style={{
                             whiteSpace: 'pre-wrap',
-                            backgroundColor: 'white',
-                            color: '#334155',
                             fontFamily: 'Public Sans, sans-serif'
                         }}
-                        data-color-mode={'light'}
-                        className="bg-white text-slate-700 prose prose-slate"
+                        className="!bg-transparent !text-slate-700 dark:!text-slate-300"
                     />
                 </div>
 
 
                 <div className="flex py-3 justify-between items-center align-middle">
                     <div>
-                        <p className="text-xs font-semibold text-slate-500 pb-1">
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 pb-1">
                             <span
-                                className="font-bold text-slate-700">answered</span> {formatDateTime(answer.createdAt)}
+                                className="font-bold text-slate-700 dark:text-slate-300">answered</span> {formatDateTime(answer.createdAt)}
                         </p>
                         <EventOwner pubkey={answer.user.pubkey}/>
                     </div>
 
-                    <div className="flex flex-row gap-x-2 text-xs sm:text-sm font-medium text-slate-500">
+                    <div className="flex flex-row gap-x-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                         <a onClick={() => handleShowModal(PortalID.share)}
-                           className="hidden sm:block items-center gap-x-1.5 w-auto hover:text-slate-700 cursor-pointer">
+                           className="hidden sm:block items-center gap-x-1.5 w-auto hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
                             <span className="hidden sm:block">Share</span>
                         </a>
                         {auth.isLoggedIn && (
                             <>
                                 <a onClick={() => handleShowModal(PortalID.zap)}
-                                   className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
+                                   className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
                                     <span className="hidden sm:block">Zap</span>
                                 </a>
                                 {auth.pubkey === answer.user.pubkey && (
                                     <a onClick={editAction}
-                                       className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 cursor-pointer">
+                                       className="hidden sm:block items-center gap-x-1.5 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
                                         <span className="hidden sm:block">Edit</span>
                                     </a>
                                 )}
@@ -95,7 +92,7 @@ const AnswerItem = ({answer, question, editAction}: {
                         <Menu as="div" className="relative inline-block text-left sm:hidden">
                             <div>
                                 <MenuButton
-                                    className="flex items-center text-gray-400 hover:text-gray-600 outline-none ring-0 ">
+                                    className="flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 outline-none ring-0">
                                     <span className="sr-only">Open options</span>
                                     <EllipsisVerticalIcon className="h-5 w-5" aria-hidden="true"/>
                                 </MenuButton>
@@ -103,15 +100,15 @@ const AnswerItem = ({answer, question, editAction}: {
 
                             <MenuItems
                                 transition
-                                className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition ease-out duration-100 data-[closed]:opacity-0 data-[closed]:scale-95">
+                                className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none transition ease-out duration-100 data-[closed]:opacity-0 data-[closed]:scale-95">
                                 <div className="py-1">
                                     <MenuItem>
                                         {({focus}) => (
                                             <a
                                                 onClick={() => handleShowModal(PortalID.share)}
                                                 className={classNames(
-                                                    focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm'
+                                                    focus ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100' : 'text-slate-700 dark:text-slate-200',
+                                                    'block px-4 py-2 text-sm cursor-pointer'
                                                 )}
                                             >
                                                 Share
@@ -123,7 +120,7 @@ const AnswerItem = ({answer, question, editAction}: {
                                             <MenuItem>
                                                 <a
                                                     onClick={() => handleShowModal(PortalID.zap)}
-                                                    className='text-gray-700 block px-4 py-2 text-sm data-[focus]:bg-gray-100 data-[focus]:text-gray-900'
+                                                    className='text-slate-700 dark:text-slate-200 block px-4 py-2 text-sm cursor-pointer data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700 data-[focus]:text-slate-900 dark:data-[focus]:text-slate-100'
                                                 >
                                                     Zap
                                                 </a>
@@ -134,8 +131,8 @@ const AnswerItem = ({answer, question, editAction}: {
                                                         <a
                                                             onClick={editAction}
                                                             className={classNames(
-                                                                focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                                'block px-4 py-2 text-sm'
+                                                                focus ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100' : 'text-slate-700 dark:text-slate-200',
+                                                                'block px-4 py-2 text-sm cursor-pointer'
                                                             )}
                                                         >
                                                             Edit

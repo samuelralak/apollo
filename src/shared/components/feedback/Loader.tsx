@@ -4,12 +4,12 @@ const Loader = ({loadingText}: { loadingText?: string }) => (
             <div className="fixed top-0 left-0 z-50 w-screen h-screen flex items-center justify-center">
                 <div className="py-2 px-5 rounded-lg flex items-center flex-col">
                     <div className="loader-dots block relative w-20 h-5 mt-2">
-                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-blue-500"></div>
-                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-blue-500"></div>
-                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-blue-500"></div>
-                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-blue-500"></div>
+                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-teal-500"></div>
+                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-teal-500"></div>
+                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-teal-500"></div>
+                        <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-teal-500"></div>
                     </div>
-                    <div className="text-slate-500 mt-2 text-center">
+                    <div className="text-slate-600 dark:text-slate-400 mt-2 text-center">
                         {loadingText ?? 'Working'}...
                     </div>
                 </div>

@@ -15,7 +15,7 @@ const SettingsPage = () => {
     return (
         <div className="lg:flex lg:gap-x-16 lg:px-8">
             <aside
-                className="flex overflow-x-auto border-b border-border-default lg:block lg:w-64 lg:flex-none lg:border-0">
+                className="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 lg:block lg:w-64 lg:flex-none lg:border-0">
                 <nav className="flex-none px-4 sm:px-6 lg:px-0">
                     <ul role="list" className="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col">
                         {secondaryNavigation.map((item) => (
@@ -24,8 +24,8 @@ const SettingsPage = () => {
                                     to={item.href}
                                     className={({isActive}) => classNames(
                                         isActive
-                                            ? 'bg-background-tertiary text-foreground-primary'
-                                            : 'text-foreground-muted hover:text-foreground-primary hover:bg-background-hover',
+                                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800',
                                         'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold transition-colors'
                                     )}
                                 >
@@ -33,7 +33,7 @@ const SettingsPage = () => {
                                         <>
                                             <item.icon
                                                 className={classNames(
-                                                    isActive ? 'text-foreground-primary' : 'text-foreground-muted group-hover:text-foreground-primary',
+                                                    isActive ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200',
                                                     'h-6 w-6 shrink-0 transition-colors'
                                                 )}
                                                 aria-hidden="true"

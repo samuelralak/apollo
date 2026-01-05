@@ -68,19 +68,19 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
 
     if (!auth?.isLoggedIn) {
         return (
-            <div className="rounded-lg bg-yellow-50 border-2 border-yellow-100 p-4 my-5">
+            <div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-100 dark:border-yellow-800 p-4 my-5">
                 <div className="flex">
                     <div className="flex-shrink-0">
-                        <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true"/>
+                        <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 dark:text-yellow-400" aria-hidden="true"/>
                     </div>
                     <div className="ml-3 flex-1 md:flex md:justify-between">
-                        <p className="text-sm text-yellow-700 font-medium">
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">
                             You have to be logged in to share your wisdom and post an answer.
                         </p>
                         <p className="mt-3 text-sm md:ml-6 md:mt-0">
                             <a
                                 onClick={() => window.document.getElementById('get-started')?.click()}
-                                className="whitespace-nowrap font-semibold text-yellow-700 hover:text-yellow-600 cursor-pointer"
+                                className="whitespace-nowrap font-semibold text-yellow-700 dark:text-yellow-300 hover:text-yellow-600 dark:hover:text-yellow-200 cursor-pointer"
                             >
                                 Get started
                                 <span aria-hidden="true"> &rarr;</span>
@@ -106,12 +106,11 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
                             onChange={onEditorChange}
                             commandsFilter={commandsFilter}
                             preview={'edit'}
-                            data-color-mode={'light'}
-                            className="prose prose-slate max-w-none prose-code:text-slate-700"
+                            className="prose prose-slate dark:prose-invert max-w-none"
                         />
                     </div>
                     {errors.description && (
-                        <p className="mt-2 text-sm text-red-600 " id="email-error">
+                        <p className="mt-2 text-sm text-red-500" id="email-error">
                             {errors.description.message as ReactNode}
                         </p>
                     )}
@@ -122,7 +121,7 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
                         type="submit"
                         disabled={publishing}
                         onClick={handleSubmit(onAnswerSubmit)}
-                        className="rounded-lg bg-slate-600 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 disabled:text-slate-300 hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+                        className="rounded-lg bg-teal-600 dark:bg-teal-500 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:text-slate-300 hover:bg-teal-700 dark:hover:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
                     >
                         {publishing ? 'Publishing...' : 'Publish your answer'}
                     </button>
@@ -131,7 +130,7 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
                         <button disabled={publishing}
                                 onClick={onEditAction}
                                 type="button"
-                                className="text-sm font-semibold leading-6 text-slate-900 disabled:text-slate-300 text-center"
+                                className="text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100 disabled:text-slate-300 dark:disabled:text-slate-600 text-center"
                         >
                             Cancel
                         </button>
@@ -141,13 +140,13 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
             </div>
 
 
-            <div className="rounded-lg bg-blue-50 p-4 border-2 border-blue-100 mt-5 text-slate-700">
+            <div className="rounded-lg bg-teal-50 dark:bg-teal-900/30 p-4 border-2 border-teal-100 dark:border-teal-800 mt-5 text-slate-700 dark:text-slate-300">
                 <div className="ml-3 flex flex-col gap-y-2">
                     <p className="text-sm">
                         Thanks for contributing an answer to our Q&A! Your insights are valuable.
                     </p>
 
-                    <p className="text-sm font-semibold">When answering:</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">When answering:</p>
 
                     <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
                         <li>Ensure you address the question directly.</li>
@@ -155,7 +154,7 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
                         <li>Embrace our diverse topics - from technical to personal experiences.</li>
                     </ul>
 
-                    <p className="text-sm font-semibold">Avoid:</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">Avoid:</p>
 
                     <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
                         <li>Requesting clarification or additional information.</li>

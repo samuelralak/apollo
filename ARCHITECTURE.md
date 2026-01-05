@@ -622,7 +622,7 @@ export {
 
 ## Theme System
 
-Apollo includes a centralized theme system that supports light and dark modes with system preference detection.
+Apollo includes a theme system that supports light and dark modes with system preference detection.
 
 ### Directory Structure
 
@@ -631,42 +631,41 @@ src/shared/theme/
 ├── index.ts              # Main exports
 ├── types.ts              # Theme type definitions
 ├── tokens/
-│   ├── colors.ts         # Color token definitions (TypeScript reference)
+│   ├── colors.ts         # Color token definitions (reference)
 │   └── index.ts          # Token exports
 ├── css/
-│   └── variables.css     # CSS custom properties + Tailwind @theme
+│   └── variables.css     # CSS custom properties (light + dark)
 ├── hooks/
 │   └── useTheme.ts       # Theme context hook
 └── components/
     └── ThemeProvider.tsx # Theme context provider
 ```
 
+### How It Works
+
+The ThemeProvider manages theme state and applies the `dark` class to the `<html>` element. Components use Tailwind's built-in `dark:` variant for dark mode styles.
+
 ### Using the Theme
 
 #### In Components
 
-Use semantic Tailwind classes that reference theme tokens:
+Use Tailwind's `dark:` variant for dark mode styling:
 
 ```tsx
 // Background colors
-<div className="bg-background-primary">      // Main page background
-<div className="bg-background-secondary">    // Subtle background
-<div className="bg-background-tertiary">     // Card/panel backgrounds
-<div className="bg-background-hover">        // Hover states
+<div className="bg-white dark:bg-slate-900">
+<div className="bg-slate-50 dark:bg-slate-800">
 
 // Text colors
-<p className="text-foreground-primary">      // Primary text
-<p className="text-foreground-secondary">    // Secondary text
-<p className="text-foreground-muted">        // Muted/subtle text
+<p className="text-slate-900 dark:text-slate-100">
+<p className="text-slate-500 dark:text-slate-400">
 
 // Border colors
-<div className="border-border-default">      // Default borders
-<div className="border-border-strong">       // Emphasized borders
+<div className="border-slate-200 dark:border-slate-700">
 
-// Brand colors
-<button className="bg-primary">              // Primary actions
-<button className="bg-primary-hover">        // Hover state
-<div className="bg-primary-bg">              // Light primary background
+// Brand colors (teal)
+<button className="bg-teal-600 dark:bg-teal-500">
+<span className="text-teal-600 dark:text-teal-500">
 ```
 
 #### Theme Toggle
@@ -675,7 +674,7 @@ Use semantic Tailwind classes that reference theme tokens:
 import { useTheme } from '../shared/theme';
 
 function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
@@ -687,19 +686,17 @@ function ThemeToggle() {
 }
 ```
 
-### Available Color Tokens
+### Color Palette
 
-| Token | Light Mode | Dark Mode | Usage |
-|-------|------------|-----------|-------|
-| `background-primary` | `#ffffff` | `#0f172a` | Page background |
-| `background-secondary` | `#f8fafc` | `#1e293b` | Subtle backgrounds |
-| `background-tertiary` | `#f1f5f9` | `#334155` | Cards, panels |
-| `foreground-primary` | `#0f172a` | `#f8fafc` | Primary text |
-| `foreground-secondary` | `#475569` | `#cbd5e1` | Secondary text |
-| `foreground-muted` | `#64748b` | `#94a3b8` | Muted text |
-| `border-default` | `#e2e8f0` | `#334155` | Default borders |
-| `primary` | `#0d9488` (teal-600) | `#14b8a6` (teal-500) | Brand/actions |
-| `primary-hover` | `#0f766e` (teal-700) | `#2dd4bf` (teal-400) | Hover state |
+| Element | Light Mode | Dark Mode |
+|---------|------------|-----------|
+| Page background | `bg-white` | `dark:bg-slate-900` |
+| Card background | `bg-slate-50` | `dark:bg-slate-800` |
+| Primary text | `text-slate-900` | `dark:text-slate-100` |
+| Secondary text | `text-slate-600` | `dark:text-slate-300` |
+| Muted text | `text-slate-500` | `dark:text-slate-400` |
+| Border | `border-slate-200` | `dark:border-slate-700` |
+| Brand/Accent | `teal-600` | `teal-500` |
 
 ### Settings
 

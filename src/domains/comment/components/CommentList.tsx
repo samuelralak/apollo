@@ -31,14 +31,14 @@ const CommentsList = ({resource, resourceKind}: Props) => {
 
     return (
         <div className="w-full">
-            <ul role="list" className="divide-y divide-slate-100 border-y border-slate-100 mt-3.5">
+            <ul role="list" className="divide-y divide-slate-200 dark:divide-slate-700 border-y border-slate-200 dark:border-slate-700 mt-3.5">
                 {comments && [...Object.values(comments.data)]?.map((comment) => (
                     <li key={comment.id} className="flex gap-x-4 py-2">
                         <div className="flex-auto w-full overflow-scroll">
                             <div className="flex items-baseline justify-between space-x-4">
                                 <EventOwner pubkey={comment.pubkey} mini={true} hideAvatar={true} />
 
-                                <p className="flex-none text-xs text-gray-600">
+                                <p className="flex-none text-xs text-slate-500 dark:text-slate-400">
                                     <time
                                         dateTime={new Date(comment.createdAt * 1000).toDateString()}
                                     >
@@ -46,7 +46,7 @@ const CommentsList = ({resource, resourceKind}: Props) => {
                                     </time>
                                 </p>
                             </div>
-                            <p className="mt-1 text-xs text-gray-600 max-w-full text-wrap">{comment.content}</p>
+                            <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 max-w-full text-wrap">{comment.content}</p>
                         </div>
                     </li>
                 ))}

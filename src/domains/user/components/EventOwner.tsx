@@ -31,9 +31,9 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
                             />
                         ) : (
                             <span
-                                className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block overflow-hidden bg-slate-100')}
+                                className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block overflow-hidden bg-slate-100 dark:bg-slate-700')}
                             >
-                            <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-full w-full text-slate-300 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
                             </svg>
@@ -43,12 +43,12 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
                 )}
 
                 <div>
-                    <p className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'text-slate-600 group-hover:text-slate-900 truncate max-w-36 sm:max-w-none ')}>
+                    <p className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate max-w-36 sm:max-w-none ')}>
                         {userProfile?.displayName ?? userProfile?.display_name ?? userProfile?.name ?? pubkey}
                     </p>
 
                     {(userProfile?.nip05 && !mini) && (
-                        <p className="text-xs font-medium text-slate-500 group-hover:text-slate-700">
+                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">
                             {userProfile?.nip05}
                         </p>
                     )}
