@@ -6,6 +6,7 @@ import {Copy01Icon, Cancel01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
 import {hidePortal} from "../../store/portal.slice";
+import {showToast} from "../../store/toast.slice";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import type {Question} from "../../../domains/question/types/question.types";
 import {questionTransformer} from "../../../domains/question/services/question.transformer";
@@ -15,7 +16,6 @@ import constants from "../../../constants";
 import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
 import {classNames, copyToClipboard} from "../../../utils";
 import {nip19} from "nostr-tools";
-import {ToastContext} from "../feedback/ToastProvider";
 
 type Resource = Question | Answer
 
@@ -72,8 +72,7 @@ const shareTabs: Record<TabID, Tab> = {
 }
 
 const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
-    const dispatch = useDispatch() as AppDispatch
-    const {showToast} = useContext(ToastContext) as ToastContext
+    const dispatch = useDispatch<AppDispatch>()
     const {ndkInstance, publishEvent} = useContext(NDKContext) as NDKContext
     const isMounted = useIsMounted()
 
@@ -92,7 +91,7 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
             const content = kind === constants.noteKind ? `${shareUrl}\n\n${selectedTab.shareUrl}` : resource?.description
             await publishEvent(kind, content, kind === constants.shareKind ? [...tags, ...[["r", shareUrl]]] : tags)
             if (isMounted()) {
-                showToast({title: 'Post successfully shared!', type: 'success'})
+                dispatch(showToast({title: 'Post successfully shared!', type: 'success'}))
             }
         }
         if (isMounted()) {
@@ -114,12 +113,12 @@ const SharePortal = ({visible, eventCoordinate, eventId}: Props) => {
 
     const handleCopyToClipboard = useCallback(async (text: string) => {
         await copyToClipboard(text, () => {
-            showToast({
+            dispatch(showToast({
                 title: 'Copied to clipboard',
                 type: 'success'
-            })
+            }))
         })
-    }, [showToast])
+    }, [dispatch])
 
     // Fetch resource on mount with isMounted check
     useMountEffect(() => {

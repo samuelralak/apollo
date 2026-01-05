@@ -1,7 +1,7 @@
 import MainNavigation from "../shared/components/layout/MainNavigation";
 import {Outlet} from "react-router";
 import NDKProvider from "../lib/ndk/NDKProvider";
-import ToastProvider from "../shared/components/feedback/ToastProvider";
+import ToastRenderer from "../shared/components/feedback/ToastRenderer";
 import {HelmetProvider} from "react-helmet-async";
 import ZapPortal from "../shared/components/portal/ZapPortal";
 import {useSelector} from "react-redux";
@@ -19,38 +19,38 @@ const Root = () => {
 
     return (
         <HelmetProvider context={helmetContext}>
-            <ToastProvider>
-                <NDKProvider>
-                    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
-                        <MainNavigation/>
-                        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                            <Outlet/>
-                        </div>
+            <NDKProvider>
+                <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
+                    <MainNavigation/>
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+                        <Outlet/>
                     </div>
-                    {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
-                        <ZapPortal
-                            pubkey={portal.pubkey!}
-                            eventId={portal.eventId}
-                            eventCoordinate={eventCoordinate}
-                        />, document.body
-                    )}
+                </div>
+                {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
+                    <ZapPortal
+                        pubkey={portal.pubkey!}
+                        eventId={portal.eventId}
+                        eventCoordinate={eventCoordinate}
+                    />, document.body
+                )}
 
-                    {visible && portalId === PortalID.share && createPortal(
-                        <SharePortal visible={visible}
-                                     eventCoordinate={eventCoordinate!}
-                                     eventId={portal.eventId!}/>
-                        , document.body
-                    )}
+                {visible && portalId === PortalID.share && createPortal(
+                    <SharePortal visible={visible}
+                                 eventCoordinate={eventCoordinate!}
+                                 eventId={portal.eventId!}/>
+                    , document.body
+                )}
 
-                    {!isLoggedIn && visible && portalId === PortalID.auth && createPortal(
-                        <GetStartedPortal />, document.body
-                    )}
+                {!isLoggedIn && visible && portalId === PortalID.auth && createPortal(
+                    <GetStartedPortal />, document.body
+                )}
 
-                    {visible && portalId === PortalID.mobileMenu && createPortal(
-                        <MobileMenuPortal />, document.body
-                    )}
-                </NDKProvider>
-            </ToastProvider>
+                {visible && portalId === PortalID.mobileMenu && createPortal(
+                    <MobileMenuPortal />, document.body
+                )}
+
+                <ToastRenderer />
+            </NDKProvider>
         </HelmetProvider>
     )
 }

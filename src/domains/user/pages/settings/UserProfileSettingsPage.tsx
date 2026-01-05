@@ -1,12 +1,12 @@
-import {useSelector} from "react-redux";
-import {RootState} from "../../../../app/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../../../app/store";
 import {SubmitHandler, useForm} from "react-hook-form";
 import userProfileSchema, {UserProfileSchemaType} from "../../schemas/user-profile.schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {ReactNode, useContext, useState} from "react";
 import {NDKContext} from "../../../../lib/ndk/NDKProvider";
-import {ToastContext} from "../../../../shared/components/feedback/ToastProvider";
+import {showToast} from "../../../../shared/store/toast.slice";
 
 const displayNameFromProfile = (userProfile: NDKUserProfile) => {
     const name = String(userProfile?.displayName ?? userProfile?.display_name ?? "").split(" ")
@@ -17,8 +17,8 @@ const displayNameFromProfile = (userProfile: NDKUserProfile) => {
 }
 
 const UserProfileSettingsPage = () => {
+    const dispatch = useDispatch<AppDispatch>()
     const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const {showToast} = useContext(ToastContext) as ToastContext
     const [publishing, setPublishing] = useState<boolean>(false)
     const auth = useSelector((state: RootState) => state.auth)
     const userProfile = auth.userProfile
@@ -47,15 +47,15 @@ const UserProfileSettingsPage = () => {
             ndkUser.profile = {...ndkUser.profile, ...payload}
             await ndkUser.publish()
 
-            showToast({
+            dispatch(showToast({
                 title: 'Event published successfully!',
                 type: 'success'
-            })
+            }))
         } catch {
-            showToast({
+            dispatch(showToast({
                 title: 'Error publishing event! Please sign out and sign back in!',
                 type: 'error'
-            })
+            }))
         } finally {
             setPublishing(false)
         }

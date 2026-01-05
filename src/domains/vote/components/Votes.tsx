@@ -12,8 +12,8 @@ import type {Vote} from "../types/vote.types";
 import {VoteType} from "../types/vote.types";
 import {voteTransformer} from "../services/vote.transformer";
 import {updateVote, revertVote} from "../store/vote.slice";
+import {showToast} from "../../../shared/store/toast.slice";
 import {classNames} from "../../../utils";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
 
 const voteActionClassName = (myVote: Vote, voteType: VoteType) =>
     classNames(
@@ -40,10 +40,9 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
     }), [aTag, pubkey]);
 
     const {publishEvent} = useContext(NDKContext) as NDKContext
-    const {showToast} = useContext(ToastContext) as ToastContext
+    const dispatch = useDispatch<AppDispatch>()
     const auth = useSelector((state: RootState) => state.auth);
     const vote = useSelector((state: RootState) => state.vote)[identifier];
-    const dispatch = useDispatch() as AppDispatch
     const myVote = vote?.data[auth.pubkey ?? ""]
 
     const onVote = async (voteType: VoteType) => {
@@ -80,7 +79,7 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
             } else {
                 dispatch(revertVote({ resourceId: identifier, pubkey: auth.pubkey }));
             }
-            showToast({ title: 'Vote failed', type: 'error' });
+            dispatch(showToast({ title: 'Vote failed', type: 'error' }));
         }
     }
 

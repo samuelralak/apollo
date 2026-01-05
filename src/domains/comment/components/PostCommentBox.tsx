@@ -9,7 +9,9 @@ import {z} from "zod";
 import commentSchema from "../schemas/comment.schema";
 import constants from "../../../constants";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../../app/store";
+import {showToast} from "../../../shared/store/toast.slice";
 import {classNames} from "../../../utils";
 
 interface Props {
@@ -27,7 +29,7 @@ interface FieldState {
 type CommentSchema = z.infer<typeof commentSchema>
 
 const PostCommentBox = ({resource, resourceKind}: Props) => {
-    const {showToast} = useContext(ToastContext) as ToastContext
+    const dispatch = useDispatch<AppDispatch>()
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const {
         handleSubmit,
@@ -51,10 +53,10 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
                 ["alt", "comment"]
             ])
 
-            showToast({title: 'Your comment is publishing', type: 'success'})
+            dispatch(showToast({title: 'Your comment is publishing', type: 'success'}))
         } catch (e) {
             if (e instanceof Error) {
-                showToast({title: e.message, type: 'error'})
+                dispatch(showToast({title: e.message, type: 'error'}))
             }
         }
 

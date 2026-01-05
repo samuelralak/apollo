@@ -11,13 +11,12 @@ import {SignerMethod, signIn} from "../../../domains/auth/store/auth.slice";
 import {decodeNsec, validatePrivateKey} from "../../../utils";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../../constants";
-import {ToastContext} from "../feedback/ToastProvider";
+import {showToast} from "../../store/toast.slice";
 import {hidePortal} from "../../store/portal.slice";
 
 const GetStartedPortal = () => {
-    const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const {showToast} = useContext(ToastContext) as ToastContext
     const dispatch = useDispatch<AppDispatch>()
+    const {ndkInstance} = useContext(NDKContext) as NDKContext
     const visible = useSelector((state: RootState) => state.portal.visible)
     const [privateKey, setPrivateKey] = useState<string>('')
 
@@ -49,7 +48,7 @@ const GetStartedPortal = () => {
             await _fetchProfileAndSignIn(signer, SignerMethod.NIP07)
         } catch (e) {
             if (e instanceof Error) {
-                showToast({title: 'Error', subtitle: e.message, type: 'error'})
+                dispatch(showToast({title: 'Error', subtitle: e.message, type: 'error'}))
             }
         }
     }
@@ -63,11 +62,11 @@ const GetStartedPortal = () => {
                 await _fetchProfileAndSignIn(signer, SignerMethod.PRIVATE_KEY)
             } catch (e) {
                 if (e instanceof Error) {
-                    showToast({title: 'Error', subtitle: e.message, type: 'error'})
+                    dispatch(showToast({title: 'Error', subtitle: e.message, type: 'error'}))
                 }
             }
         } else {
-            showToast({title: 'Error', subtitle: 'Invalid private key', type: 'error'})
+            dispatch(showToast({title: 'Error', subtitle: 'Invalid private key', type: 'error'}))
         }
     }
 

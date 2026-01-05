@@ -1,5 +1,5 @@
 import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
-import { ReactNode, useContext, useRef } from "react";
+import { ReactNode, useRef } from "react";
 import { useUpdateEffect } from "@react-hookz/web";
 import QRCode from "qrcode";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -11,8 +11,8 @@ import constants from "../../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../app/store";
 import { hidePortal } from "../../store/portal.slice";
+import { showToast } from "../../store/toast.slice";
 import { copyToClipboard } from "../../../utils";
-import { ToastContext } from "../feedback/ToastProvider";
 import useWebLN from "../../hooks/useWebLN";
 import useZapInvoice from "../../hooks/useZapInvoice";
 import useZapReceipt from "../../hooks/useZapReceipt";
@@ -25,7 +25,6 @@ interface Props {
 
 const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { showToast } = useContext(ToastContext) as ToastContext;
     const { visible } = useSelector((state: RootState) => state.portal);
     const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -67,7 +66,7 @@ const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
                 await webln.sendPayment(invoice);
             } catch (e) {
                 if (e instanceof Error) {
-                    showToast({ title: 'Payment Error', subtitle: e.message, type: 'error' });
+                    dispatch(showToast({ title: 'Payment Error', subtitle: e.message, type: 'error' }));
                 }
                 zapReceipt.stopPolling();
             }
@@ -77,7 +76,7 @@ const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
     const handleCopyInvoice = async () => {
         if (!zapInvoice.invoice) return;
         await copyToClipboard(zapInvoice.invoice, () => {
-            showToast({ title: 'Copied to clipboard', type: 'success' });
+            dispatch(showToast({ title: 'Copied to clipboard', type: 'success' }));
         });
     };
 
@@ -96,16 +95,16 @@ const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
     // Show WebLN error when it changes (skip initial null)
     useUpdateEffect(() => {
         if (webln.error) {
-            showToast({ title: 'WebLN Error', subtitle: webln.error.message, type: 'error' });
+            dispatch(showToast({ title: 'WebLN Error', subtitle: webln.error.message, type: 'error' }));
         }
-    }, [webln.error]);
+    }, [webln.error, dispatch]);
 
     // Show zap invoice error when it changes (skip initial null)
     useUpdateEffect(() => {
         if (zapInvoice.error) {
-            showToast({ title: 'Error', subtitle: zapInvoice.error.message, type: 'error' });
+            dispatch(showToast({ title: 'Error', subtitle: zapInvoice.error.message, type: 'error' }));
         }
-    }, [zapInvoice.error]);
+    }, [zapInvoice.error, dispatch]);
 
     return (
         <Dialog open={visible} onClose={handleClose} className="relative z-10">

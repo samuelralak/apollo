@@ -5,7 +5,9 @@ import {useNavigate} from "react-router";
 import {v4 as uuidv4} from "uuid";
 import questionSchema from "../schemas/question.schema";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../../app/store";
+import {showToast} from "../../../shared/store/toast.slice";
 import constants from "../../../constants";
 import type {Question} from "../types/question.types";
 
@@ -18,9 +20,9 @@ export interface QuestionFormValues {
 
 const useQuestionForm = (question?: Question) => {
     const navigate = useNavigate()
+    const dispatch = useDispatch<AppDispatch>()
     const questionId = question?.id ?? uuidv4()
 
-    const {showToast} = useContext(ToastContext) as ToastContext
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const [publishing, setPublishing] = useState<boolean>(false)
 
@@ -48,11 +50,11 @@ const useQuestionForm = (question?: Question) => {
             ])
 
             setPublishing(false)
-            showToast({
+            dispatch(showToast({
                 title: 'Success',
                 subtitle: 'Your question has been successfully published.',
                 type: 'success'
-            })
+            }))
             navigate(`/questions/${questionId}`)
         } catch {
             setPublishing(false)

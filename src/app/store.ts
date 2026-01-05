@@ -7,6 +7,7 @@ import portalReducer from "../shared/store/portal.slice";
 import questionReducer from "../domains/question/store/question.slice";
 import commentReducer from "../domains/comment/store/comment.slice";
 import subscriptionReducer from "../shared/store/subscription.slice";
+import toastReducer from "../shared/store/toast.slice";
 import {authListenerMiddleware} from "../domains/auth/store/auth.middleware";
 
 export interface PreloadedState {
@@ -23,7 +24,8 @@ export const configureAppStore = (preloadedState: PreloadedState) => {
             portal: portalReducer,
             question: questionReducer,
             comment: commentReducer,
-            subscription: subscriptionReducer
+            subscription: subscriptionReducer,
+            toast: toastReducer
         },
         middleware: getDefaultMiddleware =>
             getDefaultMiddleware({

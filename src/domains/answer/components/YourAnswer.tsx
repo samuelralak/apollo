@@ -7,9 +7,9 @@ import {ReactNode, useContext, useState} from "react";
 import type {Question} from "../../question/types/question.types";
 import {v4 as uuidv4} from "uuid";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {ToastContext} from "../../../shared/components/feedback/ToastProvider";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../app/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../../app/store";
+import {showToast} from "../../../shared/store/toast.slice";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {Alert02Icon} from "@hugeicons-pro/core-twotone-rounded";
 import constants from "../../../constants";
@@ -23,8 +23,8 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
     setPublishing: (value: boolean) => void
 }) => {
     const answerId = answer?.id ?? uuidv4()
+    const dispatch = useDispatch<AppDispatch>()
     const auth = useSelector((state: RootState) => state.auth)
-    const {showToast} = useContext(ToastContext) as ToastContext
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const [editing, setEditing] = useState<boolean>(false)
     const {handleSubmit, setValue, watch, formState: {errors}} = useForm({
@@ -60,11 +60,11 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
             setValue('description', '')
         }
 
-        showToast({
+        dispatch(showToast({
             title: 'Success',
             subtitle: 'Your answer has been successfully published.',
             type: 'success'
-        })
+        }))
     }
 
     if (!auth?.isLoggedIn) {
