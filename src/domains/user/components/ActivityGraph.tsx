@@ -25,56 +25,70 @@ interface WeeklyData {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /**
+ * Gets UTC day of week (0 = Sunday, 6 = Saturday)
+ */
+const getUTCDayOfWeek = (date: Date): number => date.getUTCDay();
+
+/**
+ * Formats date as YYYY-MM-DD in UTC
+ */
+const toUTCDateString = (date: Date): string => date.toISOString().split('T')[0];
+
+/**
+ * Adds days to a date (returns new Date)
+ */
+const addDays = (date: Date, days: number): Date => new Date(date.getTime() + days * 86400000);
+
+/**
  * Aggregates daily activity into weekly data for the chart.
+ * Uses UTC consistently to avoid timezone issues.
  */
 const generateWeeklyData = (activityDays: ActivityDay[]): WeeklyData[] => {
     const dayMap = new Map(activityDays.map(d => [d.date, d]));
     const weeks: WeeklyData[] = [];
-    const today = new Date();
-    const oneYearAgo = new Date(today);
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-    // Start from the first Sunday on or before one year ago
-    const startDate = new Date(oneYearAgo);
-    startDate.setDate(startDate.getDate() - startDate.getDay());
+    // Use UTC midnight for consistent date handling
+    const now = new Date();
+    const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const oneYearAgoUTC = new Date(Date.UTC(now.getUTCFullYear() - 1, now.getUTCMonth(), now.getUTCDate()));
 
-    const currentDate = new Date(startDate);
+    // Start from the first Sunday on or before one year ago (UTC)
+    const startDate = addDays(oneYearAgoUTC, -getUTCDayOfWeek(oneYearAgoUTC));
+
+    let currentDate = new Date(startDate);
     let weekTotal = 0;
-    let weekStart = currentDate.toISOString().split('T')[0];
+    let weekStart = toUTCDateString(currentDate);
     let weekIndex = 0;
 
-    while (currentDate <= today) {
-        const dateStr = currentDate.toISOString().split('T')[0];
+    while (currentDate <= todayUTC) {
+        const dateStr = toUTCDateString(currentDate);
         const activity = dayMap.get(dateStr);
         weekTotal += activity?.count ?? 0;
 
-        // If we've completed a week (Saturday), push the data
-        if (currentDate.getDay() === 6) {
-            const weekStartDate = new Date(weekStart);
-
+        // If we've completed a week (Saturday = day 6), push the data
+        if (getUTCDayOfWeek(currentDate) === 6) {
             weeks.push({
                 week: weekIndex,
                 count: weekTotal,
                 startDate: weekStart,
-                month: MONTHS[weekStartDate.getMonth()]
+                month: MONTHS[new Date(weekStart + 'T00:00:00Z').getUTCMonth()]
             });
 
             weekIndex++;
             weekTotal = 0;
-            weekStart = new Date(currentDate.getTime() + 86400000).toISOString().split('T')[0];
+            weekStart = toUTCDateString(addDays(currentDate, 1));
         }
 
-        currentDate.setDate(currentDate.getDate() + 1);
+        currentDate = addDays(currentDate, 1);
     }
 
     // Add any remaining days as the final partial week
-    if (weekTotal > 0 || currentDate > today) {
-        const weekStartDate = new Date(weekStart);
+    if (weekTotal > 0 || weeks.length === 0) {
         weeks.push({
             week: weekIndex,
             count: weekTotal,
             startDate: weekStart,
-            month: MONTHS[weekStartDate.getMonth()]
+            month: MONTHS[new Date(weekStart + 'T00:00:00Z').getUTCMonth()]
         });
     }
 
