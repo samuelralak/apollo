@@ -8,7 +8,8 @@ import {
     NetworkSettingsPage,
     NotificationsSettingsPage,
     SecuritySettingsPage,
-    TranslationSettingsPage
+    TranslationSettingsPage,
+    AppearanceSettingsPage
 } from "../domains/user/pages/settings";
 import withAuthRequired from "../domains/auth/components/withAuthRequired";
 import {validate as isUUID} from 'uuid'
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
                     {
                         path: "translation",
                         element: <TranslationSettingsPage />,
+                    },
+                    {
+                        path: "appearance",
+                        element: <AppearanceSettingsPage />,
                     }
                 ]
 

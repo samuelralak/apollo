@@ -6,6 +6,7 @@ import router from "./app/router";
 import {Provider} from "react-redux";
 import {configureAppStore} from "./app/store";
 import {preloadAuth} from "./domains/auth/store/auth.slice";
+import {ThemeProvider} from "./shared/theme";
 
 (async () => {
     const preloadedAuth = await preloadAuth()
@@ -16,7 +17,9 @@ import {preloadAuth} from "./domains/auth/store/auth.slice";
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>
             <Provider store={store}>
-                <RouterProvider router={router}/>
+                <ThemeProvider>
+                    <RouterProvider router={router}/>
+                </ThemeProvider>
             </Provider>
         </React.StrictMode>,
     )

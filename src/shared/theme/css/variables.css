@@ -1,0 +1,175 @@
+/**
+ * Apollo Theme System
+ *
+ * This file defines all CSS custom properties for theming.
+ * Import this file in index.css to enable theme support.
+ */
+
+/* ==========================================================================
+   CSS Custom Properties - Light Theme (Default)
+   ========================================================================== */
+
+:root {
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;        /* slate-50 */
+  --color-bg-tertiary: #f1f5f9;         /* slate-100 */
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #f1f5f9;            /* slate-100 */
+  --color-bg-active: #e2e8f0;           /* slate-200 */
+
+  /* Text colors */
+  --color-text-primary: #0f172a;        /* slate-900 */
+  --color-text-secondary: #475569;      /* slate-600 */
+  --color-text-muted: #64748b;          /* slate-500 */
+  --color-text-disabled: #94a3b8;       /* slate-400 */
+  --color-text-inverse: #ffffff;
+
+  /* Border colors */
+  --color-border-default: #e2e8f0;      /* slate-200 */
+  --color-border-strong: #cbd5e1;       /* slate-300 */
+  --color-border-focus: #0d9488;        /* teal-600 */
+
+  /* Primary colors (Teal) */
+  --color-primary: #0d9488;             /* teal-600 */
+  --color-primary-hover: #0f766e;       /* teal-700 */
+  --color-primary-active: #115e59;      /* teal-800 */
+  --color-primary-light: #14b8a6;       /* teal-500 */
+  --color-primary-lighter: #99f6e4;     /* teal-200 */
+  --color-primary-bg: #f0fdfa;          /* teal-50 */
+
+  /* Feedback colors */
+  --color-success: #22c55e;             /* green-500 */
+  --color-success-bg: #f0fdf4;          /* green-50 */
+  --color-warning: #f59e0b;             /* amber-500 */
+  --color-warning-bg: #fffbeb;          /* amber-50 */
+  --color-error: #ef4444;               /* red-500 */
+  --color-error-bg: #fef2f2;            /* red-50 */
+  --color-info: #3b82f6;                /* blue-500 */
+  --color-info-bg: #eff6ff;             /* blue-50 */
+
+  /* Ring/Focus colors */
+  --color-ring: #0d9488;                /* teal-600 */
+  --color-ring-offset: #ffffff;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ==========================================================================
+   CSS Custom Properties - Dark Theme
+   ========================================================================== */
+
+.dark {
+  /* Background colors */
+  --color-bg-primary: #0f172a;          /* slate-900 */
+  --color-bg-secondary: #1e293b;        /* slate-800 */
+  --color-bg-tertiary: #334155;         /* slate-700 */
+  --color-bg-elevated: #1e293b;         /* slate-800 */
+  --color-bg-hover: #334155;            /* slate-700 */
+  --color-bg-active: #475569;           /* slate-600 */
+
+  /* Text colors */
+  --color-text-primary: #f8fafc;        /* slate-50 */
+  --color-text-secondary: #cbd5e1;      /* slate-300 */
+  --color-text-muted: #94a3b8;          /* slate-400 */
+  --color-text-disabled: #64748b;       /* slate-500 */
+  --color-text-inverse: #0f172a;        /* slate-900 */
+
+  /* Border colors */
+  --color-border-default: #334155;      /* slate-700 */
+  --color-border-strong: #475569;       /* slate-600 */
+  --color-border-focus: #14b8a6;        /* teal-500 */
+
+  /* Primary colors (Teal - brighter for dark mode) */
+  --color-primary: #14b8a6;             /* teal-500 */
+  --color-primary-hover: #2dd4bf;       /* teal-400 */
+  --color-primary-active: #5eead4;      /* teal-300 */
+  --color-primary-light: #2dd4bf;       /* teal-400 */
+  --color-primary-lighter: #134e4a;     /* teal-900 */
+  --color-primary-bg: #042f2e;          /* teal-950 */
+
+  /* Feedback colors (adjusted for dark mode) */
+  --color-success: #4ade80;             /* green-400 */
+  --color-success-bg: #052e16;          /* green-950 */
+  --color-warning: #fbbf24;             /* amber-400 */
+  --color-warning-bg: #451a03;          /* amber-950 */
+  --color-error: #f87171;               /* red-400 */
+  --color-error-bg: #450a0a;            /* red-950 */
+  --color-info: #60a5fa;                /* blue-400 */
+  --color-info-bg: #172554;             /* blue-950 */
+
+  /* Ring/Focus colors */
+  --color-ring: #14b8a6;                /* teal-500 */
+  --color-ring-offset: #0f172a;         /* slate-900 */
+
+  /* Shadows (more subtle in dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
+
+/* ==========================================================================
+   Tailwind v4 Theme Extension (@theme directive)
+   ========================================================================== */
+
+@theme {
+  /* Background colors */
+  --color-background-primary: var(--color-bg-primary);
+  --color-background-secondary: var(--color-bg-secondary);
+  --color-background-tertiary: var(--color-bg-tertiary);
+  --color-background-elevated: var(--color-bg-elevated);
+  --color-background-hover: var(--color-bg-hover);
+  --color-background-active: var(--color-bg-active);
+
+  /* Foreground (text) colors */
+  --color-foreground-primary: var(--color-text-primary);
+  --color-foreground-secondary: var(--color-text-secondary);
+  --color-foreground-muted: var(--color-text-muted);
+  --color-foreground-disabled: var(--color-text-disabled);
+  --color-foreground-inverse: var(--color-text-inverse);
+
+  /* Border colors */
+  --color-border-default: var(--color-border-default);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-focus: var(--color-border-focus);
+
+  /* Primary brand color */
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-active: var(--color-primary-active);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-bg: var(--color-primary-bg);
+
+  /* Feedback colors */
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-error: var(--color-error);
+  --color-error-bg: var(--color-error-bg);
+  --color-info: var(--color-info);
+  --color-info-bg: var(--color-info-bg);
+
+  /* Ring colors */
+  --color-ring: var(--color-ring);
+  --color-ring-offset: var(--color-ring-offset);
+}
+
+/* ==========================================================================
+   Smooth Theme Transitions
+   ========================================================================== */
+
+html {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Disable transitions on initial page load */
+html.no-transitions,
+html.no-transitions * {
+  transition: none !important;
+}

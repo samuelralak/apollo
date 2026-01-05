@@ -19,9 +19,11 @@ const Root = () => {
         <HelmetProvider context={helmetContext}>
             <ToastProvider>
                 <NDKProvider>
-                    <MainNavigation/>
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                        <Outlet/>
+                    <div className="min-h-screen bg-background-primary text-foreground-primary transition-colors">
+                        <MainNavigation/>
+                        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+                            <Outlet/>
+                        </div>
                     </div>
                     {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
                         <ZapPortal

@@ -1,4 +1,4 @@
-import {BellIcon, CursorArrowRaysIcon, FingerPrintIcon, GlobeAltIcon, UserCircleIcon} from '@heroicons/react/24/outline'
+import {BellIcon, CursorArrowRaysIcon, FingerPrintIcon, GlobeAltIcon, UserCircleIcon, SwatchIcon} from '@heroicons/react/24/outline'
 import {classNames} from "../../../../utils";
 import {NavLink, Outlet} from "react-router";
 
@@ -8,13 +8,14 @@ const secondaryNavigation = [
     {name: 'Notifications', href: '/settings/notifications', icon: BellIcon, current: false},
     {name: 'Network', href: '/settings/network', icon: CursorArrowRaysIcon, current: false},
     {name: 'Translation', href: '/settings/translation', icon: GlobeAltIcon, current: false},
+    {name: 'Appearance', href: '/settings/appearance', icon: SwatchIcon, current: false},
 ]
 
 const SettingsPage = () => {
     return (
         <div className="lg:flex lg:gap-x-16 lg:px-8">
             <aside
-                className="flex overflow-x-auto border-b border-gray-900/5 lg:block lg:w-64 lg:flex-none lg:border-0">
+                className="flex overflow-x-auto border-b border-border-default lg:block lg:w-64 lg:flex-none lg:border-0">
                 <nav className="flex-none px-4 sm:px-6 lg:px-0">
                     <ul role="list" className="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col">
                         {secondaryNavigation.map((item) => (
@@ -23,17 +24,17 @@ const SettingsPage = () => {
                                     to={item.href}
                                     className={({isActive}) => classNames(
                                         isActive
-                                            ? 'bg-slate-50 text-slate-700'
-                                            : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50',
-                                        'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold'
+                                            ? 'bg-background-tertiary text-foreground-primary'
+                                            : 'text-foreground-muted hover:text-foreground-primary hover:bg-background-hover',
+                                        'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold transition-colors'
                                     )}
                                 >
                                     {({isActive}) => (
                                         <>
                                             <item.icon
                                                 className={classNames(
-                                                    isActive ? 'text-slate-700' : 'text-slate-400 group-hover:text-slate-700',
-                                                    'h-6 w-6 shrink-0'
+                                                    isActive ? 'text-foreground-primary' : 'text-foreground-muted group-hover:text-foreground-primary',
+                                                    'h-6 w-6 shrink-0 transition-colors'
                                                 )}
                                                 aria-hidden="true"
                                             />

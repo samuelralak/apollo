@@ -83,10 +83,23 @@ src/
 │           │   ├── NotificationsSettingsPage.tsx
 │           │   ├── SecuritySettingsPage.tsx
 │           │   ├── TranslationSettingsPage.tsx
+│           │   ├── AppearanceSettingsPage.tsx
 │           │   └── index.ts
 │           └── index.ts
 │
 ├── shared/                       # Truly shared code
+│   ├── theme/                    # Centralized theme system
+│   │   ├── index.ts
+│   │   ├── types.ts
+│   │   ├── tokens/
+│   │   │   ├── colors.ts
+│   │   │   └── index.ts
+│   │   ├── css/
+│   │   │   └── variables.css
+│   │   ├── hooks/
+│   │   │   └── useTheme.ts
+│   │   └── components/
+│   │       └── ThemeProvider.tsx
 │   ├── types/                    # Shared types used across domains
 │   │   ├── user.types.ts         # User, BaseResource
 │   │   └── category.types.ts     # Category, Guideline
@@ -604,6 +617,93 @@ export {
     type QuestionState
 } from './question.slice';
 ```
+
+---
+
+## Theme System
+
+Apollo includes a centralized theme system that supports light and dark modes with system preference detection.
+
+### Directory Structure
+
+```
+src/shared/theme/
+├── index.ts              # Main exports
+├── types.ts              # Theme type definitions
+├── tokens/
+│   ├── colors.ts         # Color token definitions (TypeScript reference)
+│   └── index.ts          # Token exports
+├── css/
+│   └── variables.css     # CSS custom properties + Tailwind @theme
+├── hooks/
+│   └── useTheme.ts       # Theme context hook
+└── components/
+    └── ThemeProvider.tsx # Theme context provider
+```
+
+### Using the Theme
+
+#### In Components
+
+Use semantic Tailwind classes that reference theme tokens:
+
+```tsx
+// Background colors
+<div className="bg-background-primary">      // Main page background
+<div className="bg-background-secondary">    // Subtle background
+<div className="bg-background-tertiary">     // Card/panel backgrounds
+<div className="bg-background-hover">        // Hover states
+
+// Text colors
+<p className="text-foreground-primary">      // Primary text
+<p className="text-foreground-secondary">    // Secondary text
+<p className="text-foreground-muted">        // Muted/subtle text
+
+// Border colors
+<div className="border-border-default">      // Default borders
+<div className="border-border-strong">       // Emphasized borders
+
+// Brand colors
+<button className="bg-primary">              // Primary actions
+<button className="bg-primary-hover">        // Hover state
+<div className="bg-primary-bg">              // Light primary background
+```
+
+#### Theme Toggle
+
+```tsx
+import { useTheme } from '../shared/theme';
+
+function ThemeToggle() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  return (
+    <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="system">System</option>
+    </select>
+  );
+}
+```
+
+### Available Color Tokens
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|------------|-----------|-------|
+| `background-primary` | `#ffffff` | `#0f172a` | Page background |
+| `background-secondary` | `#f8fafc` | `#1e293b` | Subtle backgrounds |
+| `background-tertiary` | `#f1f5f9` | `#334155` | Cards, panels |
+| `foreground-primary` | `#0f172a` | `#f8fafc` | Primary text |
+| `foreground-secondary` | `#475569` | `#cbd5e1` | Secondary text |
+| `foreground-muted` | `#64748b` | `#94a3b8` | Muted text |
+| `border-default` | `#e2e8f0` | `#334155` | Default borders |
+| `primary` | `#0d9488` (teal-600) | `#14b8a6` (teal-500) | Brand/actions |
+| `primary-hover` | `#0f766e` (teal-700) | `#2dd4bf` (teal-400) | Hover state |
+
+### Settings
+
+Users can configure their theme preference at `/settings/appearance`. The preference is persisted to localStorage and respects system preference when set to "System".
 
 ---
 
