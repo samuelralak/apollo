@@ -1,5 +1,6 @@
 import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
-import {createContext, ReactNode, useEffect, useRef, useState, useCallback} from "react";
+import {createContext, ReactNode, useRef, useState, useCallback} from "react";
+import {useMountEffect, useUnmountEffect} from "@react-hookz/web";
 import Loader from "../../shared/components/feedback/Loader";
 import {useSelector, useDispatch} from "react-redux";
 import {RootState, AppDispatch} from "../../app/store";
@@ -10,122 +11,116 @@ import {decodeNsec} from "../../utils";
 import {SubscriptionManager} from "../subscriptions";
 
 export interface NDKContext {
-    signer: () => NDKSigner | null,
-    ndkConnected: boolean,
-    ndkInstance: () => NDK,
-    setNDKSigner: (signer?: NDKSigner) => void,
-    removeNDKSigner: () => void,
-    buildEvent: (kind: number, content: string, tags?: string[][]) => NDKEvent
-    publishEvent: (kind: number, content: string, tags?: string[][]) => Promise<string>
+    signer: () => NDKSigner | null;
+    ndkConnected: boolean;
+    ndkInstance: () => NDK;
+    setNDKSigner: (signer?: NDKSigner) => void;
+    removeNDKSigner: () => void;
+    buildEvent: (kind: number, content: string, tags?: string[][]) => NDKEvent;
+    publishEvent: (kind: number, content: string, tags?: string[][]) => Promise<string>;
 }
-
-const relays = [...constants.explicitRelays]
 
 export const NDKContext = createContext<NDKContext | null>(null)
 
 const NDKProvider = ({children}: { children: ReactNode }) => {
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch<AppDispatch>()
-    const ndk = useRef<NDK | undefined>(undefined)
-    const currentSignerRef = useRef<NDKSigner | null>(null)
-    const [ndkConnected, setNDKConnected] = useState<boolean>(false)
+    const ndkRef = useRef<NDK | undefined>(undefined)
+    const signerRef = useRef<NDKSigner | null>(null)
+    const [ndkConnected, setNDKConnected] = useState(false)
+
+    const ndkInstance = (): NDK => ndkRef.current!
+    const signer = (): NDKSigner | null => signerRef.current
 
     const connectNDK = async () => {
         try {
-            ndk.current = new NDK({explicitRelayUrls: relays});
-            await ndk.current.connect(5000)
-
-            // Wait a bit for relays to establish connections, then check if any connected
+            ndkRef.current = new NDK({ explicitRelayUrls: constants.explicitRelays })
+            await ndkRef.current.connect(5000)
             await new Promise(resolve => setTimeout(resolve, 1000))
 
-            const connectedRelays = Array.from(ndk.current.pool.relays.values())
-                .filter(relay => relay.connectivity.status === 1)
+            const connected = Array.from(ndkRef.current.pool.relays.values())
+                .filter(r => r.connectivity.status === 1)
 
-            if (connectedRelays.length > 0) {
-                console.log(`Connected to ${connectedRelays.length} relay(s)`)
-            } else {
-                console.warn('No relays connected, but proceeding anyway')
+            if (connected.length === 0) {
+                console.warn('No relays connected, proceeding anyway')
             }
 
-            // Initialize SubscriptionManager after NDK connects
-            const subscriptionManager = SubscriptionManager.getInstance();
-            subscriptionManager.initialize(ndk.current, dispatch);
-            console.log('SubscriptionManager initialized');
-
+            SubscriptionManager.getInstance().initialize(ndkRef.current, dispatch)
             setNDKConnected(true)
         } catch (error) {
             console.error('NDK connection error:', error)
-            setNDKConnected(true) // Allow app to load even on error
+            setNDKConnected(true)
         }
     }
 
-    const buildEvent = (kind: number, content: string, tags?: string[][]): NDKEvent => {
-        const ndkEvent = new NDKEvent(ndk.current)
-        ndkEvent.kind = kind
-        ndkEvent.content = content
-        ndkEvent.tags = tags ?? []
-
-        return ndkEvent
+    const buildEvent = (kind: number, content: string, tags: string[][] = []): NDKEvent => {
+        const event = new NDKEvent(ndkRef.current)
+        event.kind = kind
+        event.content = content
+        event.tags = tags
+        return event
     }
 
-    const publishEvent = async (kind: number, content: string, tags?: string[][]) => {
-        if (!ndkInstance().signer) {
-            setNDKSigner()
+    const publishEvent = async (kind: number, content: string, tags: string[][] = []): Promise<string> => {
+        if (!ndkInstance().signer) setNDKSigner()
+
+        const currentSigner = ndkInstance().signer
+        if (!currentSigner) {
+            throw new Error('No signer available. Please log in again.')
         }
-        const ndkEvent = new NDKEvent(ndk.current)
-        ndkEvent.kind = kind
-        ndkEvent.content = content
-        ndkEvent.tags = tags ?? []
 
-        await ndkEvent.publish()
-        return ndkEvent.id
+        // Wait for NIP-07 extension to be ready
+        if ('blockUntilReady' in currentSigner) {
+            await (currentSigner as NDKNip07Signer).blockUntilReady()
+        }
+
+        const event = buildEvent(kind, content, tags)
+        await event.publish()
+        return event.id
     }
 
-    // Helper function to create signer based on auth method - single source of truth
+    // Create signer based on auth method with NIP-07 fallback
     const createSigner = useCallback((): NDKSigner | null => {
-        if (auth.signerMethod === SignerMethod.NIP07) {
-            return new NDKNip07Signer(3000)
+        if (auth.signerMethod === SignerMethod.PRIVATE_KEY) {
+            const stored = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec?: string; privkey?: string } | null
+            const key = stored?.nsec ? decodeNsec(stored.nsec as `nsec1${string}`) : stored?.privkey
+
+            if (key) return new NDKPrivateKeySigner(key as string)
+
+            // Clear stale encrypted data if decryption failed
+            const rawKey = `@secure.j.${constants.secureStorageKey}`
+            if (localStorage.getItem(rawKey)) {
+                console.warn('Private key decryption failed. Clearing stale data.')
+                localStorage.removeItem(rawKey)
+            }
         }
 
-        if (auth.signerMethod === SignerMethod.PRIVATE_KEY) {
-            const {nsec} = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec: string }
-            const decodedKey = decodeNsec(nsec as `nsec1${string}`)
-            return new NDKPrivateKeySigner(decodedKey as unknown as string)
+        // NIP-07 extension as primary or fallback
+        if (auth.signerMethod === SignerMethod.NIP07 || window.nostr) {
+            return new NDKNip07Signer(3000)
         }
 
         return null
     }, [auth.signerMethod])
 
-    // Returns cached signer instance
-    const signer = (): NDKSigner | null => currentSignerRef.current
-
-    const ndkInstance = (): NDK => ndk.current!
-
-    // Set or clear the NDK signer - non-recursive, clear logic
     const setNDKSigner = useCallback((signerInstance?: NDKSigner) => {
-        // Use provided signer or create one based on auth method
-        const signerToSet = signerInstance ?? createSigner()
-
-        // Update NDK and cache
-        ndk.current!.signer = signerToSet ?? undefined
-        currentSignerRef.current = signerToSet
+        const newSigner = signerInstance ?? createSigner()
+        ndkRef.current!.signer = newSigner ?? undefined
+        signerRef.current = newSigner
     }, [createSigner])
 
     const removeNDKSigner = useCallback(() => {
-        ndk.current!.signer = undefined
-        currentSignerRef.current = null
+        ndkRef.current!.signer = undefined
+        signerRef.current = null
     }, [])
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial connection to external NDK service
+    useMountEffect(() => {
         connectNDK().catch(console.error)
+    })
 
-        // Cleanup on unmount
-        return () => {
-            const subscriptionManager = SubscriptionManager.getInstance();
-            subscriptionManager.destroy();
-        }
-    }, [])
+    useUnmountEffect(() => {
+        SubscriptionManager.getInstance().destroy()
+    })
 
     if (!ndkConnected) {
         return <Loader loadingText={'Connecting'}/>

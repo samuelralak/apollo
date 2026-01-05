@@ -3,59 +3,39 @@ import { VoteType } from "../types/vote.types";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 interface VoteData {
-    data: {
-        // key is user's pubkey
-        [key: string]: Vote
-    };
-    total: number;
-    downVotes: number;
-    upVotes: number;
+    data: Record<string, Vote>;  // key is user's pubkey
+    total: number;               // Net score: upVotes - downVotes
 }
 
 interface VoteState {
-    // key is eventId of event being voted
-    [key: string]: VoteData
+    [key: string]: VoteData      // key is resource identifier
 }
 
 const initialState: VoteState = {}
 
-const calculateVotes = (votePayload: Vote, existingVote: VoteData, value: number) => {
-    existingVote.downVotes += votePayload.vote === VoteType.DOWNVOTE ? value : 0;
-    existingVote.upVotes += votePayload.vote === VoteType.UPVOTE ? value : 0;
-    existingVote.data[votePayload.pubkey] = votePayload;
-}
+// Convert vote type to numeric value: upvote = +1, downvote = -1
+const voteValue = (type: VoteType): number => type === VoteType.UPVOTE ? 1 : -1;
 
 const voteSlice = createSlice({
     name: 'vote',
     initialState,
     reducers: {
-        updateVote: (state, {payload}: PayloadAction<Vote>) => {
-            const existingVote = state[payload.resourceId]
+        updateVote: (state, { payload }: PayloadAction<Vote>) => {
+            const { resourceId, pubkey, vote } = payload;
+            const newValue = voteValue(vote);
 
-            if (!existingVote) {
-                state[payload.resourceId] = {
-                    total: 1,
-                    downVotes: payload.vote === VoteType.DOWNVOTE ? 1 : 0,
-                    upVotes: payload.vote === VoteType.UPVOTE ? 1 : 0,
-                    data: {
-                        [payload.pubkey]: payload
-                    }
-                }
-            } else {
-                const userVote = existingVote.data[payload.pubkey]
-                if (!userVote) {
-                    existingVote.total += 1;
-                    calculateVotes(payload, existingVote, 1);
-                    state[payload.resourceId] = existingVote
-                } else {
-                    if (userVote.vote !== payload.vote) {
-                        calculateVotes(payload, existingVote, -1);
-                        calculateVotes(payload, existingVote, 1);
-                        existingVote.total = existingVote.upVotes + existingVote.downVotes
-                        state[payload.resourceId] = existingVote
-                    }
-                }
+            // Initialize resource if first vote
+            if (!state[resourceId]) {
+                state[resourceId] = { data: {}, total: 0 };
             }
+
+            const resource = state[resourceId];
+            const oldVote = resource.data[pubkey];
+            const oldValue = oldVote ? voteValue(oldVote.vote) : 0;
+
+            // Apply delta: new - old (handles new votes, changes, and same votes)
+            resource.total += newValue - oldValue;
+            resource.data[pubkey] = payload;
         }
     }
 })

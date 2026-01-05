@@ -10,6 +10,7 @@ import EventOwner from "../../user/components/EventOwner";
 import constants from "../../../constants";
 import {AppDispatch, RootState} from "../../../app/store";
 import {PortalID, showPortal} from "../../../shared/store/portal.slice";
+import useQuestionStats from "../hooks/useQuestionStats";
 
 interface QuestionListItemBProps {
     question: Question;
@@ -28,6 +29,9 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
     const vote = useSelector((state: RootState) => state.vote[question.id]);
     const answer = useSelector((state: RootState) => state.answer[question.id]);
     const dispatch = useDispatch() as AppDispatch;
+
+    // Subscribe to vote and answer stats for this question
+    useQuestionStats(question);
 
     const hasAcceptedAnswer = !!question.acceptedAnswerId;
     const voteCount = vote?.total ?? 0;
@@ -131,7 +135,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                                 <MenuItem>
                                     <a
                                         onClick={() => handleShowModal(PortalID.share)}
-                                        className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700 cursor-pointer"
+                                        className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700 cursor-pointer"
                                     >
                                         Share
                                     </a>
@@ -141,7 +145,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                                         <MenuItem>
                                             <a
                                                 onClick={() => handleShowModal(PortalID.zap)}
-                                                className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700 cursor-pointer"
+                                                className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700 cursor-pointer"
                                             >
                                                 Zap
                                             </a>
@@ -150,7 +154,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                                             <MenuItem>
                                                 <Link
                                                     to={`/questions/${question.id}/edit`}
-                                                    className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700"
+                                                    className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700"
                                                 >
                                                     Edit
                                                 </Link>

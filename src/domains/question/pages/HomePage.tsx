@@ -37,6 +37,12 @@ const HomePage = () => {
         kinds: [constants.questionKind]
     }), []);
 
+    // Memoize questions array to prevent re-renders
+    const sortedQuestions = useMemo(() =>
+        Object.values(questions.data).sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)),
+        [questions.data]
+    );
+
     // Subscribe with IMMEDIATE mode during initial load, BUFFERED after
     useNDKSubscription(
         filters,
@@ -53,7 +59,7 @@ const HomePage = () => {
         return <Loader />;
     }
 
-    if (Object.entries(questions.data).length === 0) {
+    if (sortedQuestions.length === 0) {
         return <EmptyState />;
     }
 
@@ -66,7 +72,7 @@ const HomePage = () => {
                 onLoadCallback={handleQuestionEvent}
             />
 
-            <QuestionsList questions={[...Object.values(questions.data)]} />
+            <QuestionsList questions={sortedQuestions} />
         </div>
     );
 };

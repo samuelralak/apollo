@@ -20,9 +20,15 @@ const AnswersContainer = ({question}: { question: Question }) => {
     const questionAnswers = useSelector((state: RootState) => state.answer)[question.id];
     const [publishingAnswer, setPublishingAnswer] = useState<boolean>(false)
     const dispatch = useDispatch() as AppDispatch
-    const answers = Object.values(questionAnswers?.data ?? {})
-    const myAnswer = questionAnswers?.data[pubkey ?? '']
-    const otherAnswers = answers.filter(a => a.user.pubkey !== pubkey)
+    const { answers, myAnswer, otherAnswers } = useMemo(() => {
+        const data = questionAnswers?.data ?? {};
+        const all = Object.values(data);
+        return {
+            answers: all,
+            myAnswer: data[pubkey ?? ''],
+            otherAnswers: all.filter(a => a.user.pubkey !== pubkey)
+        };
+    }, [questionAnswers?.data, pubkey])
 
     const handleAnswerEvent = useCallback((event: NDKEvent) => {
         const answer = answerTransformer(event)

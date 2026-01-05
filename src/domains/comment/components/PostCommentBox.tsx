@@ -1,7 +1,8 @@
 import type {Question} from "../../question/types/question.types";
 import type {Answer} from "../../answer/types/answer.types";
 import {NDKKind} from "@nostr-dev-kit/ndk";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
+import {useUpdateEffect} from "@react-hookz/web";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import {FieldError, SubmitHandler, useForm} from "react-hook-form";
 import {z} from "zod";
@@ -61,11 +62,8 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
         resetField('comment')
     }
 
-    useEffect(() => {
-        (() => {
-            const currentFieldState = getFieldState('comment')
-            setFieldState(currentFieldState)
-        })()
+    useUpdateEffect(() => {
+        setFieldState(getFieldState('comment'))
     }, [watchComment]);
 
     return (

@@ -1,7 +1,7 @@
 import {useParams} from "react-router";
-import {useContext, useEffect, useState} from "react";
+import {useContext} from "react";
+import {useAsyncAbortable, useMountEffect} from "@react-hookz/web";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import Loader from "../../../shared/components/feedback/Loader";
 import {classNames} from "../../../utils";
 import BannerPlaceholder from '../../../assets/banner-placeholder.png'
@@ -21,17 +21,17 @@ const tabs: Tab[] = [
 const ProfilePage = () => {
     const {pubkey} = useParams()
     const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const [profile, setUserProfile] = useState<NDKUserProfile>()
-    const [fetchingProfile, setFetchingProfile] = useState<boolean>(true)
 
-    useEffect(() => {
-        (async () => {
-            const user = ndkInstance().getUser({pubkey})
-            await user.fetchProfile()
-            setUserProfile(user.profile)
-            setFetchingProfile(false)
-        })()
-    }, []);
+    const [state, actions] = useAsyncAbortable(async (_signal, key: string) => {
+        const user = ndkInstance().getUser({pubkey: key})
+        await user.fetchProfile()
+        return user.profile
+    })
+
+    useMountEffect(() => { actions.execute(pubkey!) })
+
+    const profile = state.result
+    const fetchingProfile = state.status === 'loading' || state.status === 'not-executed';
 
 
     if (fetchingProfile) {

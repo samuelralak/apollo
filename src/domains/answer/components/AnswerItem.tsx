@@ -1,3 +1,4 @@
+import {memo} from "react";
 import type {Answer} from "../types/answer.types";
 import Votes from "../../vote/components/Votes";
 import constants from "../../../constants";
@@ -15,11 +16,13 @@ import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/react";
 import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
 
-const AnswerItem = ({answer, question, editAction}: {
-    answer: Answer,
-    question: Question,
-    editAction?: () => void
-}) => {
+interface AnswerItemProps {
+    answer: Answer;
+    question: Question;
+    editAction?: () => void;
+}
+
+const AnswerItem = memo(({answer, question, editAction}: AnswerItemProps) => {
     const auth = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch() as AppDispatch
     const isAccepted = question?.acceptedAnswerId === answer.id
@@ -141,7 +144,9 @@ const AnswerItem = ({answer, question, editAction}: {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+});
 
-export default AnswerItem
+AnswerItem.displayName = 'AnswerItem';
+
+export default AnswerItem;

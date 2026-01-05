@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, type ReactNode } from 'react';
+import { useState, useCallback, type ReactNode } from 'react';
+import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import { ThemeContext } from '../hooks/useTheme';
 import type { Theme, ResolvedTheme } from '../types';
 import { THEME_STORAGE_KEY } from '../types';
@@ -8,52 +9,40 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
+const getSystemTheme = (): ResolvedTheme =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-function getStoredTheme(): Theme | null {
+const getStoredTheme = (): Theme | null => {
   if (typeof window === 'undefined') return null;
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark' || stored === 'system') {
-    return stored;
-  }
-  return null;
-}
+  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : null;
+};
 
-function resolveTheme(theme: Theme): ResolvedTheme {
-  return theme === 'system' ? getSystemTheme() : theme;
-}
+const resolveTheme = (theme: Theme): ResolvedTheme =>
+  theme === 'system' ? getSystemTheme() : theme;
 
-function applyThemeToDOM(resolved: ResolvedTheme) {
-  const root = document.documentElement;
-
-  if (resolved === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-}
+const applyThemeToDOM = (resolved: ResolvedTheme) => {
+  document.documentElement.classList.toggle('dark', resolved === 'dark');
+};
 
 export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    return getStoredTheme() ?? defaultTheme;
-  });
+  const [theme, setThemeState] = useState<Theme>(() => getStoredTheme() ?? defaultTheme);
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolveTheme(getStoredTheme() ?? defaultTheme));
 
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => {
-    return resolveTheme(getStoredTheme() ?? defaultTheme);
+  // Apply theme on initial mount
+  useMountEffect(() => {
+    applyThemeToDOM(resolveTheme(theme));
   });
 
   // Update resolved theme and DOM when theme changes
-  useEffect(() => {
+  useUpdateEffect(() => {
     const resolved = resolveTheme(theme);
     setResolvedTheme(resolved);
     applyThemeToDOM(resolved);
   }, [theme]);
 
   // Listen for system theme changes when in 'system' mode
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (theme !== 'system') return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -66,12 +55,6 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
-
-  // Apply theme on initial mount
-  useEffect(() => {
-    const resolved = resolveTheme(theme);
-    applyThemeToDOM(resolved);
-  }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {
     // Update state

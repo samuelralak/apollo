@@ -1,22 +1,22 @@
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
-import {useContext, useEffect, useState} from "react";
+import {useContext} from "react";
+import {useAsyncAbortable, useMountEffect, useUpdateEffect} from "@react-hookz/web";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import {classNames} from "../../../utils";
 import {Link} from "react-router";
 
 const EventOwner = ({pubkey, mini, hideAvatar, inline}: { pubkey: string, mini?: boolean, hideAvatar?: boolean, inline?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const [userProfile, setUserEvent] = useState<NDKUserProfile | null>()
 
-    useEffect(() => {
-        (async () => {
-            const userEvent = await ndkInstance().fetchEvent({kinds: [0], authors: [pubkey]})
+    const [state, actions] = useAsyncAbortable(async (_signal, key: string) => {
+        const event = await ndkInstance().fetchEvent({kinds: [0], authors: [key]})
+        return event ? JSON.parse(event.content) as NDKUserProfile : null
+    })
 
-            if (userEvent) {
-                setUserEvent(JSON.parse(userEvent.content))
-            }
-        })()
-    }, [pubkey]);
+    useMountEffect(() => { actions.execute(pubkey) })
+    useUpdateEffect(() => { actions.execute(pubkey) }, [pubkey])
+
+    const userProfile = state.result;
 
     return (
         <Link to={`/user/${pubkey}`} className={classNames(inline ? 'inline' : 'block', 'group flex-shrink-0')}>
