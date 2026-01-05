@@ -4,7 +4,7 @@ import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import {classNames} from "../../../utils";
 import {Link} from "react-router";
 
-const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean, hideAvatar?: boolean }) => {
+const EventOwner = ({pubkey, mini, hideAvatar, inline}: { pubkey: string, mini?: boolean, hideAvatar?: boolean, inline?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
     const [userProfile, setUserEvent] = useState<NDKUserProfile | null>()
 
@@ -19,8 +19,8 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
     }, [pubkey]);
 
     return (
-        <Link to={`/user/${pubkey}`} className="group block flex-shrink-0">
-            <div className="flex items-center space-x-3">
+        <Link to={`/user/${pubkey}`} className={classNames(inline ? 'inline' : 'block', 'group flex-shrink-0')}>
+            <span className={classNames(inline ? 'inline-flex' : 'flex', 'items-center space-x-3')}>
                 {!hideAvatar && (
                     <div>
                         {userProfile?.image || userProfile?.picture ? (
@@ -53,7 +53,7 @@ const EventOwner = ({pubkey, mini, hideAvatar}: { pubkey: string, mini?: boolean
                         </p>
                     )}
                 </div>
-            </div>
+            </span>
         </Link>
     )
 }

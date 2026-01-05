@@ -97,73 +97,48 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
     }
 
     return (
-        <>
-            <div>
-                <div className="mb-5">
-                    <div className="mt-5 w-full">
-                        <MDEditor
-                            value={answerDescription}
-                            onChange={onEditorChange}
-                            commandsFilter={commandsFilter}
-                            preview={'edit'}
-                            className="prose prose-slate dark:prose-invert max-w-none"
-                        />
-                    </div>
-                    {errors.description && (
-                        <p className="mt-2 text-sm text-red-500" id="email-error">
-                            {errors.description.message as ReactNode}
-                        </p>
-                    )}
-                </div>
+        <div className="mt-4">
+            <div className="w-full">
+                <MDEditor
+                    value={answerDescription}
+                    onChange={onEditorChange}
+                    commandsFilter={commandsFilter}
+                    preview={'edit'}
+                    className="prose prose-slate dark:prose-invert max-w-none"
+                />
+            </div>
+            {errors.description && (
+                <p className="mt-2 text-sm text-red-500">
+                    {errors.description.message as ReactNode}
+                </p>
+            )}
 
-                <div className="flex gap-x-6">
+            <div className="flex items-center gap-4 mt-4">
+                <button
+                    type="submit"
+                    disabled={publishing}
+                    onClick={handleSubmit(onAnswerSubmit)}
+                    className="rounded-md bg-teal-600 dark:bg-teal-500 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-400 dark:disabled:bg-slate-600 hover:bg-teal-700 dark:hover:bg-teal-400 transition-colors"
+                >
+                    {publishing ? 'Publishing...' : 'Post your answer'}
+                </button>
+
+                {editing && (
                     <button
-                        type="submit"
                         disabled={publishing}
-                        onClick={handleSubmit(onAnswerSubmit)}
-                        className="rounded-lg bg-teal-600 dark:bg-teal-500 px-3 py-3.5 text-sm font-semibold text-white disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:text-slate-300 hover:bg-teal-700 dark:hover:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-colors"
+                        onClick={onEditAction}
+                        type="button"
+                        className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                     >
-                        {publishing ? 'Publishing...' : 'Publish your answer'}
+                        Cancel
                     </button>
-
-                    {editing && (
-                        <button disabled={publishing}
-                                onClick={onEditAction}
-                                type="button"
-                                className="text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100 disabled:text-slate-300 dark:disabled:text-slate-600 text-center"
-                        >
-                            Cancel
-                        </button>
-                    )}
-                </div>
-
+                )}
             </div>
 
-
-            <div className="rounded-lg bg-teal-50 dark:bg-teal-900/30 p-4 border-2 border-teal-100 dark:border-teal-800 mt-5 text-slate-700 dark:text-slate-300">
-                <div className="ml-3 flex flex-col gap-y-2">
-                    <p className="text-sm">
-                        Thanks for contributing an answer to our Q&A! Your insights are valuable.
-                    </p>
-
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">When answering:</p>
-
-                    <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
-                        <li>Ensure you address the question directly.</li>
-                        <li>Include details, explanations, and if possible, references.</li>
-                        <li>Embrace our diverse topics - from technical to personal experiences.</li>
-                    </ul>
-
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">Avoid:</p>
-
-                    <ul className="list-disc text-sm pl-8 flex flex-col gap-y-1">
-                        <li>Requesting clarification or additional information.</li>
-                        <li>Baseless opinions. Prefer facts or shared experiences.</li>
-                        <li>Responding to other answers unless providing additional information.</li>
-                    </ul>
-                </div>
-            </div>
-        </>
+            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+                Be specific and include details. Avoid asking for clarification in answers.
+            </p>
+        </div>
     )
 }
 

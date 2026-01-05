@@ -1,59 +1,35 @@
 import type {Question} from "../types/question.types";
-import {Link} from "react-router";
 import {memo} from "react";
-import {formatDateTime, markdownToText} from "../../../utils";
-import EventOwner from "../../user/components/EventOwner";
-import QuestionStats from "./QuestionStats";
-import ActionItems from "../../../shared/components/ActionItems";
+import QuestionListItemB from "./QuestionListItemB";
 
-const QuestionsList = memo(({questions}: { questions: Question[] }) => {
+interface QuestionsListProps {
+    questions: Question[];
+}
+
+const QuestionsList = memo(({questions}: QuestionsListProps) => {
     return (
-        <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-700 gap-y-3.5">
-            {questions.map((question) => (
-                <div className="flex flex-col sm:flex-row gap-x-6 pt-3.5 w-full flex-nowrap" key={question.eventId}>
-                    <QuestionStats/>
+        <div>
+            {/* Header - minimal, no border */}
+            <div className="mb-2">
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                    {questions.length} {questions.length === 1 ? 'Question' : 'Questions'}
+                </span>
+            </div>
 
-                    <div className="flex flex-1 flex-col w-full gap-y-2.5">
-                        <div className="w-full overflow-hidden">
-                            <Link to={`/questions/${question.id}`} className="text-lg font-extrabold text-slate-700 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
-                                {question.title}
-                            </Link>
-
-                            <div className="flex gap-x-2 mt-1 mb-3 max-w-64 sm:max-w-full flex-wrap gap-y-2">
-                                {question.tags && question.tags.map((tag, index) => (
-                                    <span
-                                        key={`${question.id}-${tag}-${index} `}
-                                        className="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 min-w-max"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-
-                            <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-400 w-full font-medium">
-                                {markdownToText(question.description)}
-                            </p>
-                        </div>
-
-
-                        <div className="flex flex-row align-top justify-between items-center">
-                            <div className="flex flex-row items-center gap-x-2">
-                                <EventOwner pubkey={question.user.pubkey} mini={true}/>
-                                <span className="text-sm font-medium text-slate-500 dark:text-slate-400 align-top">
-                                    asked {formatDateTime(question.createdAt)}
-                                </span>
-                            </div>
-
-                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
-                        </div>
-                    </div>
-                </div>
-            ))}
+            {/* Questions list */}
+            <ul className="flex flex-col divide-y divide-slate-100 dark:divide-slate-800">
+                {questions.map((question) => (
+                    <QuestionListItemB
+                        key={question.eventId}
+                        question={question}
+                        showPreview={true}
+                    />
+                ))}
+            </ul>
         </div>
+    );
+});
 
-    )
-})
+QuestionsList.displayName = 'QuestionsList';
 
-QuestionsList.displayName = 'QuestionList'
-
-export default QuestionsList
+export default QuestionsList;

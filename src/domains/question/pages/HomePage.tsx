@@ -29,7 +29,7 @@ const HomePage = () => {
     }
 
     return (
-        <div className="mx-auto max-w-3xl">
+        <div className="max-w-3xl">
             <QuestionsList questions={[...Object.values(questions.data)]}/>
         </div>
     )

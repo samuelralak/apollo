@@ -1,6 +1,6 @@
 import type {Question} from "../../question/types/question.types";
 import YourAnswer from "./YourAnswer";
-import {Fragment, useState} from "react";
+import {useState} from "react";
 import {NDKFilter} from "@nostr-dev-kit/ndk";
 import {answerTransformer} from "../services/answer.transformer";
 import constants from "../../../constants";
@@ -20,6 +20,8 @@ const AnswersContainer = ({question}: { question: Question }) => {
     const [publishingAnswer, setPublishingAnswer] = useState<boolean>(false)
     const dispatch = useDispatch() as AppDispatch
     const answers = Object.values(questionAnswers?.data ?? {})
+    const myAnswer = questionAnswers?.data[pubkey ?? '']
+    const otherAnswers = answers.filter(a => a.user.pubkey !== pubkey)
 
     useNDKSubscription(answerFilters, {closeOnEose: false}, (event) => {
         const answer = answerTransformer(event)
@@ -27,39 +29,38 @@ const AnswersContainer = ({question}: { question: Question }) => {
     })
 
     return (
-        <>
-            {answers.length >= 0 && !questionAnswers?.data[pubkey ?? ''] && (
-                <div className="mb-5">
-                    <h1 className="text-lg font-bold text-slate-700 dark:text-slate-200">{answers.length ?? 0} Answers</h1>
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+            {/* Answers header */}
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+                {answers.length} {answers.length === 1 ? 'Answer' : 'Answers'}
+            </h2>
 
-                    {answers.length === 0 ? (
-                        <div className="bg-slate-50 dark:bg-slate-800 rounded-lg w-full h-20 flex items-center justify-center mt-3">
-                            <p className="font-semibold text-lg text-slate-400 dark:text-slate-500 text-center">
-                                No answers? Your insights could be the missing piece!
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-700 gap-y-4">
-                            {answers.length > 0 && answers.map((answer) => (
-                                <Fragment key={answer.id}>
-                                    {answer.user.pubkey !== pubkey && (<AnswerItem question={question} answer={answer}/>)}
-                                </Fragment>
-                            ))}
-                        </div>
-                    )}
+            {/* Answers list */}
+            {answers.length === 0 ? (
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-4">
+                    No answers yet. Be the first to answer!
+                </p>
+            ) : (
+                <div className="divide-y divide-slate-200 dark:divide-slate-700">
+                    {otherAnswers.map((answer) => (
+                        <AnswerItem key={answer.id} question={question} answer={answer} />
+                    ))}
                 </div>
             )}
 
-            <div className="pt-5">
-                <h1 className="text-lg font-bold text-slate-700 dark:text-slate-200">Your Answer</h1>
+            {/* Your Answer section */}
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    Your Answer
+                </h2>
                 <YourAnswer
-                    answer={questionAnswers?.data[pubkey ?? '']}
+                    answer={myAnswer}
                     question={question}
                     publishing={publishingAnswer}
                     setPublishing={setPublishingAnswer}
                 />
             </div>
-        </>
+        </div>
     )
 }
 

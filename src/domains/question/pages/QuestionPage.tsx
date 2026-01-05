@@ -45,68 +45,83 @@ const QuestionPage = () => {
                 url={`/questions/${question?.id}`}
             />
 
-            <div className="mx-auto max-w-2xl">
-                <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{question?.title}</h1>
-                <div className="flex flex-row gap-x-2 mt-1">
-                    <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
-                        Asked {formatDateTime(question?.createdAt)}
-                    </p>
-                </div>
+            <div className="max-w-3xl">
+                {/* Header */}
+                <header className="mb-6">
+                    <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+                        {question?.title}
+                    </h1>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                        <span>Asked {formatDateTime(question?.createdAt)}</span>
+                        <span>·</span>
+                        <EventOwner pubkey={question.user?.pubkey} mini={true} />
+                    </div>
+                </header>
 
-                <div className="flex flex-row gap-x-2 mt-3.5">
-                    {question?.tags?.map((tag, index) => (
-                        <span
-                            key={`${tag}-${index}-${question?.id}`}
-                            className="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300"
-                        >
-                        {tag}
-                    </span>
-                    ))}
-                </div>
-                <div className="grid grid-cols-8 sm:grid-cols-12 gap-x-4 my-8">
-                    <div className="col-span-1 sm:col-span-1 gap-y-3">
-                        <Votes kind={constants.questionKind}
-                               eventId={question.eventId}
-                               pubkey={question.user.pubkey}
-                               identifier={question.id}
+                {/* Question body */}
+                <div className="flex gap-4">
+                    {/* Vote column */}
+                    <div className="shrink-0 hidden sm:block">
+                        <Votes
+                            kind={constants.questionKind}
+                            eventId={question.eventId}
+                            pubkey={question.user.pubkey}
+                            identifier={question.id}
                         />
                     </div>
 
-                    <div className="col-span-7 sm:col-span-11">
-                        <div className="question-detail prose prose-slate dark:prose-invert max-w-none">
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                        {/* Markdown content */}
+                        <div className="question-detail prose prose-slate dark:prose-invert max-w-none prose-sm sm:prose-base">
                             <MDEditor.Markdown
                                 source={question?.description ?? ''}
                                 style={{
                                     whiteSpace: 'pre-wrap',
-                                    fontFamily: 'Public Sans, sans-serif'
+                                    fontFamily: 'Mona Sans, sans-serif'
                                 }}
                                 className="!bg-transparent !text-slate-700 dark:!text-slate-300"
                             />
                         </div>
 
-
-                        <div className="flex flex-row py-3 align-middle justify-between mt-5 items-center">
-                            <div>
-                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 pb-1">
-                                <span
-                                    className="font-bold text-slate-700 dark:text-slate-300">asked</span> {formatDateTime(question?.createdAt)}
-                                </p>
-                                <EventOwner pubkey={question.user?.pubkey}/>
+                        {/* Tags */}
+                        {question?.tags && question.tags.length > 0 && (
+                            <div className="flex gap-1.5 mt-6 flex-wrap">
+                                {question.tags.map((tag, index) => (
+                                    <span
+                                        key={`${tag}-${index}-${question?.id}`}
+                                        className="inline-flex items-center rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
                             </div>
+                        )}
 
-
-                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey}/>
+                        {/* Footer: actions + mobile votes */}
+                        <div className="flex items-center gap-4 mt-6 text-xs font-medium text-slate-500 dark:text-slate-400">
+                            {/* Mobile votes */}
+                            <div className="sm:hidden">
+                                <Votes
+                                    kind={constants.questionKind}
+                                    eventId={question.eventId}
+                                    pubkey={question.user.pubkey}
+                                    identifier={question.id}
+                                />
+                            </div>
+                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey} />
                         </div>
 
+                        {/* Comments */}
                         <CommentsList resource={question} resourceKind={constants.questionKind} />
                         <PostCommentBox resource={question} resourceKind={constants.questionKind} />
                     </div>
                 </div>
 
-                <AnswersContainer question={question}/>
+                {/* Answers */}
+                <AnswersContainer question={question} />
             </div>
         </>
-
     )
 }
 

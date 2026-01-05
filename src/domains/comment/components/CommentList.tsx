@@ -29,37 +29,33 @@ const CommentsList = ({resource, resourceKind}: Props) => {
         "#a": [`${resourceKind}:${resource.user.pubkey}:${resource.id}`]
     }, {closeOnEose: false}, handleResourceEvent)
 
-    return (
-        <div className="w-full">
-            <ul role="list" className="divide-y divide-slate-200 dark:divide-slate-700 border-y border-slate-200 dark:border-slate-700 mt-3.5">
-                {comments && [...Object.values(comments.data)]?.map((comment) => (
-                    <li key={comment.id} className="flex gap-x-4 py-2">
-                        <div className="flex-auto w-full overflow-scroll">
-                            <div className="flex items-baseline justify-between space-x-4">
-                                <EventOwner pubkey={comment.pubkey} mini={true} hideAvatar={true} />
+    const commentList = comments ? Object.values(comments.data) : []
 
-                                <p className="flex-none text-xs text-slate-500 dark:text-slate-400">
-                                    <time
-                                        dateTime={new Date(comment.createdAt * 1000).toDateString()}
-                                    >
-                                        {formatDateTime(comment.createdAt)}
-                                    </time>
-                                </p>
-                            </div>
-                            <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 max-w-full text-wrap">{comment.content}</p>
-                        </div>
+    if (commentList.length === 0) {
+        return null
+    }
+
+    return (
+        <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <ul role="list" className="space-y-3">
+                {commentList.map((comment) => (
+                    <li key={comment.id} className="flex gap-3 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="w-0.5 shrink-0 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                        <p className="flex-1">
+                            <span className="text-slate-700 dark:text-slate-300">{comment.content}</span>
+                            {' – '}
+                            <EventOwner pubkey={comment.pubkey} mini={true} hideAvatar={true} inline={true} />
+                            <span className="text-xs text-slate-400 dark:text-slate-500">
+                                {' · '}
+                                <time dateTime={new Date(comment.createdAt * 1000).toISOString()}>
+                                    {formatDateTime(comment.createdAt)}
+                                </time>
+                            </span>
+                        </p>
                     </li>
                 ))}
             </ul>
-
-            {/*<button
-                className="w-full text-sm bg-slate-100 my-2.5 py-2.5 px-1.5 font-medium text-slate-600 rounded-md cursor-pointer hover:bg-slate-200">
-                <p>
-                    351 comments from Samuel Ralak and more
-                </p>
-            </button>*/}
         </div>
-
     )
 }
 
