@@ -1,11 +1,11 @@
 import {ArrowDownCircleIcon, ArrowUpCircleIcon} from "@heroicons/react/24/outline";
-import {useContext} from "react";
+import {useContext, useCallback, useMemo} from "react";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {NDKFilter, NDKKind} from "@nostr-dev-kit/ndk";
+import type {NDKFilter, NDKKind, NDKEvent} from "@nostr-dev-kit/ndk";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import constants from "../../../constants";
-import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubscription";
 import type {Vote} from "../types/vote.types";
 import {VoteType} from "../types/vote.types";
 import {voteTransformer} from "../services/vote.transformer";
@@ -30,7 +30,12 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
     horizontal?: boolean
 }) => {
     const aTag = `${kind}:${eventId}:${identifier}`
-    const voteFilters = {kinds: [constants.voteKind], "#a": [aTag], "#p": [pubkey]}
+    const voteFilters = useMemo(() => ({
+        kinds: [constants.voteKind],
+        "#a": [aTag],
+        "#p": [pubkey]
+    }), [aTag, pubkey]);
+
     const {publishEvent} = useContext(NDKContext) as NDKContext
     const auth = useSelector((state: RootState) => state.auth);
     const vote = useSelector((state: RootState) => state.vote)[identifier];
@@ -49,10 +54,21 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
         }
     }
 
-    useNDKSubscription(voteFilters as NDKFilter, {closeOnEose: false}, (event) => {
+    const handleVoteEvent = useCallback((event: NDKEvent) => {
         const vote = voteTransformer(event)
         dispatch(updateVote(vote))
-    })
+    }, [dispatch]);
+
+    useNDKSubscription(
+        voteFilters as NDKFilter,
+        handleVoteEvent,
+        undefined,
+        {
+            ndkOptions: { closeOnEose: false },
+            resourceType: ResourceType.VOTE,
+            context: { parentId: identifier }
+        }
+    );
 
     return (
         <div className={classNames(

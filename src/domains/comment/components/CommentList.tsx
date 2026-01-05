@@ -1,7 +1,8 @@
 import type {Question} from "../../question/types/question.types";
 import type {Answer} from "../../answer/types/answer.types";
-import {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
-import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import {useCallback, useMemo} from "react";
+import type {NDKEvent, NDKKind} from "@nostr-dev-kit/ndk";
+import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubscription";
 import constants from "../../../constants";
 import {commentTransformer} from "../services/comment.transformer"
 import {useDispatch, useSelector} from "react-redux";
@@ -19,15 +20,26 @@ const CommentsList = ({resource, resourceKind}: Props) => {
     const dispatch = useDispatch<AppDispatch>()
     const comments = useSelector((state: RootState) => state.comment)[resource.id ?? ""]
 
-    const handleResourceEvent = (event: NDKEvent) => {
+    const handleResourceEvent = useCallback((event: NDKEvent) => {
         const fromEvent = commentTransformer(event)
         dispatch(addComment({key: fromEvent.id, item: fromEvent}))
-    }
+    }, [dispatch]);
 
-    useNDKSubscription({
+    const filters = useMemo(() => ({
         kinds: [constants.noteKind],
         "#a": [`${resourceKind}:${resource.user.pubkey}:${resource.id}`]
-    }, {closeOnEose: false}, handleResourceEvent)
+    }), [resourceKind, resource.user.pubkey, resource.id]);
+
+    useNDKSubscription(
+        filters,
+        handleResourceEvent,
+        undefined,
+        {
+            ndkOptions: { closeOnEose: false },
+            resourceType: ResourceType.COMMENT,
+            context: { parentId: resource.id }
+        }
+    );
 
     const commentList = comments ? Object.values(comments.data) : []
 

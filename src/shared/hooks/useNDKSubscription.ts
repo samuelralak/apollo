@@ -1,47 +1,121 @@
-import {NDKEvent, NDKFilter, NDKSubscription, NDKSubscriptionOptions} from "@nostr-dev-kit/ndk";
-import {useContext, useEffect, useRef, useState} from "react";
-import {NDKContext} from "../../lib/ndk/NDKProvider";
+import type { NDKEvent, NDKFilter, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+    SubscriptionManager,
+    EventHandlingMode,
+    ResourceType,
+    hashFilter,
+    generateSubscriptionId,
+    type SubscriptionContext,
+    type SubscriptionHandle
+} from "../../lib/subscriptions";
 
-const EOSE_TIMEOUT_MS = 10000 // 10 seconds timeout for EOSE
-
-const useNDKSubscription = (filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, callbackFn?: (event: NDKEvent) => void, eoseFn?: () => void) => {
-    const {ndkInstance} = useContext(NDKContext) as NDKContext
-    const [ndkSubscription, setNDKSubscription] = useState<NDKSubscription | undefined>()
-    const eoseCalled = useRef(false)
-
-    useEffect(() => {
-        let timeoutId: ReturnType<typeof setTimeout>
-
-        const handleEose = () => {
-            if (!eoseCalled.current) {
-                eoseCalled.current = true
-                clearTimeout(timeoutId)
-                eoseFn?.()
-            }
-        }
-
-        (async () => {
-            const defaultOpts = {...{closeOnEose: true}, ...(opts ?? {})}
-            const subscription = ndkInstance().subscribe(filters, defaultOpts);
-            setNDKSubscription(subscription)
-
-            subscription.on('event', (event: NDKEvent) => callbackFn?.(event))
-            subscription.on('eose', handleEose)
-
-            // Fallback timeout in case EOSE never fires
-            timeoutId = setTimeout(() => {
-                if (!eoseCalled.current) {
-                    console.warn('EOSE timeout reached, proceeding anyway')
-                    handleEose()
-                }
-            }, EOSE_TIMEOUT_MS)
-        })()
-
-        return () => {
-            clearTimeout(timeoutId)
-            ndkSubscription?.stop()
-        }
-    }, []);
+interface UseNDKSubscriptionOptions {
+    /** NDK subscription options */
+    ndkOptions?: NDKSubscriptionOptions;
+    /** How to handle incoming events (default: IMMEDIATE) */
+    mode?: EventHandlingMode;
+    /** Resource type for proper routing */
+    resourceType?: ResourceType;
+    /** Context for scoped subscriptions (e.g., parentId for answers) */
+    context?: SubscriptionContext;
+    /** Whether the subscription is enabled (default: true) */
+    enabled?: boolean;
 }
 
-export default useNDKSubscription
+/**
+ * Hook for subscribing to Nostr events via the centralized SubscriptionManager.
+ *
+ * Features:
+ * - Automatic deduplication of identical filters
+ * - Proper cleanup on unmount
+ * - Stable callback references (no stale closures)
+ * - Support for IMMEDIATE and BUFFERED modes
+ *
+ * @param filters - NDK filter(s) to subscribe to
+ * @param onEvent - Callback when an event is received (for IMMEDIATE mode)
+ * @param onEose - Callback when EOSE is received
+ * @param options - Additional subscription options
+ */
+const useNDKSubscription = (
+    filters: NDKFilter | NDKFilter[],
+    onEvent?: (event: NDKEvent) => void,
+    onEose?: () => void,
+    options: UseNDKSubscriptionOptions = {}
+): void => {
+    const {
+        ndkOptions,
+        mode = EventHandlingMode.IMMEDIATE,
+        resourceType = ResourceType.QUESTION,
+        context,
+        enabled = true
+    } = options;
+
+    // Store callbacks in refs to avoid stale closures
+    const onEventRef = useRef(onEvent);
+    const onEoseRef = useRef(onEose);
+
+    // Keep refs updated
+    useEffect(() => {
+        onEventRef.current = onEvent;
+    }, [onEvent]);
+
+    useEffect(() => {
+        onEoseRef.current = onEose;
+    }, [onEose]);
+
+    // Stable callback wrappers
+    const handleEvent = useCallback((event: NDKEvent) => {
+        onEventRef.current?.(event);
+    }, []);
+
+    const handleEose = useCallback(() => {
+        onEoseRef.current?.();
+    }, []);
+
+    // Memoize filter hash to detect actual filter changes
+    const filterHash = useMemo(() => hashFilter(filters), [filters]);
+
+    // Generate stable subscription ID per component instance
+    // Using == null pattern for safe lazy initialization during render
+    const subscriptionIdRef = useRef<string | null>(null);
+    if (subscriptionIdRef.current == null) {
+        subscriptionIdRef.current = generateSubscriptionId('hook');
+    }
+
+    // Track subscription handle for cleanup
+    const handleRef = useRef<SubscriptionHandle | null>(null);
+
+    useEffect(() => {
+        const manager = SubscriptionManager.getInstance();
+
+        // Don't subscribe if disabled or manager not initialized
+        if (!enabled || !manager.isInitialized()) {
+            return;
+        }
+
+        // Subscribe through the manager
+        handleRef.current = manager.subscribe({
+            id: subscriptionIdRef.current!,
+            filters,
+            options: ndkOptions,
+            mode,
+            resourceType,
+            context,
+            onEvent: handleEvent,
+            onEose: handleEose
+        });
+
+        // Cleanup on unmount or when dependencies change
+        return () => {
+            handleRef.current?.unsubscribe();
+            handleRef.current = null;
+        };
+    }, [filterHash, enabled, mode, resourceType, context, ndkOptions, handleEvent, handleEose]);
+};
+
+export default useNDKSubscription;
+
+// Re-export types for convenience
+export { EventHandlingMode, ResourceType };
+export type { UseNDKSubscriptionOptions };

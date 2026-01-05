@@ -1,4 +1,5 @@
-import {NDKEvent} from "@nostr-dev-kit/ndk";
+import {useCallback, useMemo} from "react";
+import type {NDKEvent} from "@nostr-dev-kit/ndk";
 import {questionTransformer} from "../services/question.transformer";
 import {useParams} from "react-router";
 import {formatDateTime, markdownToText} from "../../../utils";
@@ -7,7 +8,7 @@ import Loader from "../../../shared/components/feedback/Loader";
 import EventOwner from "../../user/components/EventOwner";
 import AnswersContainer from "../../answer/components/AnswersContainer";
 import Votes from "../../vote/components/Votes";
-import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubscription";
 import constants from "../../../constants";
 import ActionItems from "../../../shared/components/ActionItems";
 import SEOContainer from "../../../shared/components/SEOContainer";
@@ -22,15 +23,25 @@ const QuestionPage = () => {
     const {questionId} = useParams()
     const question = useSelector((state: RootState) => state.question).data[questionId!]
 
-    const handleQuestionEvent = (event: NDKEvent) => {
+    const handleQuestionEvent = useCallback((event: NDKEvent) => {
         const questionFromEvent = questionTransformer(event)
         dispatch(addQuestion(questionFromEvent))
-    }
+    }, [dispatch]);
 
-    useNDKSubscription({
+    const filters = useMemo(() => ({
         kinds: [constants.questionKind],
         "#d": [questionId!]
-    }, {closeOnEose: false}, handleQuestionEvent)
+    }), [questionId]);
+
+    useNDKSubscription(
+        filters,
+        handleQuestionEvent,
+        undefined,
+        {
+            ndkOptions: { closeOnEose: false },
+            resourceType: ResourceType.QUESTION
+        }
+    );
 
     if (!question) {
         return <Loader loadingText={'Fetching question'}/>

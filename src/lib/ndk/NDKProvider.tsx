@@ -1,12 +1,13 @@
 import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
 import {createContext, ReactNode, useEffect, useRef, useState} from "react";
 import Loader from "../../shared/components/feedback/Loader";
-import {useSelector} from "react-redux";
-import {RootState} from "../../app/store";
+import {useSelector, useDispatch} from "react-redux";
+import {RootState, AppDispatch} from "../../app/store";
 import {SignerMethod} from "../../domains/auth/store/auth.slice";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../constants";
 import {decodeNsec} from "../../utils";
+import {SubscriptionManager} from "../subscriptions";
 
 export interface NDKContext {
     signer: () => NDKSigner | null,
@@ -24,6 +25,7 @@ export const NDKContext = createContext<NDKContext | null>(null)
 
 const NDKProvider = ({children}: { children: ReactNode }) => {
     const auth = useSelector((state: RootState) => state.auth)
+    const dispatch = useDispatch<AppDispatch>()
     const ndk = useRef<NDK | undefined>(undefined)
     const [ndkConnected, setNDKConnected] = useState<boolean>(false)
 
@@ -40,11 +42,16 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
 
             if (connectedRelays.length > 0) {
                 console.log(`Connected to ${connectedRelays.length} relay(s)`)
-                setNDKConnected(true)
             } else {
                 console.warn('No relays connected, but proceeding anyway')
-                setNDKConnected(true) // Still allow app to load
             }
+
+            // Initialize SubscriptionManager after NDK connects
+            const subscriptionManager = SubscriptionManager.getInstance();
+            subscriptionManager.initialize(ndk.current, dispatch);
+            console.log('SubscriptionManager initialized');
+
+            setNDKConnected(true)
         } catch (error) {
             console.error('NDK connection error:', error)
             setNDKConnected(true) // Allow app to load even on error
@@ -114,6 +121,12 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial connection to external NDK service
         connectNDK().catch(console.error)
+
+        // Cleanup on unmount
+        return () => {
+            const subscriptionManager = SubscriptionManager.getInstance();
+            subscriptionManager.destroy();
+        }
     }, [])
 
     if (!ndkConnected) {

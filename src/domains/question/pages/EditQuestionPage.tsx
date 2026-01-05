@@ -1,7 +1,8 @@
 import {useParams} from "react-router";
+import {useCallback, useMemo} from "react";
 import {questionTransformer} from "../services/question.transformer";
-import {NDKEvent} from "@nostr-dev-kit/ndk";
-import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import type {NDKEvent} from "@nostr-dev-kit/ndk";
+import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubscription";
 import QuestionForm from "../components/QuestionForm";
 import constants from "../../../constants";
 import {useDispatch, useSelector} from "react-redux";
@@ -13,15 +14,25 @@ const EditQuestionPage = () => {
     const {questionId} = useParams()
     const question = useSelector((state: RootState) => state.question).data[questionId!]
 
-    const handleQuestionEvent = (event: NDKEvent) => {
+    const handleQuestionEvent = useCallback((event: NDKEvent) => {
         const questionFromEvent = questionTransformer(event)
 
-        if (event.id !== question.eventId) {
+        if (event.id !== question?.eventId) {
             dispatch(addQuestion(questionFromEvent))
         }
-    }
+    }, [dispatch, question?.eventId]);
 
-    useNDKSubscription({kinds: [constants.questionKind], "#d": [questionId!]}, {}, handleQuestionEvent)
+    const filters = useMemo(() => ({
+        kinds: [constants.questionKind],
+        "#d": [questionId!]
+    }), [questionId]);
+
+    useNDKSubscription(
+        filters,
+        handleQuestionEvent,
+        undefined,
+        { resourceType: ResourceType.QUESTION }
+    );
 
     return (
         <div className="mx-auto max-w-7xl">

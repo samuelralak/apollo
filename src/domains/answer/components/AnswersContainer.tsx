@@ -1,20 +1,21 @@
 import type {Question} from "../../question/types/question.types";
 import YourAnswer from "./YourAnswer";
-import {useState} from "react";
-import {NDKFilter} from "@nostr-dev-kit/ndk";
+import {useState, useCallback, useMemo} from "react";
+import type {NDKFilter, NDKEvent} from "@nostr-dev-kit/ndk";
 import {answerTransformer} from "../services/answer.transformer";
 import constants from "../../../constants";
-import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
+import useNDKSubscription, {ResourceType} from "../../../shared/hooks/useNDKSubscription";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import {updateAnswer} from "../store/answer.slice";
 import AnswerItem from "./AnswerItem";
 
 const AnswersContainer = ({question}: { question: Question }) => {
-    const answerFilters: NDKFilter = {
+    const answerFilters: NDKFilter = useMemo(() => ({
         kinds: [constants.answerKind],
         "#a": [`${constants.questionKind}:${question.user.pubkey}:${question.id}`]
-    }
+    }), [question.user.pubkey, question.id]);
+
     const pubkey = useSelector((state: RootState) => state.auth).pubkey;
     const questionAnswers = useSelector((state: RootState) => state.answer)[question.id];
     const [publishingAnswer, setPublishingAnswer] = useState<boolean>(false)
@@ -23,10 +24,21 @@ const AnswersContainer = ({question}: { question: Question }) => {
     const myAnswer = questionAnswers?.data[pubkey ?? '']
     const otherAnswers = answers.filter(a => a.user.pubkey !== pubkey)
 
-    useNDKSubscription(answerFilters, {closeOnEose: false}, (event) => {
+    const handleAnswerEvent = useCallback((event: NDKEvent) => {
         const answer = answerTransformer(event)
         dispatch(updateAnswer(answer))
-    })
+    }, [dispatch]);
+
+    useNDKSubscription(
+        answerFilters,
+        handleAnswerEvent,
+        undefined,
+        {
+            ndkOptions: { closeOnEose: false },
+            resourceType: ResourceType.ANSWER,
+            context: { parentId: question.id }
+        }
+    );
 
     return (
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200 dark:border-slate-700">
