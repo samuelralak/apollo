@@ -1,4 +1,4 @@
-import QuestionForm from "../../../components/questions/QuestionForm.tsx";
+import QuestionForm from "../../../domains/question/components/QuestionForm";
 
 const Page = () => {
     return (

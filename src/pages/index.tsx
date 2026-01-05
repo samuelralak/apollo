@@ -2,17 +2,17 @@ import HomePage from './home'
 import ProfilePage from "./profile";
 import {EditQuestionPage, NewQuestionPage, QuestionPage} from "./questions";
 
-import MainNavigation from "../components/MainNavigation.tsx";
+import MainNavigation from "../shared/components/layout/MainNavigation";
 import {Outlet} from "react-router";
-import NDKProvider from "../components/NDKProvider.tsx";
-import ToastProvider from "../components/ToastProvider.tsx";
+import NDKProvider from "../lib/ndk/NDKProvider";
+import ToastProvider from "../shared/components/feedback/ToastProvider";
 import {HelmetProvider} from "react-helmet-async";
-import ZapPortal from "../components/portals/ZapPortal.tsx";
+import ZapPortal from "../domains/portal/components/ZapPortal";
 import {useSelector} from "react-redux";
-import {RootState} from "../store";
-import {PortalID} from "../features/portal/portal-slice.ts";
+import {RootState} from "../app/store";
+import {PortalID} from "../domains/portal/store/portal.slice";
 import {createPortal} from "react-dom";
-import SharePortal from "../components/portals/SharePortal.tsx";
+import SharePortal from "../domains/portal/components/SharePortal";
 
 const Root = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth).isLoggedIn

@@ -4,3 +4,4 @@ export * from './vote';
 export * from './auth';
 export * from './comment';
 export * from './portal';
+export * from './user';

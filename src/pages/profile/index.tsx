@@ -1,8 +1,8 @@
 import {useParams} from "react-router";
 import {useContext, useEffect, useState} from "react";
-import {NDKContext} from "../../components/NDKProvider.tsx";
+import {NDKContext} from "../../lib/ndk/NDKProvider";
 import {NDKUserProfile} from "@nostr-dev-kit/ndk";
-import Loader from "../../components/Loader.tsx";
+import Loader from "../../shared/components/feedback/Loader";
 import {classNames} from "../../utils";
 import BannerPlaceholder from '../../assets/banner-placeholder.png'
 

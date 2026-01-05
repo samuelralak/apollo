@@ -1,13 +1,13 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {transformer as questionTransformer} from "../../resources/question";
-import Loader from "../../components/Loader";
-import QuestionsList from "../../components/questions/QuestionsList";
+import {questionTransformer} from "../../domains/question/services/question.transformer";
+import Loader from "../../shared/components/feedback/Loader";
+import QuestionsList from "../../domains/question/components/QuestionsList";
 import constants from "../../constants";
-import useNDKSubscription from "../../hooks/useNDKSubscription.ts";
-import {addQuestion, updateLastFetched} from "../../features/question/question-slice.ts";
+import useNDKSubscription from "../../shared/hooks/useNDKSubscription";
+import {addQuestion, updateLastFetched} from "../../domains/question/store/question.slice";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../store";
-import EmptyState from "../../components/questions/EmptyState.tsx";
+import {AppDispatch, RootState} from "../../app/store";
+import EmptyState from "../../domains/question/components/EmptyState";
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>()

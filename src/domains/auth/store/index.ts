@@ -6,3 +6,5 @@ export {
     SignerMethod,
     type AuthState
 } from './auth.slice';
+
+export { authListenerMiddleware } from './auth.middleware';

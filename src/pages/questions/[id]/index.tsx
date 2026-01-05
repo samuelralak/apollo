@@ -1,21 +1,21 @@
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {transformer as questionTransformer} from "../../../resources/question";
+import {questionTransformer} from "../../../domains/question/services/question.transformer";
 import {useParams} from "react-router";
 import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
-import Loader from "../../../components/Loader";
-import EventOwner from "../../../components/shared/EventOwner";
-import AnswersContainer from "../../../components/answers/AnswersContainer";
-import Votes from "../../../components/shared/Votes.tsx";
-import useNDKSubscription from "../../../hooks/useNDKSubscription.ts";
+import Loader from "../../../shared/components/feedback/Loader";
+import EventOwner from "../../../domains/user/components/EventOwner";
+import AnswersContainer from "../../../domains/answer/components/AnswersContainer";
+import Votes from "../../../domains/vote/components/Votes";
+import useNDKSubscription from "../../../shared/hooks/useNDKSubscription";
 import constants from "../../../constants";
-import ActionItems from "../../../components/shared/ActionItems.tsx";
-import SEOContainer from "../../../components/SEOContainer.tsx";
+import ActionItems from "../../../shared/components/ActionItems";
+import SEOContainer from "../../../shared/components/SEOContainer";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../../store";
-import {addQuestion} from "../../../features/question/question-slice.ts";
-import CommentsList from "../../../components/comments/CommentList.tsx";
-import PostCommentBox from "../../../components/comments/PostCommentBox.tsx";
+import {AppDispatch, RootState} from "../../../app/store";
+import {addQuestion} from "../../../domains/question/store/question.slice";
+import CommentsList from "../../../domains/comment/components/CommentList";
+import PostCommentBox from "../../../domains/comment/components/PostCommentBox";
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>()

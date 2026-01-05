@@ -6,7 +6,7 @@ import answerReducer from "../domains/answer/store/answer.slice";
 import portalReducer from "../domains/portal/store/portal.slice";
 import questionReducer from "../domains/question/store/question.slice";
 import commentReducer from "../domains/comment/store/comment.slice";
-import {authListenerMiddleware} from "../store/middlewares";
+import {authListenerMiddleware} from "../domains/auth/store/auth.middleware";
 
 export interface PreloadedState {
     auth: AuthState

@@ -1,12 +1,12 @@
 import {useParams} from "react-router";
-import {transformer as questionTransformer} from "../../../../resources/question.ts";
+import {questionTransformer} from "../../../../domains/question/services/question.transformer";
 import {NDKEvent} from "@nostr-dev-kit/ndk";
-import useNDKSubscription from "../../../../hooks/useNDKSubscription.ts";
-import QuestionForm from "../../../../components/questions/QuestionForm.tsx";
+import useNDKSubscription from "../../../../shared/hooks/useNDKSubscription";
+import QuestionForm from "../../../../domains/question/components/QuestionForm";
 import constants from "../../../../constants";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../../../store";
-import {addQuestion} from "../../../../features/question/question-slice.ts";
+import {AppDispatch, RootState} from "../../../../app/store";
+import {addQuestion} from "../../../../domains/question/store/question.slice";
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>()

@@ -4,8 +4,8 @@ import './index.css'
 import {RouterProvider} from "react-router";
 import router from "./router";
 import {Provider} from "react-redux";
-import {configureAppStore} from "./store";
-import {preloadAuth} from "./features/auth/auth-slice.ts";
+import {configureAppStore} from "./app/store";
+import {preloadAuth} from "./domains/auth/store/auth.slice";
 
 (async () => {
     const preloadedAuth = await preloadAuth()

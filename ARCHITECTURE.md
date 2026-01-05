@@ -7,13 +7,11 @@ This document describes the Domain-Driven Design (DDD) architecture used in the 
 ```
 src/
 ├── app/                          # Application setup
-│   ├── store.ts                  # Redux store configuration
-│   └── index.ts                  # Barrel export
+│   └── store.ts                  # Redux store configuration
 │
 ├── lib/                          # Third-party integrations
 │   ├── ndk/                      # NDK (Nostr Dev Kit) integration
-│   │   ├── NDKProvider.tsx       # NDK context provider
-│   │   └── index.ts
+│   │   └── NDKProvider.tsx       # NDK context provider
 │   ├── storage/                  # LocalForage wrapper
 │   │   └── index.ts
 │   └── webln/                    # WebLN types
@@ -22,45 +20,80 @@ src/
 ├── domains/                      # Feature domains (vertical slices)
 │   ├── question/
 │   │   ├── types/                # Domain-specific types
-│   │   │   ├── question.types.ts
-│   │   │   └── index.ts
+│   │   │   └── question.types.ts
 │   │   ├── services/             # Domain-specific services & transformers
-│   │   │   ├── question.transformer.ts
-│   │   │   └── index.ts
+│   │   │   └── question.transformer.ts
 │   │   ├── schemas/              # Zod validation schemas
-│   │   │   ├── question.schema.ts
-│   │   │   └── index.ts
+│   │   │   └── question.schema.ts
 │   │   ├── store/                # Redux slice
-│   │   │   ├── question.slice.ts
-│   │   │   └── index.ts
-│   │   ├── components/           # Domain-specific UI components
-│   │   ├── pages/                # Route pages
-│   │   ├── hooks/                # Domain-specific hooks
-│   │   └── index.ts              # Barrel export
+│   │   │   └── question.slice.ts
+│   │   └── components/           # Domain-specific UI components
+│   │       ├── QuestionForm.tsx
+│   │       ├── QuestionsList.tsx
+│   │       ├── QuestionStats.tsx
+│   │       └── EmptyState.tsx
 │   ├── answer/
-│   ├── vote/
-│   ├── auth/
+│   │   ├── types/
+│   │   ├── services/
+│   │   ├── schemas/
+│   │   ├── store/
+│   │   └── components/
+│   │       ├── AnswersContainer.tsx
+│   │       ├── AnswerItem.tsx
+│   │       ├── YourAnswer.tsx
+│   │       └── AcceptAnswer.tsx
 │   ├── comment/
+│   │   ├── types/
+│   │   ├── services/
+│   │   ├── schemas/
+│   │   ├── store/
+│   │   └── components/
+│   │       ├── CommentList.tsx
+│   │       └── PostCommentBox.tsx
+│   ├── vote/
+│   │   ├── types/
+│   │   ├── services/
+│   │   ├── store/
+│   │   └── components/
+│   │       └── Votes.tsx
+│   ├── auth/
+│   │   ├── store/
+│   │   │   ├── auth.slice.ts
+│   │   │   └── auth.middleware.ts
+│   │   └── components/
+│   │       ├── GetStarted.tsx
+│   │       ├── UserMenuDesktop.tsx
+│   │       ├── UserMenuMobile.tsx
+│   │       ├── AuthRequired.tsx
+│   │       └── withAuthRequired.tsx
 │   ├── portal/
-│   └── index.ts
+│   │   ├── store/
+│   │   │   └── portal.slice.ts
+│   │   └── components/
+│   │       ├── ZapPortal.tsx
+│   │       └── SharePortal.tsx
+│   └── user/
+│       ├── schemas/
+│       │   └── user-profile.schema.ts
+│       └── components/
+│           └── EventOwner.tsx
 │
 ├── shared/                       # Truly shared code
 │   ├── types/                    # Shared types used across domains
 │   │   ├── user.types.ts         # User, BaseResource
-│   │   ├── category.types.ts     # Category, Guideline
-│   │   └── index.ts
+│   │   └── category.types.ts     # Category, Guideline
+│   ├── schemas/                  # Cross-cutting schemas
+│   │   └── zap.schema.ts         # Zap validation (works on any event)
 │   ├── components/
-│   │   └── feedback/             # Loader, ToastProvider
-│   ├── hooks/                    # useNDKSubscription
-│   └── index.ts
+│   │   ├── feedback/             # Loader, ToastProvider
+│   │   ├── forms/                # SelectMenu
+│   │   ├── layout/               # MainNavigation
+│   │   ├── ActionItems.tsx
+│   │   ├── AvatarPlaceholder.tsx
+│   │   └── SEOContainer.tsx
+│   └── hooks/                    # useNDKSubscription
 │
-├── components/                   # Legacy components (being migrated)
-├── features/                     # Legacy Redux slices (re-exports)
-├── resources/                    # Legacy types (re-exports)
-├── schemas/                      # Legacy schemas (re-exports)
 ├── pages/                        # Route pages
-├── hooks/                        # Legacy hooks (re-exports)
-├── store/                        # Legacy store (re-exports)
 ├── utils/                        # Pure utility functions
 ├── constants/                    # App constants (Nostr kinds, relays)
 ├── data/                         # Static data (categories, guidelines)
@@ -79,6 +112,62 @@ Configured in `tsconfig.json` and `vite.config.ts`:
 "@/shared/*"   → "src/shared/*"
 "@/utils/*"    → "src/utils/*"
 "@/constants"  → "src/constants/index.ts"
+```
+
+**Note:** Currently, relative imports are used throughout the codebase. Path aliases are available but optional.
+
+---
+
+## Naming Conventions
+
+### Files
+
+| Type | Convention | Example |
+|------|------------|---------|
+| **Types** | `[domain].types.ts` | `question.types.ts` |
+| **Schemas** | `[domain].schema.ts` or `[name].schema.ts` | `question.schema.ts`, `user-profile.schema.ts` |
+| **Slices** | `[domain].slice.ts` | `question.slice.ts` |
+| **Middleware** | `[domain].middleware.ts` | `auth.middleware.ts` |
+| **Transformers** | `[domain].transformer.ts` | `question.transformer.ts` |
+| **Components** | `PascalCase.tsx` | `QuestionForm.tsx`, `AnswerItem.tsx` |
+| **Hooks** | `use[Name].ts` | `useNDKSubscription.ts` |
+| **Utilities** | `camelCase.ts` or `kebab-case.ts` | `formatDateTime.ts`, `md-editor.ts` |
+
+### Exports
+
+```typescript
+// Types - use `export type` for type-only exports
+export type { Question } from './question.types';
+
+// Components - use default export
+export default QuestionForm;
+
+// Slices - export default reducer + named actions
+export default questionSlice.reducer;
+export const { addQuestion, updateLastFetched } = questionSlice.actions;
+
+// Transformers - use named export
+export const questionTransformer = (event: NDKEvent): Question => { ... };
+```
+
+### Import Style
+
+```typescript
+// ✅ Prefer: import type for type-only imports
+import type { Question } from "../types/question.types";
+
+// ✅ Use relative paths (current convention)
+import Votes from "../../vote/components/Votes";
+
+// ✅ Group imports: external → internal → relative
+import { useSelector } from "react-redux";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+
+import { RootState } from "../../../app/store";
+import constants from "../../../constants";
+
+import type { Question } from "../types/question.types";
+import QuestionForm from "./QuestionForm";
 ```
 
 ---
@@ -114,28 +203,56 @@ When creating a new domain, follow this structure:
 ```
 domains/[domain-name]/
 ├── types/                # Domain-specific types
-│   ├── [domain].types.ts
-│   └── index.ts
+│   └── [domain].types.ts
 ├── services/             # Domain-specific services & transformers
-│   ├── [domain].transformer.ts
-│   ├── [domain].service.ts   # Optional: API/business logic
-│   └── index.ts
+│   └── [domain].transformer.ts
 ├── components/           # Domain-specific UI components
-│   ├── [Component].tsx
-│   └── index.ts
-├── pages/                # Route pages (if applicable)
-│   ├── [Page]Page.tsx
-│   └── index.ts
-├── hooks/                # Domain-specific hooks
-│   ├── use[Domain].ts
-│   └── index.ts
-├── schemas/              # Zod validation schemas
-│   ├── [domain].schema.ts
-│   └── index.ts
-├── store/                # Redux slice
+│   └── [Component].tsx
+├── hooks/                # Domain-specific hooks (optional)
+│   └── use[Domain].ts
+├── schemas/              # Zod validation schemas (optional)
+│   └── [domain].schema.ts
+├── store/                # Redux slice (optional)
 │   ├── [domain].slice.ts
-│   └── index.ts
-└── index.ts              # Domain barrel export
+│   └── [domain].middleware.ts  # Optional
+└── index.ts              # Domain barrel export (optional)
+```
+
+**Note:** Only create folders that are needed. A minimal domain might just have `types/` and `components/`.
+
+### Quick Decision Tree
+
+```
+Where does my new code go?
+│
+├─ Is it a new entity/feature with its own data model?
+│  └─ YES → Create new domain in /domains/[name]/
+│
+├─ Is it a React component?
+│  ├─ Used by only one domain? → /domains/[domain]/components/
+│  ├─ Used by multiple domains? → /shared/components/
+│  └─ A page/route? → /pages/[route]/
+│
+├─ Is it a type/interface?
+│  ├─ Domain-specific? → /domains/[domain]/types/
+│  └─ Used across domains? → /shared/types/
+│
+├─ Is it a validation schema?
+│  ├─ Domain-specific form? → /domains/[domain]/schemas/
+│  └─ Cross-cutting (like zaps)? → /shared/schemas/
+│
+├─ Is it a Redux slice?
+│  └─ → /domains/[domain]/store/
+│
+├─ Is it a hook?
+│  ├─ Domain-specific? → /domains/[domain]/hooks/
+│  └─ Reusable? → /shared/hooks/
+│
+├─ Is it a third-party wrapper/integration?
+│  └─ → /lib/[library-name]/
+│
+└─ Is it a pure utility function?
+   └─ → /utils/
 ```
 
 ### What Goes Where
@@ -147,15 +264,30 @@ domains/[domain-name]/
 | **Store types** | `/app/store.ts` | `RootState`, `AppDispatch` |
 | **NDK event transformers** | `/domains/[domain]/services/` | `questionTransformer(event)` |
 | **Redux slices** | `/domains/[domain]/store/` | `question.slice.ts` |
+| **Redux middleware** | `/domains/[domain]/store/` | `auth.middleware.ts` |
 | **Form validation** | `/domains/[domain]/schemas/` | `question.schema.ts` |
+| **Cross-cutting schemas** | `/shared/schemas/` | `zap.schema.ts` |
 | **Domain components** | `/domains/[domain]/components/` | `QuestionForm.tsx` |
-| **Route pages** | `/domains/[domain]/pages/` | `QuestionPage.tsx` |
+| **Route pages** | `/pages/` | `pages/home/index.tsx` |
 | **Domain hooks** | `/domains/[domain]/hooks/` | `useQuestions.ts` |
 | **Shared components** | `/shared/components/` | `Loader.tsx`, `SelectMenu.tsx` |
 | **Shared hooks** | `/shared/hooks/` | `useNDKSubscription.ts` |
 | **Third-party wrappers** | `/lib/` | `NDKProvider.tsx`, `storage/` |
 | **Pure utilities** | `/utils/` | `formatDateTime.ts`, `classNames.ts` |
 | **App constants** | `/constants/` | Nostr kinds, relay URLs |
+
+### Shared Components Organization
+
+Organize shared components by category:
+
+| Category | Location | Examples |
+|----------|----------|----------|
+| **Feedback** | `/shared/components/feedback/` | `Loader.tsx`, `ToastProvider.tsx` |
+| **Forms** | `/shared/components/forms/` | `SelectMenu.tsx` |
+| **Layout** | `/shared/components/layout/` | `MainNavigation.tsx` |
+| **Generic** | `/shared/components/` (root) | `ActionItems.tsx`, `SEOContainer.tsx` |
+
+**Rule:** If 3+ components share a category, create a subfolder.
 
 ---
 
@@ -199,29 +331,141 @@ domains/[domain-name]/
 ### Example: Adding a "Bookmark" Feature
 
 ```bash
-# 1. Create domain structure
-mkdir -p src/domains/bookmark/{types,services,components,store,hooks}
+# 1. Create domain structure (only what you need)
+mkdir -p src/domains/bookmark/{types,services,components,store}
+```
 
-# 2. Create types
-# src/domains/bookmark/types/bookmark.types.ts
+```typescript
+// 2. Create types first
+// src/domains/bookmark/types/bookmark.types.ts
+import type { User } from "../../../shared/types/user.types";
+
 export interface Bookmark {
     id: string;
+    eventId: string;
     questionId: string;
     createdAt: number;
-    pubkey: string;
+    user: User;
+}
+```
+
+```typescript
+// 3. Create transformer
+// src/domains/bookmark/services/bookmark.transformer.ts
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { tagFromEvents } from "../../../utils";
+import type { Bookmark } from "../types/bookmark.types";
+
+export const bookmarkTransformer = (event: NDKEvent): Bookmark => {
+    const tags = tagFromEvents(event.tags);
+    return {
+        id: tags['d']?.[0],
+        eventId: event.id,
+        questionId: tags['e']?.[0] ?? '',
+        createdAt: event.created_at,
+        user: { pubkey: event.pubkey }
+    };
+};
+```
+
+```typescript
+// 4. Create Redux slice
+// src/domains/bookmark/store/bookmark.slice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { Bookmark } from "../types/bookmark.types";
+
+interface BookmarkState {
+    data: { [key: string]: Bookmark };
 }
 
-# 3. Create transformer
-# src/domains/bookmark/services/bookmark.transformer.ts
+const bookmarkSlice = createSlice({
+    name: 'bookmark',
+    initialState: { data: {} } as BookmarkState,
+    reducers: {
+        addBookmark: (state, { payload }: PayloadAction<Bookmark>) => {
+            state.data[payload.id] = payload;
+        },
+        removeBookmark: (state, { payload }: PayloadAction<string>) => {
+            delete state.data[payload];
+        }
+    }
+});
 
-# 4. Create Redux slice
-# src/domains/bookmark/store/bookmark.slice.ts
+export const { addBookmark, removeBookmark } = bookmarkSlice.actions;
+export default bookmarkSlice.reducer;
+```
 
-# 5. Register in store
-# src/app/store.ts - add bookmarkReducer
+```typescript
+// 5. Register in app/store.ts
+import bookmarkReducer from "../domains/bookmark/store/bookmark.slice";
 
-# 6. Create barrel exports
-# src/domains/bookmark/index.ts
+export const rootReducer = combineReducers({
+    // ... existing reducers
+    bookmark: bookmarkReducer,
+});
+```
+
+```typescript
+// 6. Create component
+// src/domains/bookmark/components/BookmarkButton.tsx
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../app/store";
+import { addBookmark, removeBookmark } from "../store/bookmark.slice";
+
+const BookmarkButton = ({ questionId }: { questionId: string }) => {
+    // ... implementation
+};
+
+export default BookmarkButton;
+```
+
+---
+
+## Common Mistakes to Avoid
+
+### ❌ Don't: Import domain types/services across domains
+```typescript
+// domains/answer/components/AnswerItem.tsx
+import type { Question } from "../../question/types/question.types"; // ❌ BAD
+```
+
+### ✅ Do: Pass data as props or use shared types
+```typescript
+// domains/answer/components/AnswerItem.tsx
+interface Props {
+    questionId: string;  // ✅ Just the ID
+    questionPubkey: string;  // ✅ Only what's needed
+}
+```
+
+### ❌ Don't: Create circular dependencies
+```typescript
+// domains/question/components/QuestionItem.tsx
+import AnswersList from "../../answer/components/AnswersList";
+// AND
+// domains/answer/components/AnswersList.tsx
+import QuestionItem from "../../question/components/QuestionItem"; // ❌ CIRCULAR
+```
+
+### ✅ Do: Keep component imports one-directional
+```typescript
+// Parent domain imports child domain's components
+// domains/question/components/QuestionDetail.tsx
+import AnswersContainer from "../../answer/components/AnswersContainer"; // ✅ OK
+
+// Child never imports parent
+// domains/answer/components/AnswersContainer.tsx
+// Does NOT import from question/components/  // ✅ CORRECT
+```
+
+### ❌ Don't: Put reusable components in a domain
+```typescript
+// domains/question/components/Loader.tsx  // ❌ Should be in shared/
+```
+
+### ✅ Do: If 2+ domains need it, move to shared
+```typescript
+// shared/components/feedback/Loader.tsx  // ✅ CORRECT
 ```
 
 ---
@@ -234,12 +478,34 @@ export interface Bookmark {
 - Domain → Lib (NDK, storage)
 - Domain → Utils
 - Domain → Constants
+- Domain → Domain **for components only** (see rules below)
 - Shared → Lib
 - Shared → Utils
 
+### Domain-to-Domain Component Imports
+
+Domain components MAY import from other domain components when:
+1. The imported component is a leaf/presentational component (e.g., `Votes`, `EventOwner`)
+2. The relationship is natural (e.g., `AnswerItem` displaying `Votes`)
+3. It avoids circular dependencies
+
+**Examples of acceptable cross-domain imports:**
+```typescript
+// domains/answer/components/AnswerItem.tsx
+import Votes from "../../vote/components/Votes";           // ✅ OK - presentational
+import EventOwner from "../../user/components/EventOwner"; // ✅ OK - presentational
+import CommentsList from "../../comment/components/CommentList"; // ✅ OK - leaf component
+```
+
+**NOT acceptable:**
+```typescript
+// domains/vote/components/Votes.tsx
+import AnswerItem from "../../answer/components/AnswerItem"; // ❌ Circular risk
+```
+
 ### NOT Allowed
 
-- Domain → Domain (use shared services as intermediary if needed)
+- Domain → Domain **for types, services, store, schemas** (use shared as intermediary)
 - Shared → Domain
 - Lib → Domain
 - Lib → Shared
@@ -303,22 +569,16 @@ export {
 
 ---
 
-## Migration Notes
+## Migration Complete
 
-The codebase is in a transitional state. Legacy files in these folders re-export from their new locations:
+The codebase migration to Domain-Driven Design is complete. All legacy folders have been removed:
 
-- `src/components/` → Re-exports from `src/shared/components/` and `src/lib/`
-- `src/features/` → Re-exports from `src/domains/*/store/`
-- `src/resources/` → Re-exports from `src/domains/*/types/` and `src/shared/types/`
-- `src/schemas/` → Re-exports from `src/domains/*/schemas/`
-- `src/hooks/` → Re-exports from `src/shared/hooks/`
-- `src/store/` → Re-exports from `src/app/`
+- ~~`src/components/`~~ → Components moved to `src/domains/*/components/` and `src/shared/components/`
+- ~~`src/features/`~~ → Redux slices moved to `src/domains/*/store/`
+- ~~`src/resources/`~~ → Types moved to `src/domains/*/types/` and `src/shared/types/`
+- ~~`src/schemas/`~~ → Schemas moved to `src/domains/*/schemas/` and `src/shared/schemas/`
+- ~~`src/hooks/`~~ → Hooks moved to `src/shared/hooks/`
+- ~~`src/store/`~~ → Store configuration moved to `src/app/store.ts`
+- ~~`src/storage/`~~ → Storage utilities moved to `src/lib/storage/`
 
-Files marked with `// TODO: Update imports...` comments indicate re-export files that can be removed once all imports are updated.
-
-### Completing the Migration
-
-1. Update imports in components/pages to use new paths
-2. Delete re-export files once imports are updated
-3. Move remaining components to their appropriate domains
-4. Delete empty legacy folders
+All imports now use the new domain-based paths.

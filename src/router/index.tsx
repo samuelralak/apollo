@@ -1,6 +1,6 @@
 import {createBrowserRouter, LoaderFunction} from "react-router";
 import Root, {EditQuestionPage, HomePage, NewQuestionPage, ProfilePage, QuestionPage} from "../pages";
-import withAuthRequired from "../components/hocs/withAuthRequired";
+import withAuthRequired from "../domains/auth/components/withAuthRequired";
 import {validate as isUUID} from 'uuid'
 import SettingsPage, {
     NetworkSettingsPage,

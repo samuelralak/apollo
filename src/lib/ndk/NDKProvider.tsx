@@ -1,9 +1,9 @@
 import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
 import {createContext, ReactNode, useEffect, useRef, useState} from "react";
-import Loader from "../../components/Loader.tsx";
+import Loader from "../../shared/components/feedback/Loader";
 import {useSelector} from "react-redux";
-import {RootState} from "../../store";
-import {SignerMethod} from "../../features/auth/auth-slice.ts";
+import {RootState} from "../../app/store";
+import {SignerMethod} from "../../domains/auth/store/auth.slice";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../constants";
 import {decodeNsec} from "../../utils";
