@@ -638,69 +638,253 @@ src/shared/theme/
 ├── hooks/
 │   └── useTheme.ts       # Theme context hook
 └── components/
-    └── ThemeProvider.tsx # Theme context provider
+    ├── ThemeProvider.tsx # Theme context provider
+    └── ThemeToggle.tsx   # Quick toggle button
 ```
 
 ### How It Works
 
-The ThemeProvider manages theme state and applies the `dark` class to the `<html>` element. Components use Tailwind's built-in `dark:` variant for dark mode styles.
-
-### Using the Theme
-
-#### In Components
-
-Use Tailwind's `dark:` variant for dark mode styling:
-
-```tsx
-// Background colors
-<div className="bg-white dark:bg-slate-900">
-<div className="bg-slate-50 dark:bg-slate-800">
-
-// Text colors
-<p className="text-slate-900 dark:text-slate-100">
-<p className="text-slate-500 dark:text-slate-400">
-
-// Border colors
-<div className="border-slate-200 dark:border-slate-700">
-
-// Brand colors (teal)
-<button className="bg-teal-600 dark:bg-teal-500">
-<span className="text-teal-600 dark:text-teal-500">
-```
-
-#### Theme Toggle
-
-```tsx
-import { useTheme } from '../shared/theme';
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-
-  return (
-    <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-      <option value="system">System</option>
-    </select>
-  );
-}
-```
-
-### Color Palette
-
-| Element | Light Mode | Dark Mode |
-|---------|------------|-----------|
-| Page background | `bg-white` | `dark:bg-slate-900` |
-| Card background | `bg-slate-50` | `dark:bg-slate-800` |
-| Primary text | `text-slate-900` | `dark:text-slate-100` |
-| Secondary text | `text-slate-600` | `dark:text-slate-300` |
-| Muted text | `text-slate-500` | `dark:text-slate-400` |
-| Border | `border-slate-200` | `dark:border-slate-700` |
-| Brand/Accent | `teal-600` | `teal-500` |
+The ThemeProvider manages theme state and applies the `dark` class to the `<html>` element. Tailwind v4 is configured with class-based dark mode via `@custom-variant dark` in `index.css`. Components use Tailwind's built-in `dark:` variant for dark mode styles.
 
 ### Settings
 
-Users can configure their theme preference at `/settings/appearance`. The preference is persisted to localStorage and respects system preference when set to "System".
+Users can configure their theme preference at `/settings/appearance`. The preference is persisted to localStorage and respects system preference when set to "System". A quick toggle is also available in the navigation bar.
+
+---
+
+## Dark Mode First Development
+
+**IMPORTANT:** All components MUST be built with dark mode support from the start. Never add a color class without its `dark:` counterpart.
+
+### The Golden Rule
+
+```tsx
+// ❌ NEVER do this
+<div className="bg-white text-slate-900">
+
+// ✅ ALWAYS do this
+<div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+```
+
+### Color Palette Reference
+
+Apollo uses **Slate** for neutrals and **Teal** for brand/accent colors.
+
+#### Backgrounds
+
+| Usage | Light | Dark | Example |
+|-------|-------|------|---------|
+| Page background | `bg-white` | `dark:bg-slate-900` | Main app background |
+| Elevated surface | `bg-white` | `dark:bg-slate-800` | Cards, modals, dropdowns |
+| Secondary surface | `bg-slate-50` | `dark:bg-slate-800` | Sidebars, secondary areas |
+| Tertiary/Input | `bg-slate-100` | `dark:bg-slate-800` | Input fields, code blocks |
+| Hover state | `hover:bg-slate-100` | `dark:hover:bg-slate-800` | List items, buttons |
+| Active state | `bg-slate-200` | `dark:bg-slate-700` | Selected items |
+
+#### Text Colors
+
+| Usage | Light | Dark | Example |
+|-------|-------|------|---------|
+| Primary text | `text-slate-900` | `dark:text-slate-100` | Headings, body text |
+| Secondary text | `text-slate-700` | `dark:text-slate-200` | Subheadings |
+| Tertiary text | `text-slate-600` | `dark:text-slate-300` | Labels, metadata |
+| Muted text | `text-slate-500` | `dark:text-slate-400` | Placeholders, hints |
+| Disabled text | `text-slate-400` | `dark:text-slate-500` | Disabled states |
+
+#### Borders
+
+| Usage | Light | Dark | Example |
+|-------|-------|------|---------|
+| Default border | `border-slate-200` | `dark:border-slate-700` | Cards, dividers |
+| Strong border | `border-slate-300` | `dark:border-slate-600` | Input focus |
+| Focus ring | `ring-teal-600` | `dark:ring-teal-500` | Focus states |
+
+#### Brand Colors (Teal)
+
+| Usage | Light | Dark | Example |
+|-------|-------|------|---------|
+| Primary button | `bg-teal-600` | `dark:bg-teal-500` | CTAs |
+| Primary hover | `hover:bg-teal-700` | `dark:hover:bg-teal-400` | Button hover |
+| Primary text | `text-teal-600` | `dark:text-teal-400` | Links, active states |
+| Primary hover text | `hover:text-teal-700` | `dark:hover:text-teal-300` | Link hover |
+| Light background | `bg-teal-50` | `dark:bg-teal-900/30` | Info boxes |
+| Light border | `border-teal-100` | `dark:border-teal-800` | Info box borders |
+
+#### Feedback Colors
+
+| Type | Light Background | Dark Background | Light Text | Dark Text |
+|------|-----------------|-----------------|------------|-----------|
+| Success | `bg-green-50` | `dark:bg-green-900/30` | `text-green-700` | `dark:text-green-300` |
+| Warning | `bg-yellow-50` | `dark:bg-yellow-900/30` | `text-yellow-700` | `dark:text-yellow-300` |
+| Error | `bg-red-50` | `dark:bg-red-900/30` | `text-red-700` | `dark:text-red-300` |
+| Info | `bg-blue-50` | `dark:bg-blue-900/30` | `text-blue-700` | `dark:text-blue-300` |
+
+### Component Patterns
+
+#### Buttons
+
+```tsx
+// Primary button
+<button className="bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 dark:hover:bg-teal-400 text-white font-semibold px-4 py-2 rounded-lg transition-colors disabled:bg-slate-400 dark:disabled:bg-slate-600">
+  Submit
+</button>
+
+// Secondary/Ghost button
+<button className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2 rounded-lg transition-colors">
+  Cancel
+</button>
+```
+
+#### Form Inputs
+
+```tsx
+<input
+  className="block w-full rounded-lg border-0 py-3 px-3
+    bg-slate-100 dark:bg-slate-800
+    text-slate-900 dark:text-slate-100
+    ring-2 ring-slate-200 dark:ring-slate-700
+    placeholder:text-slate-400
+    focus:bg-white dark:focus:bg-slate-700
+    focus:ring-teal-600 dark:focus:ring-teal-500
+    focus:outline-none"
+  placeholder="Enter text..."
+/>
+```
+
+#### Cards
+
+```tsx
+<div className="bg-white dark:bg-slate-800 rounded-lg shadow dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700 p-6">
+  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Title</h3>
+  <p className="text-slate-600 dark:text-slate-400 mt-2">Description text</p>
+</div>
+```
+
+#### Dropdowns/Menus
+
+```tsx
+<div className="bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 rounded-lg">
+  <a className="block px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">
+    Menu item
+  </a>
+</div>
+```
+
+#### Alert/Notice Boxes
+
+```tsx
+// Warning
+<div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-100 dark:border-yellow-800 p-4">
+  <p className="text-yellow-700 dark:text-yellow-300">Warning message</p>
+</div>
+
+// Info (using brand color)
+<div className="rounded-lg bg-teal-50 dark:bg-teal-900/30 border-2 border-teal-100 dark:border-teal-800 p-4">
+  <p className="text-slate-700 dark:text-slate-300">Info message</p>
+</div>
+```
+
+#### Links
+
+```tsx
+<a className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 underline">
+  Click here
+</a>
+```
+
+#### Dividers
+
+```tsx
+<div className="border-t border-slate-200 dark:border-slate-700" />
+```
+
+#### Avatar Placeholders
+
+```tsx
+<span className="inline-block h-10 w-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700">
+  <svg className="h-full w-full text-slate-300 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"/>
+  </svg>
+</span>
+```
+
+### Component Checklist
+
+Before submitting any component, verify:
+
+- [ ] **All background colors** have `dark:` variants
+- [ ] **All text colors** have `dark:` variants
+- [ ] **All border colors** have `dark:` variants
+- [ ] **All ring/outline colors** have `dark:` variants
+- [ ] **Hover states** have `dark:hover:` variants
+- [ ] **Focus states** have `dark:focus:` variants
+- [ ] **Disabled states** have `dark:disabled:` variants
+- [ ] **No hardcoded colors** in inline styles (use CSS variables or Tailwind)
+- [ ] **No `gray-*` classes** - use `slate-*` instead for consistency
+- [ ] **Shadows** account for dark mode (use `dark:shadow-slate-900/50` or similar)
+
+### Common Mistakes
+
+```tsx
+// ❌ Using gray instead of slate
+<p className="text-gray-500">  // Wrong!
+<p className="text-slate-500 dark:text-slate-400">  // Correct!
+
+// ❌ Forgetting hover dark variant
+<a className="hover:text-slate-700">  // Missing dark hover!
+<a className="hover:text-slate-700 dark:hover:text-slate-200">  // Correct!
+
+// ❌ Hardcoded colors in style prop
+<div style={{ backgroundColor: '#ffffff' }}>  // Won't respond to dark mode!
+<div className="bg-white dark:bg-slate-900">  // Correct!
+
+// ❌ Missing focus ring dark variant
+<input className="focus:ring-teal-600">  // Missing dark variant!
+<input className="focus:ring-teal-600 dark:focus:ring-teal-500">  // Correct!
+
+// ❌ Inconsistent disabled states
+<button disabled className="disabled:bg-gray-400">  // Wrong color + missing dark!
+<button disabled className="disabled:bg-slate-400 dark:disabled:bg-slate-600">  // Correct!
+```
+
+### Testing Dark Mode
+
+1. Use the theme toggle in the navigation bar to switch between modes
+2. Test both modes before committing any UI changes
+3. Check for contrast issues - text should be readable in both modes
+4. Verify hover/focus states work correctly in both modes
+
+### CSS Variables (Advanced)
+
+For complex components that need programmatic color access, CSS variables are defined in `src/shared/theme/css/variables.css`:
+
+```css
+:root {
+  --color-bg-primary: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-border-default: #e2e8f0;
+  /* ... */
+}
+
+.dark {
+  --color-bg-primary: #0f172a;
+  --color-text-primary: #f8fafc;
+  --color-border-default: #334155;
+  /* ... */
+}
+```
+
+Use in CSS:
+```css
+.my-component {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+```
+
+### MDEditor Dark Mode
+
+The MDEditor component automatically adapts to dark mode via CSS variables defined in `index.css`. No additional configuration needed when using the editor.
 
 ---
 
