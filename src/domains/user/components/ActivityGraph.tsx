@@ -1,4 +1,13 @@
 import {useMemo} from "react";
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid
+} from "recharts";
 import type {UserActivity, ActivityDay} from "../types/profile.types";
 
 interface ActivityGraphProps {
@@ -6,22 +15,21 @@ interface ActivityGraphProps {
     loading?: boolean;
 }
 
-// Color scale for light/dark modes (teal-based to match brand)
-const LEVEL_COLORS = {
-    light: ['#f1f5f9', '#ccfbf1', '#5eead4', '#2dd4bf', '#14b8a6'],
-    dark: ['#1e293b', '#134e4a', '#0f766e', '#0d9488', '#14b8a6']
-};
-
-interface WeekData {
-    days: (ActivityDay | null)[];
+interface WeeklyData {
+    week: number;
+    count: number;
+    startDate: string;
+    month: string;
 }
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /**
- * Generates 52 weeks of data for the heatmap, filling in missing days.
+ * Aggregates daily activity into weekly data for the chart.
  */
-const generateWeeksData = (activityDays: ActivityDay[]): WeekData[] => {
+const generateWeeklyData = (activityDays: ActivityDay[]): WeeklyData[] => {
     const dayMap = new Map(activityDays.map(d => [d.date, d]));
-    const weeks: WeekData[] = [];
+    const weeks: WeeklyData[] = [];
     const today = new Date();
     const oneYearAgo = new Date(today);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -31,108 +39,129 @@ const generateWeeksData = (activityDays: ActivityDay[]): WeekData[] => {
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
     const currentDate = new Date(startDate);
-    let currentWeek: (ActivityDay | null)[] = [];
+    let weekTotal = 0;
+    let weekStart = currentDate.toISOString().split('T')[0];
+    let weekIndex = 0;
 
     while (currentDate <= today) {
         const dateStr = currentDate.toISOString().split('T')[0];
         const activity = dayMap.get(dateStr);
+        weekTotal += activity?.count ?? 0;
 
-        currentWeek.push(activity ?? {
-            date: dateStr,
-            count: 0,
-            level: 0
-        });
-
-        // If we've completed a week (Saturday), start a new one
+        // If we've completed a week (Saturday), push the data
         if (currentDate.getDay() === 6) {
-            weeks.push({days: currentWeek});
-            currentWeek = [];
+            const weekStartDate = new Date(weekStart);
+
+            weeks.push({
+                week: weekIndex,
+                count: weekTotal,
+                startDate: weekStart,
+                month: MONTHS[weekStartDate.getMonth()]
+            });
+
+            weekIndex++;
+            weekTotal = 0;
+            weekStart = new Date(currentDate.getTime() + 86400000).toISOString().split('T')[0];
         }
 
         currentDate.setDate(currentDate.getDate() + 1);
     }
 
     // Add any remaining days as the final partial week
-    if (currentWeek.length > 0) {
-        weeks.push({days: currentWeek});
+    if (weekTotal > 0 || currentDate > today) {
+        const weekStartDate = new Date(weekStart);
+        weeks.push({
+            week: weekIndex,
+            count: weekTotal,
+            startDate: weekStart,
+            month: MONTHS[weekStartDate.getMonth()]
+        });
     }
 
     return weeks;
 };
 
 const ActivityGraphSkeleton = () => (
-    <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 my-6 animate-pulse">
+    <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 animate-pulse">
         <div className="h-5 w-48 bg-slate-200 dark:bg-slate-700 rounded mb-4" />
-        <div className="h-24 w-full bg-slate-200 dark:bg-slate-700 rounded" />
+        <div className="h-32 w-full bg-slate-200 dark:bg-slate-700 rounded" />
     </div>
 );
 
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{value: number; payload: WeeklyData}>;
+}
+
+const CustomTooltip = ({active, payload}: CustomTooltipProps) => {
+    if (!active || !payload?.length) return null;
+
+    const data = payload[0].payload;
+    return (
+        <div className="bg-slate-900 dark:bg-slate-700 text-white text-xs px-2 py-1 rounded shadow-lg">
+            <p className="font-medium">{data.count} contribution{data.count !== 1 ? 's' : ''}</p>
+            <p className="text-slate-400">Week of {data.startDate}</p>
+        </div>
+    );
+};
+
 const ActivityGraph = ({activity, loading}: ActivityGraphProps) => {
-    const weeks = useMemo(() => generateWeeksData(activity.days), [activity.days]);
+    const weeklyData = useMemo(() => generateWeeklyData(activity.days), [activity.days]);
 
     if (loading) {
         return <ActivityGraphSkeleton />;
     }
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 my-6">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {activity.totalContributions} contribution{activity.totalContributions !== 1 ? 's' : ''} in the last year
-                </h3>
-            </div>
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">
+                {activity.totalContributions} contribution{activity.totalContributions !== 1 ? 's' : ''} in the last year
+            </h3>
 
-            <div className="overflow-x-auto">
-                <div className="flex gap-[3px] min-w-fit">
-                    {weeks.map((week, weekIndex) => (
-                        <div key={weekIndex} className="flex flex-col gap-[3px]">
-                            {week.days.map((day, dayIndex) => (
-                                <div
-                                    key={`${weekIndex}-${dayIndex}`}
-                                    className="w-[10px] h-[10px] sm:w-3 sm:h-3 rounded-sm transition-colors"
-                                    style={{
-                                        backgroundColor: day
-                                            ? `var(--activity-level-${day.level})`
-                                            : 'var(--activity-level-0)'
-                                    }}
-                                    title={day ? `${day.date}: ${day.count} contribution${day.count !== 1 ? 's' : ''}` : ''}
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </div>
+            <div className="h-36">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={weeklyData} margin={{top: 8, right: 8, bottom: 4, left: 0}}>
+                        <defs>
+                            <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="currentColor"
+                            className="text-slate-200 dark:text-slate-700"
+                        />
+                        <XAxis
+                            dataKey="week"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{fontSize: 11, fill: '#94a3b8'}}
+                            ticks={[0, 8, 17, 26, 35, 44]}
+                            tickFormatter={(weekIdx) => {
+                                const data = weeklyData[weekIdx];
+                                return data?.month ?? '';
+                            }}
+                        />
+                        <YAxis
+                            tick={{fontSize: 11, fill: '#94a3b8'}}
+                            axisLine={false}
+                            tickLine={false}
+                            width={24}
+                            tickFormatter={(value) => value > 0 ? value : ''}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                            type="monotone"
+                            dataKey="count"
+                            stroke="#14b8a6"
+                            strokeWidth={1.5}
+                            fill="url(#activityGradient)"
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
             </div>
-
-            {/* Legend */}
-            <div className="flex items-center justify-end gap-1 mt-3 text-xs text-slate-500 dark:text-slate-400">
-                <span className="mr-1">Less</span>
-                {[0, 1, 2, 3, 4].map(level => (
-                    <div
-                        key={level}
-                        className="w-[10px] h-[10px] sm:w-3 sm:h-3 rounded-sm"
-                        style={{backgroundColor: `var(--activity-level-${level})`}}
-                    />
-                ))}
-                <span className="ml-1">More</span>
-            </div>
-
-            {/* CSS custom properties for colors - using inline style for theme support */}
-            <style>{`
-                :root {
-                    --activity-level-0: ${LEVEL_COLORS.light[0]};
-                    --activity-level-1: ${LEVEL_COLORS.light[1]};
-                    --activity-level-2: ${LEVEL_COLORS.light[2]};
-                    --activity-level-3: ${LEVEL_COLORS.light[3]};
-                    --activity-level-4: ${LEVEL_COLORS.light[4]};
-                }
-                .dark {
-                    --activity-level-0: ${LEVEL_COLORS.dark[0]};
-                    --activity-level-1: ${LEVEL_COLORS.dark[1]};
-                    --activity-level-2: ${LEVEL_COLORS.dark[2]};
-                    --activity-level-3: ${LEVEL_COLORS.dark[3]};
-                    --activity-level-4: ${LEVEL_COLORS.dark[4]};
-                }
-            `}</style>
         </div>
     );
 };
