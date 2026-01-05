@@ -1,5 +1,6 @@
 import {HugeiconsIcon} from "@hugeicons/react";
 import {ThumbsUpIcon, ThumbsDownIcon} from "@hugeicons-pro/core-twotone-rounded";
+import {ThumbsUpIcon as ThumbsUpSolidIcon, ThumbsDownIcon as ThumbsDownSolidIcon} from "@hugeicons-pro/core-solid-rounded";
 import {useContext, useCallback, useMemo} from "react";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import type {NDKFilter, NDKKind, NDKEvent} from "@nostr-dev-kit/ndk";
@@ -78,7 +79,7 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
         )}>
             <button type="button" onClick={() => onVote(VoteType.UPVOTE)}>
                 <HugeiconsIcon
-                    icon={ThumbsUpIcon}
+                    icon={myVote?.vote === VoteType.UPVOTE ? ThumbsUpSolidIcon : ThumbsUpIcon}
                     size={horizontal ? 18 : 22}
                     className={voteActionClassName(myVote, VoteType.UPVOTE)}
                 />
@@ -91,7 +92,7 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
 
             <button onClick={() => onVote(VoteType.DOWNVOTE)}>
                 <HugeiconsIcon
-                    icon={ThumbsDownIcon}
+                    icon={myVote?.vote === VoteType.DOWNVOTE ? ThumbsDownSolidIcon : ThumbsDownIcon}
                     size={horizontal ? 18 : 22}
                     className={voteActionClassName(myVote, VoteType.DOWNVOTE)}
                 />

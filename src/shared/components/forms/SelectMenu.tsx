@@ -1,7 +1,8 @@
 import {useState} from 'react'
 import {Listbox, ListboxButton, ListboxLabel, ListboxOptions, ListboxOption} from '@headlessui/react'
 import {HugeiconsIcon} from "@hugeicons/react";
-import {Tick02Icon, ArrowDown01Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {ArrowDown01Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {Tick02Icon as Tick02SolidIcon} from "@hugeicons-pro/core-solid-rounded";
 
 interface Option {
     [key: string]: string | undefined;
@@ -61,7 +62,7 @@ const SelectMenu = <T extends Option>({
 
                                         {selected ? (
                                             <span className="text-teal-600 dark:text-teal-500 data-[focus]:text-white">
-                                                <HugeiconsIcon icon={Tick02Icon} size={20} aria-hidden="true" />
+                                                <HugeiconsIcon icon={Tick02SolidIcon} size={20} aria-hidden="true" />
                                             </span>
                                         ) : null}
                                     </div>

@@ -10,7 +10,7 @@ import {RootState} from "../../../app/store";
 import type {Question} from "../../question/types/question.types";
 import AcceptAnswer from "./AcceptAnswer";
 import {HugeiconsIcon} from "@hugeicons/react";
-import {CheckmarkCircle02Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {CheckmarkCircle02Icon as CheckmarkCircle02SolidIcon} from "@hugeicons-pro/core-solid-rounded";
 import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
 import ActionItems from "../../../shared/components/ActionItems";
@@ -39,7 +39,7 @@ const AnswerItem = memo(({answer, question, editAction}: AnswerItemProps) => {
                 />
                 {isAccepted && (
                     <span title="Accepted answer">
-                        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="text-green-500" size={20} />
+                        <HugeiconsIcon icon={CheckmarkCircle02SolidIcon} className="text-green-500" size={20} />
                     </span>
                 )}
                 {canAccept && <AcceptAnswer answer={answer} question={question} />}

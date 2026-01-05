@@ -1,16 +1,17 @@
 import {HugeiconsIcon} from "@hugeicons/react";
 import type {IconSvgElement} from "@hugeicons/react";
 import {UserCircleIcon, FingerPrintIcon, Notification03Icon, Cursor02Icon, LanguageSkillIcon, ColorsIcon} from "@hugeicons-pro/core-twotone-rounded";
+import {UserCircleIcon as UserCircleSolidIcon, FingerPrintIcon as FingerPrintSolidIcon, Notification03Icon as Notification03SolidIcon, Cursor02Icon as Cursor02SolidIcon, LanguageSkillIcon as LanguageSkillSolidIcon, ColorsIcon as ColorsSolidIcon} from "@hugeicons-pro/core-solid-rounded";
 import {classNames} from "../../../../utils";
 import {NavLink, Outlet} from "react-router";
 
-const secondaryNavigation: {name: string; href: string; icon: IconSvgElement; current: boolean}[] = [
-    {name: 'General', href: '/settings/user-profile', icon: UserCircleIcon, current: true},
-    {name: 'Security', href: '/settings/security', icon: FingerPrintIcon, current: false},
-    {name: 'Notifications', href: '/settings/notifications', icon: Notification03Icon, current: false},
-    {name: 'Network', href: '/settings/network', icon: Cursor02Icon, current: false},
-    {name: 'Translation', href: '/settings/translation', icon: LanguageSkillIcon, current: false},
-    {name: 'Appearance', href: '/settings/appearance', icon: ColorsIcon, current: false},
+const secondaryNavigation: {name: string; href: string; icon: IconSvgElement; iconSolid: IconSvgElement; current: boolean}[] = [
+    {name: 'General', href: '/settings/user-profile', icon: UserCircleIcon, iconSolid: UserCircleSolidIcon, current: true},
+    {name: 'Security', href: '/settings/security', icon: FingerPrintIcon, iconSolid: FingerPrintSolidIcon, current: false},
+    {name: 'Notifications', href: '/settings/notifications', icon: Notification03Icon, iconSolid: Notification03SolidIcon, current: false},
+    {name: 'Network', href: '/settings/network', icon: Cursor02Icon, iconSolid: Cursor02SolidIcon, current: false},
+    {name: 'Translation', href: '/settings/translation', icon: LanguageSkillIcon, iconSolid: LanguageSkillSolidIcon, current: false},
+    {name: 'Appearance', href: '/settings/appearance', icon: ColorsIcon, iconSolid: ColorsSolidIcon, current: false},
 ]
 
 const SettingsPage = () => {
@@ -34,7 +35,7 @@ const SettingsPage = () => {
                                     {({isActive}) => (
                                         <>
                                             <HugeiconsIcon
-                                                icon={item.icon}
+                                                icon={isActive ? item.iconSolid : item.icon}
                                                 className={classNames(
                                                     isActive ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200',
                                                     'shrink-0 transition-colors'
