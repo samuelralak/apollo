@@ -4,7 +4,7 @@ import {questionTransformer} from "../services/question.transformer";
 import {useParams} from "react-router";
 import {formatDateTime, markdownToText} from "../../../utils";
 import MDEditor from '@uiw/react-md-editor';
-import Loader from "../../../shared/components/feedback/Loader";
+import QuestionDetailSkeleton from "../components/QuestionDetailSkeleton";
 import EventOwner from "../../user/components/EventOwner";
 import AnswersContainer from "../../answer/components/AnswersContainer";
 import Votes from "../../vote/components/Votes";
@@ -44,7 +44,7 @@ const QuestionPage = () => {
     );
 
     if (!question) {
-        return <Loader loadingText={'Fetching question'}/>
+        return <QuestionDetailSkeleton />
     }
 
     return (

@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { questionTransformer } from "../services/question.transformer";
-import Loader from "../../../shared/components/feedback/Loader";
 import QuestionsList from "../components/QuestionsList";
+import QuestionsListSkeleton from "../components/QuestionsListSkeleton";
 import NewQuestionsBanner from "../components/NewQuestionsBanner";
 import constants from "../../../constants";
 import useNDKSubscription, { EventHandlingMode, ResourceType } from "../../../shared/hooks/useNDKSubscription";
@@ -55,11 +55,10 @@ const HomePage = () => {
         }
     );
 
-    if (questions.lastFetched === 0) {
-        return <Loader />;
-    }
+    const isLoading = questions.lastFetched === 0;
 
-    if (sortedQuestions.length === 0) {
+    // Show empty state only after initial load completes
+    if (!isLoading && sortedQuestions.length === 0) {
         return <EmptyState />;
     }
 
@@ -72,7 +71,11 @@ const HomePage = () => {
                 onLoadCallback={handleQuestionEvent}
             />
 
-            <QuestionsList questions={sortedQuestions} />
+            {isLoading ? (
+                <QuestionsListSkeleton count={6} />
+            ) : (
+                <QuestionsList questions={sortedQuestions} />
+            )}
         </div>
     );
 };
