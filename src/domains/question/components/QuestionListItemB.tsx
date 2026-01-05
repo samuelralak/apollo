@@ -1,16 +1,14 @@
 import {memo} from "react";
 import {Link} from "react-router";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import {EllipsisHorizontalIcon} from "@heroicons/react/20/solid";
-import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import type {Question} from "../types/question.types";
 import {formatDateTime, markdownToText} from "../../../utils";
 import EventOwner from "../../user/components/EventOwner";
 import constants from "../../../constants";
-import {AppDispatch, RootState} from "../../../app/store";
-import {PortalID, showPortal} from "../../../shared/store/portal.slice";
+import {RootState} from "../../../app/store";
 import useQuestionStats from "../hooks/useQuestionStats";
+import ActionItems from "../../../shared/components/ActionItems";
 
 interface QuestionListItemBProps {
     question: Question;
@@ -25,10 +23,8 @@ interface QuestionListItemBProps {
  * - Accepted answer indicator
  */
 const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItemBProps) => {
-    const auth = useSelector((state: RootState) => state.auth);
     const vote = useSelector((state: RootState) => state.vote[question.id]);
     const answer = useSelector((state: RootState) => state.answer[question.id]);
-    const dispatch = useDispatch() as AppDispatch;
 
     // Subscribe to vote and answer stats for this question
     useQuestionStats(question);
@@ -36,13 +32,6 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
     const hasAcceptedAnswer = !!question.acceptedAnswerId;
     const voteCount = vote?.total ?? 0;
     const answerCount = answer?.total ?? 0;
-
-    const handleShowModal = (portalId: PortalID) => dispatch(showPortal({
-        portalId: portalId,
-        pubkey: question.user.pubkey,
-        eventId: question.eventId,
-        eventCoordinate: `${constants.questionKind}:${question.user.pubkey}:${question.id}`
-    }));
 
     return (
         <li className="py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
@@ -100,72 +89,13 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center shrink-0">
-                    {/* Desktop: text links */}
-                    <div className="hidden sm:flex items-center gap-x-3 font-medium">
-                        <a onClick={() => handleShowModal(PortalID.share)}
-                           className="hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
-                            Share
-                        </a>
-                        {auth.isLoggedIn && (
-                            <>
-                                <a onClick={() => handleShowModal(PortalID.zap)}
-                                   className="hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
-                                    Zap
-                                </a>
-                                {auth.pubkey === question.user.pubkey && (
-                                    <Link
-                                        to={`/questions/${question.id}/edit`}
-                                        className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
-                                        Edit
-                                    </Link>
-                                )}
-                            </>
-                        )}
-                    </div>
-
-                    {/* Mobile: ellipsis menu */}
-                    <Menu as="div" className="relative sm:hidden">
-                        <MenuButton className="p-1 -m-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
-                            <span className="sr-only">Actions</span>
-                            <EllipsisHorizontalIcon className="h-5 w-5" />
-                        </MenuButton>
-                        <MenuItems className="absolute right-0 z-10 mt-1 w-32 origin-top-right rounded-md bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
-                            <div className="py-1">
-                                <MenuItem>
-                                    <a
-                                        onClick={() => handleShowModal(PortalID.share)}
-                                        className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700 cursor-pointer"
-                                    >
-                                        Share
-                                    </a>
-                                </MenuItem>
-                                {auth.isLoggedIn && (
-                                    <>
-                                        <MenuItem>
-                                            <a
-                                                onClick={() => handleShowModal(PortalID.zap)}
-                                                className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700 cursor-pointer"
-                                            >
-                                                Zap
-                                            </a>
-                                        </MenuItem>
-                                        {auth.pubkey === question.user.pubkey && (
-                                            <MenuItem>
-                                                <Link
-                                                    to={`/questions/${question.id}/edit`}
-                                                    className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-focus:bg-slate-100 dark:data-focus:bg-slate-700"
-                                                >
-                                                    Edit
-                                                </Link>
-                                            </MenuItem>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        </MenuItems>
-                    </Menu>
-                </div>
+                <ActionItems
+                    id={question.id}
+                    eventId={question.eventId}
+                    pubkey={question.user.pubkey}
+                    kind={constants.questionKind}
+                    editPath={`/questions/${question.id}/edit`}
+                />
             </div>
         </li>
     );

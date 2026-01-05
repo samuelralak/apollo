@@ -9,6 +9,7 @@ import {RootState} from "./store";
 import {PortalID} from "../shared/store/portal.slice";
 import {createPortal} from "react-dom";
 import SharePortal from "../shared/components/portal/SharePortal";
+import GetStartedPortal from "../shared/components/portal/GetStartedPortal";
 
 const Root = () => {
     const isLoggedIn = useSelector((state: RootState) => state.auth).isLoggedIn
@@ -38,6 +39,10 @@ const Root = () => {
                                      eventCoordinate={eventCoordinate!}
                                      eventId={portal.eventId!}/>
                         , document.body
+                    )}
+
+                    {!isLoggedIn && visible && portalId === PortalID.auth && createPortal(
+                        <GetStartedPortal />, document.body
                     )}
                 </NDKProvider>
             </ToastProvider>

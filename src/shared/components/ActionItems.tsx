@@ -4,17 +4,25 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
 import {Link} from "react-router";
 import {PortalID, showPortal} from "../store/portal.slice";
-import constants from "../../constants";
 
-const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => {
+interface ActionItemsProps {
+    id: string;
+    eventId: string;
+    pubkey: string;
+    kind: number;
+    editAction?: () => void;
+    editPath?: string;
+}
+
+const ActionItems = ({id, eventId, pubkey, kind, editAction, editPath}: ActionItemsProps) => {
     const auth = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch() as AppDispatch
 
     const handleShowModal = (portalId: PortalID) => dispatch(showPortal({
         portalId: portalId,
-        pubkey: props.pubkey,
-        eventId: props.eventId,
-        eventCoordinate: `${constants.questionKind}:${props.pubkey}:${props.id}`
+        pubkey: pubkey,
+        eventId: eventId,
+        eventCoordinate: `${kind}:${pubkey}:${id}`
     }))
 
     return (
@@ -31,11 +39,18 @@ const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => 
                            className="hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
                             Zap
                         </a>
-                        {auth.pubkey === props.pubkey && (
-                            <Link to={`/questions/${props.id}/edit`}
-                                  className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
-                                Edit
-                            </Link>
+                        {auth.pubkey === pubkey && (editAction || editPath) && (
+                            editAction ? (
+                                <a onClick={editAction}
+                                   className="hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors">
+                                    Edit
+                                </a>
+                            ) : editPath ? (
+                                <Link to={editPath}
+                                      className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                                    Edit
+                                </Link>
+                            ) : null
                         )}
                     </>
                 )}
@@ -67,14 +82,19 @@ const ActionItems = (props: { id: string, eventId: string, pubkey: string }) => 
                                         Zap
                                     </a>
                                 </MenuItem>
-                                {auth.pubkey === props.pubkey && (
+                                {auth.pubkey === pubkey && (editAction || editPath) && (
                                     <MenuItem>
-                                        <Link
-                                            to={`/questions/${props.id}/edit`}
-                                            className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700"
-                                        >
-                                            Edit
-                                        </Link>
+                                        {editAction ? (
+                                            <a onClick={editAction}
+                                               className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700 cursor-pointer">
+                                                Edit
+                                            </a>
+                                        ) : editPath ? (
+                                            <Link to={editPath}
+                                                  className="block px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 data-[focus]:bg-slate-100 dark:data-[focus]:bg-slate-700">
+                                                Edit
+                                            </Link>
+                                        ) : null}
                                     </MenuItem>
                                 )}
                             </>

@@ -108,7 +108,7 @@ const ZapPortal = ({ pubkey, eventId, eventCoordinate }: Props) => {
     }, [zapInvoice.error]);
 
     return (
-        <Dialog open={visible} onClose={() => {}} className="relative z-10">
+        <Dialog open={visible} onClose={handleClose} className="relative z-10">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-slate-900/75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"

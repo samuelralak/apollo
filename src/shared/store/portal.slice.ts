@@ -2,7 +2,8 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export enum PortalID {
     share = 'share',
-    zap = 'zap'
+    zap = 'zap',
+    auth = 'auth'
 }
 
 export interface PortalState {

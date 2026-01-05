@@ -121,7 +121,13 @@ const QuestionPage = () => {
                                     horizontal={true}
                                 />
                             </div>
-                            <ActionItems id={question.id} eventId={question.eventId} pubkey={question.user.pubkey} />
+                            <ActionItems
+                                id={question.id}
+                                eventId={question.eventId}
+                                pubkey={question.user.pubkey}
+                                kind={constants.questionKind}
+                                editPath={`/questions/${question.id}/edit`}
+                            />
                         </div>
 
                         {/* Comments */}
