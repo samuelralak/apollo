@@ -26,13 +26,13 @@ const MobileMenuPortal = () => {
         <Dialog open={visible} onClose={handleClose} className="relative z-50 md:hidden">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
             />
 
             <div className="fixed inset-0 flex items-start justify-center p-4 pt-16">
                 <DialogPanel
                     transition
-                    className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-200 dark:ring-slate-700 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[closed]:opacity-0 data-[closed]:scale-95 data-[closed]:-translate-y-4"
+                    className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-800 shadow-2xl ring-1 ring-slate-200 dark:ring-slate-700 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-closed:opacity-0 data-closed:scale-95 data-closed:-translate-y-4"
                 >
                     <Link to="/" onClick={handleClose} className={linkClass}>
                         Home

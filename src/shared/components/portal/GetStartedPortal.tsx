@@ -75,14 +75,14 @@ const GetStartedPortal = () => {
         <Dialog open={visible} onClose={handleClose} className="relative z-10">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-slate-900/75 transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
             />
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div className="flex min-h-full justify-center p-4 text-center items-start">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all duration-300 ease-out my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:opacity-0 data-[closed]:translate-y-4 sm:data-[closed]:translate-y-0 sm:data-[closed]:scale-95"
+                        className="relative transform overflow-hidden rounded-xl bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl ring-1 ring-slate-200 dark:ring-slate-700 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] my-8 sm:w-full sm:max-w-sm sm:p-6 data-closed:opacity-0 data-closed:scale-95 data-closed:-translate-y-4"
                     >
                         <DialogTitle as="h2"
                                      className="font-semibold leading-6 text-slate-700 dark:text-slate-200 text-base flex justify-between items-center"
