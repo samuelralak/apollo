@@ -23,9 +23,17 @@ const REPUTATION = {
     ANSWER_ACCEPTED: 15
 } as const;
 
+export interface ResourceVotes {
+    upvotes: number;
+    downvotes: number;
+    score: number;
+}
+
 interface UseUserStatsResult {
     questions: Question[];
     answers: Answer[];
+    questionVotes: Map<string, ResourceVotes>;
+    answerVotes: Map<string, ResourceVotes>;
     stats: UserStats;
     loading: boolean;
 }
@@ -135,55 +143,91 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
     const questions = useMemo(() => Array.from(questionsMap.values()), [questionsMap]);
     const answers = useMemo(() => Array.from(answersMap.values()), [answersMap]);
 
-    // Calculate stats with O(n) single-pass aggregation
-    const stats = useMemo<UserStats>(() => {
+    // Calculate stats and per-resource votes with O(n) single-pass aggregation
+    const { stats, questionVotes, answerVotes } = useMemo(() => {
         // Build Set of question IDs for O(1) lookup when categorizing votes
         const questionIds = new Set(questionsMap.keys());
+        const answerIds = new Set(answersMap.keys());
 
-        // Single pass through votes to calculate reputation
-        let upvotes = 0;
-        let downvotes = 0;
+        // Per-resource vote tracking
+        const qVotes = new Map<string, ResourceVotes>();
+        const aVotes = new Map<string, ResourceVotes>();
+
+        // Initialize vote counts for all resources
+        for (const id of questionIds) {
+            qVotes.set(id, { upvotes: 0, downvotes: 0, score: 0 });
+        }
+        for (const id of answerIds) {
+            aVotes.set(id, { upvotes: 0, downvotes: 0, score: 0 });
+        }
+
+        // Single pass through votes
+        let totalUpvotes = 0;
+        let totalDownvotes = 0;
         let reputation = 0;
 
         for (const vote of votesMap.values()) {
             const isQuestion = questionIds.has(vote.resourceId);
+            const isAnswer = answerIds.has(vote.resourceId);
             const isUpvote = vote.vote === VoteType.UPVOTE;
 
+            // Update per-resource votes
+            if (isQuestion) {
+                const current = qVotes.get(vote.resourceId)!;
+                if (isUpvote) {
+                    current.upvotes++;
+                    current.score++;
+                } else {
+                    current.downvotes++;
+                    current.score--;
+                }
+            } else if (isAnswer) {
+                const current = aVotes.get(vote.resourceId)!;
+                if (isUpvote) {
+                    current.upvotes++;
+                    current.score++;
+                } else {
+                    current.downvotes++;
+                    current.score--;
+                }
+            }
+
+            // Update totals
             if (isUpvote) {
-                upvotes++;
+                totalUpvotes++;
                 reputation += isQuestion ? REPUTATION.QUESTION_UPVOTE : REPUTATION.ANSWER_UPVOTE;
             } else {
-                downvotes++;
+                totalDownvotes++;
                 reputation += isQuestion ? REPUTATION.QUESTION_DOWNVOTE : REPUTATION.ANSWER_DOWNVOTE;
             }
         }
 
-        // Accepted answers calculation would require fetching questions the user answered
-        // to check if acceptedAnswerId matches. For now, this is a placeholder.
-        // TODO: Add subscription to questions containing user's answers for full accuracy
         const acceptedAnswers = 0;
-
         reputation += acceptedAnswers * REPUTATION.ANSWER_ACCEPTED;
-
-        // Ensure reputation doesn't go below 1 (Stack Overflow minimum)
         reputation = Math.max(1, reputation);
 
         return {
-            reputation,
-            questionsCount: questionsMap.size,
-            answersCount: answersMap.size,
-            votesReceived: {
-                upvotes,
-                downvotes,
-                total: upvotes - downvotes
-            },
-            acceptedAnswers
+            stats: {
+                reputation,
+                questionsCount: questionsMap.size,
+                answersCount: answersMap.size,
+                votesReceived: {
+                    upvotes: totalUpvotes,
+                    downvotes: totalDownvotes,
+                    total: totalUpvotes - totalDownvotes
+                },
+                acceptedAnswers
+            } as UserStats,
+            questionVotes: qVotes,
+            answerVotes: aVotes
         };
     }, [questionsMap, answersMap, votesMap]);
 
     return {
         questions,
         answers,
+        questionVotes,
+        answerVotes,
         stats,
         loading: questionsLoading || answersLoading || votesLoading
     };

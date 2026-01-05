@@ -59,7 +59,7 @@ const ProfilePage = () => {
         actions.execute(pubkey!);
     });
 
-    const {questions, answers, stats, loading: statsLoading} = useUserStats(pubkey!);
+    const {questions, answers, questionVotes, answerVotes, stats, loading: statsLoading} = useUserStats(pubkey!);
     const {activity, loading: activityLoading} = useUserActivity(pubkey!);
 
     const profile = state.result;
@@ -134,10 +134,10 @@ const ProfilePage = () => {
                             />
                         )}
                         {activeTab === 'questions' && (
-                            <UserQuestionsList questions={questions} loading={statsLoading} />
+                            <UserQuestionsList questions={questions} votes={questionVotes} loading={statsLoading} />
                         )}
                         {activeTab === 'answers' && (
-                            <UserAnswersList answers={answers} loading={statsLoading} />
+                            <UserAnswersList answers={answers} votes={answerVotes} loading={statsLoading} />
                         )}
                     </div>
                 </div>
