@@ -46,7 +46,7 @@ const AnswerItem = ({answer, question, editAction}: {
                 {isAccepted && (
                     <CheckCircleIcon className="text-green-500 h-4 w-4 sm:h-5 sm:w-5" title="Accepted answer" />
                 )}
-                {canAccept && <AcceptAnswer answer={answer} />}
+                {canAccept && <AcceptAnswer answer={answer} question={question} />}
             </div>
 
             {/* Content */}

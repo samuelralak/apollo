@@ -25,12 +25,13 @@ interface QuestionListItemBProps {
  */
 const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItemBProps) => {
     const auth = useSelector((state: RootState) => state.auth);
+    const vote = useSelector((state: RootState) => state.vote[question.id]);
+    const answer = useSelector((state: RootState) => state.answer[question.id]);
     const dispatch = useDispatch() as AppDispatch;
 
     const hasAcceptedAnswer = !!question.acceptedAnswerId;
-    // Static for now - will be dynamic later
-    const voteCount: number = 0;
-    const answerCount: number = 0;
+    const voteCount = vote?.total ?? 0;
+    const answerCount = answer?.total ?? 0;
 
     const handleShowModal = (portalId: PortalID) => dispatch(showPortal({
         portalId: portalId,

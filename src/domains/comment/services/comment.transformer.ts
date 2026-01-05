@@ -1,19 +1,20 @@
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { tagFromEvents } from "../../../utils";
+import { safeGetAllTags, safeGetCoordinateIdentifier } from "../../../utils/tags";
 import type { Comment } from "../types/comment.types";
 
 export const commentTransformer = (event: NDKEvent): Comment => {
-    const tags = tagFromEvents(event.tags)
+    const tags = tagFromEvents(event.tags);
 
     return {
         id: event.id,
         content: event.content,
         pubkey: event.pubkey,
         createdAt: event.created_at!,
-        participants: tags['p'],
+        participants: safeGetAllTags(tags, 'p'),
         isReplaceable: false,
-        parentId: tags['a'][0].split(':')[2],
-    }
+        parentId: safeGetCoordinateIdentifier(tags) ?? '',
+    };
 }
 
 // Keep backwards-compatible name

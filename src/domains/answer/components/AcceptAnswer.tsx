@@ -1,31 +1,30 @@
 import type {Answer} from "../types/answer.types";
+import type {Question} from "../../question/types/question.types";
 import {CheckCircleIcon} from "@heroicons/react/24/solid";
 import {useContext, useState} from "react";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import constants from "../../../constants";
 import {CogIcon} from "@heroicons/react/24/outline";
 
-const AcceptAnswer = ({answer}: { answer: Answer }) => {
-    const {ndkInstance, publishEvent} = useContext(NDKContext) as NDKContext
+const AcceptAnswer = ({answer, question}: { answer: Answer, question: Question }) => {
+    const {publishEvent} = useContext(NDKContext) as NDKContext
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const handleMarkAcceptedAnswer = async () => {
         setIsLoading(true)
-        const questionEvent = await ndkInstance().fetchEvent({
-            kinds: [constants.questionKind],
-            "#d": [answer.questionId]
-        })
 
-        if (questionEvent) {
-            await publishEvent(constants.questionKind, questionEvent.content, [
-                ...questionEvent.tags.filter((tag) => ["a", "accepted_answer"].indexOf(tag[0]) === -1),
-                ...[
-                    ["accepted_answer", answer.eventId],
-                    ["a", `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`, ""]
-                ]
-            ])
-        }
+        // Reconstruct tags from Question data - no network fetch needed
+        const tags: string[][] = [
+            ["d", question.id],
+            ["title", question.title],
+            ...question.tags.map(t => ["t", t]),
+            ["L", "question-category"],
+            ["l", question.category, "question-category"],
+            ["accepted_answer", answer.eventId],
+            ["a", `${constants.answerKind}:${answer.user.pubkey}:${answer.id}`, ""]
+        ];
 
+        await publishEvent(constants.questionKind, question.description, tags);
         setIsLoading(false)
     }
 

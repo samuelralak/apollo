@@ -29,7 +29,8 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
     refEvent?: string,
     horizontal?: boolean
 }) => {
-    const aTag = `${kind}:${eventId}:${identifier}`
+    // NIP spec: a-tag format is kind:pubkey:identifier
+    const aTag = `${kind}:${pubkey}:${identifier}`
     const voteFilters = useMemo(() => ({
         kinds: [constants.voteKind],
         "#a": [aTag],
