@@ -384,7 +384,7 @@ const ProfileSidebar = ({profile, stats, loading}: ProfileSidebarProps) => {
 
             {/* Bio */}
             {profile?.about && (
-                <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">
+                <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-words overflow-hidden">
                     {profile.about}
                 </p>
             )}
