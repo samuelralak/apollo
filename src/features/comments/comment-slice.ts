@@ -1,6 +1,4 @@
-import createResourceSlice from "../resource/resource-slice.ts";
-import Comment from "../../resources/comment.ts";
-
-const commentSlice = createResourceSlice<Comment>('comment')
-export const {addItem: addComment} = commentSlice.actions
-export default commentSlice.reducer
+// Re-export from new location for backwards compatibility
+// TODO: Update imports to use @/domains/comment directly and remove this file
+export { addComment } from '../../domains/comment/store/comment.slice';
+export { default } from '../../domains/comment/store/comment.slice';

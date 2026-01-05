@@ -1,35 +1,10 @@
-import localforage from "localforage";
-
-const storeNames: { SESSION: string } = {
-    SESSION: 'session'
-}
-
-type StoreName = typeof storeNames[keyof typeof storeNames];
-
-const storage = localforage.createInstance({
-    name: import.meta.env.VITE_SECURE_LOCAL_STORAGE_PREFIX as string
-})
-
-const saveToStorage = <T>(storeName: StoreName, key: string, value: T) => {
-    storage.config({storeName})
-    return storage.setItem(key, value)
-}
-
-const fetchFromStorage = (storeName: StoreName, key: string) => {
-    storage.config({storeName})
-    return storage.getItem(key)
-}
-
-const deleteFromStorage = (storeName: StoreName, key: string) => {
-    storage.config({storeName})
-    return storage.removeItem(key)
-}
-
+// Re-export from new location for backwards compatibility
+// TODO: Update imports to use @lib/storage directly and remove this file
 export {
     storeNames,
     saveToStorage,
     fetchFromStorage,
     deleteFromStorage
-}
+} from '../lib/storage';
 
-export default storage
+export { default } from '../lib/storage';

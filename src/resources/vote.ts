@@ -1,30 +1,6 @@
-import {NDKEvent} from "@nostr-dev-kit/ndk";
-import {tagFromEvents} from "../utils";
-
-export enum VoteType {
-    UPVOTE = '+',
-    DOWNVOTE = '-'
-}
-
-
-export default interface Vote {
-    vote: VoteType;
-    eventId: string;
-    pubkey: string;
-    createdAt: number;
-    referenceEventId: string;
-    resourceId: string;
-}
-
-export const transformer = (event: NDKEvent): Vote => {
-    const tags = tagFromEvents(event.tags)
-
-    return {
-        vote: event.content as VoteType,
-        eventId: event.id,
-        pubkey: event.pubkey,
-        createdAt: event.created_at!,
-        referenceEventId: tags['e'][tags['e'].length - 1],
-        resourceId: (tags['a'] ?? [])[0]?.split(':')[2]
-    }
-}
+// Re-export from new locations for backwards compatibility
+// TODO: Update imports to use @/domains/vote directly and remove this file
+export type { Vote } from '../domains/vote/types/vote.types';
+export { VoteType } from '../domains/vote/types/vote.types';
+export type { Vote as default } from '../domains/vote/types/vote.types';
+export { transformer, voteTransformer } from '../domains/vote/services/vote.transformer';

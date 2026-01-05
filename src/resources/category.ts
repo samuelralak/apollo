@@ -1,6 +1,3 @@
-export interface Category {
-    slug: string;
-    title: string;
-    description: string;
-    [key: string]: string | undefined;
-}
+// Re-export from new location for backwards compatibility
+// TODO: Update imports to use @/shared/types directly and remove this file
+export type { Category } from '../shared/types/category.types';

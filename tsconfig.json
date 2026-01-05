@@ -18,7 +18,18 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/app/*": ["src/app/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/domains/*": ["src/domains/*"],
+      "@/shared/*": ["src/shared/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/constants": ["src/constants/index.ts"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,8 +1,4 @@
-import {z} from "zod";
-
-export default z.object({
-    comment: z
-        .string()
-        .min(15, "must be at least 15 characters")
-        .max(144, "must be at most 144 characters")
-})
+// Re-export from new location for backwards compatibility
+// TODO: Update imports to use @/domains/comment directly and remove this file
+export { default } from '../domains/comment/schemas/comment.schema';
+export type { CommentFormData } from '../domains/comment/schemas/comment.schema';

@@ -1,8 +1,4 @@
-import {z} from "zod";
-
-export default z.object({
-    description: z
-        .string()
-        .min(1, "Answer is required")
-        .max(1440, "Answer must be at most 720 characters long")
-})
+// Re-export from new location for backwards compatibility
+// TODO: Update imports to use @/domains/answer directly and remove this file
+export { default } from '../domains/answer/schemas/answer.schema';
+export type { AnswerFormData } from '../domains/answer/schemas/answer.schema';
