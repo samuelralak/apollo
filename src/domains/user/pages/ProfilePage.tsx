@@ -1,6 +1,6 @@
 import {useParams} from "react-router";
 import {useContext, useState, useMemo} from "react";
-import {useAsyncAbortable, useMountEffect} from "@react-hookz/web";
+import {useAsyncAbortable, useMountEffect, useUpdateEffect} from "@react-hookz/web";
 import type {Question} from "../../question/types/question.types";
 import type {Answer} from "../../answer/types/answer.types";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
@@ -12,10 +12,12 @@ import {
     UserCircleIcon,
     Link01Icon,
     BitcoinEllipseIcon,
-    CheckmarkBadge01Icon,
+    CheckmarkBadge01Icon
+} from "@hugeicons-pro/core-twotone-rounded";
+import {
     HelpCircleIcon,
     MessageDone01Icon
-} from "@hugeicons-pro/core-twotone-rounded";
+} from "@hugeicons-pro/core-duotone-rounded";
 import ActivityGraph from "../components/ActivityGraph";
 import UserQuestionsList from "../components/UserQuestionsList";
 import UserAnswersList from "../components/UserAnswersList";
@@ -27,6 +29,7 @@ import type {UserActivity} from "../types/profile.types";
 
 type TabId = 'overview' | 'questions' | 'answers';
 
+// TODO: Move formatTimeAgo to src/utils/date.utils.ts for reuse across components
 const formatTimeAgo = (timestamp: number): string => {
     const seconds = Math.floor(Date.now() / 1000) - timestamp;
     if (seconds < 60) return 'just now';
@@ -55,12 +58,24 @@ const ProfilePage = () => {
         return user.profile;
     });
 
+    // Initial load on mount
     useMountEffect(() => {
-        actions.execute(pubkey!);
+        if (pubkey) actions.execute(pubkey);
     });
 
-    const {questions, answers, questionVotes, answerVotes, stats, loading: statsLoading} = useUserStats(pubkey!);
-    const {activity, loading: activityLoading} = useUserActivity(pubkey!);
+    // Re-fetch when navigating between profiles (pubkey changes)
+    useUpdateEffect(() => {
+        if (pubkey) actions.execute(pubkey);
+    }, [pubkey]);
+
+    // Safety: pass empty string if pubkey is undefined (hooks handle gracefully)
+    const {questions, answers, questionVotes, answerVotes, stats, loading: statsLoading} = useUserStats(pubkey || '');
+    const {activity, loading: activityLoading} = useUserActivity(pubkey || '');
+
+    // Safety check: show error state if no pubkey
+    if (!pubkey) {
+        return <div className="p-8 text-center text-slate-500">Invalid User ID</div>;
+    }
 
     const profile = state.result;
     const fetchingProfile = state.status === 'loading' || state.status === 'not-executed';
@@ -210,8 +225,8 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
                             <div className="absolute left-[11px] top-1 bottom-1 w-px bg-slate-200 dark:bg-slate-700" />
 
                             <ul className="space-y-5">
-                                {recentActivity.map((item, idx) => (
-                                    <li key={idx} className="relative">
+                                {recentActivity.map((item) => (
+                                    <li key={`${item.type}-${item.id}`} className="relative">
                                         {/* Timeline icon */}
                                         <div className="absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                             <HugeiconsIcon
