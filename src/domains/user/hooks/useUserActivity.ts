@@ -26,21 +26,23 @@ const getIntensityLevel = (count: number): 0 | 1 | 2 | 3 | 4 => {
  * Subscribes to all user activity (questions, answers, votes, comments) from the last year.
  */
 const useUserActivity = (pubkey: string): UseUserActivityResult => {
-    const [events, setEvents] = useState<NDKEvent[]>([]);
+    // Use Map for O(1) deduplication instead of array with O(n) .some() check
+    const [eventsMap, setEventsMap] = useState<Map<string, NDKEvent>>(() => new Map());
     const [loading, setLoading] = useState(true);
 
     // Reset state when pubkey changes (useUpdateEffect skips initial mount)
     useUpdateEffect(() => {
-        setEvents([]);
+        setEventsMap(new Map());
         setLoading(true);
     }, [pubkey]);
 
-    // Calculate timestamp for 365 days ago
-    const since = useMemo(() =>
-        Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60),
-    []);
+    // Calculate timestamp for 365 days ago (lazy init to avoid impure Date.now during render)
+    const [since] = useState(() =>
+        Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60)
+    );
 
     // Memoize filters to prevent unnecessary re-subscriptions
+    // Limit prevents relay overload from power users/bots with excessive activity
     const activityFilters = useMemo<NDKFilter>(() => ({
         kinds: [
             constants.questionKind,
@@ -49,14 +51,17 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
             constants.noteKind
         ],
         authors: [pubkey],
-        since
+        since,
+        limit: 5000
     }), [pubkey, since]);
 
-    // Handle incoming activity events
+    // Handle incoming activity events - O(1) deduplication via Map
     const handleEvent = useCallback((event: NDKEvent) => {
-        setEvents(prev => {
-            if (prev.some(e => e.id === event.id)) return prev;
-            return [...prev, event];
+        setEventsMap(prev => {
+            if (prev.has(event.id)) return prev;
+            const newMap = new Map(prev);
+            newMap.set(event.id, event);
+            return newMap;
         });
     }, []);
 
@@ -76,6 +81,7 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
     // Group events by date and calculate intensity levels
     const activity = useMemo<UserActivity>(() => {
         const dayMap = new Map<string, number>();
+        const events = Array.from(eventsMap.values());
 
         events.forEach(event => {
             if (!event.created_at) return;
@@ -96,9 +102,9 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
 
         return {
             days,
-            totalContributions: events.length
+            totalContributions: eventsMap.size
         };
-    }, [events]);
+    }, [eventsMap]);
 
     return {activity, loading};
 };
