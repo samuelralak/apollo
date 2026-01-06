@@ -57,6 +57,10 @@ const useNDKSubscription = (
     const onEventRef = useSyncedRef(onEvent);
     const onEoseRef = useSyncedRef(onEose);
 
+    // Mode ref: Allows mode changes without triggering re-subscription
+    // SubscriptionManager reads this dynamically via getMode()
+    const modeRef = useSyncedRef(mode);
+
     // Configuration: Hash objects to detect ACTUAL changes without infinite re-renders
     const filterHash = useMemo(() => hashFilter(filters), [filters]);
     const contextHash = useMemo(() => JSON.stringify(context), [context]);
@@ -81,7 +85,8 @@ const useNDKSubscription = (
                 id: subscriptionIdRef.current!,
                 filters,
                 options: ndkOptions,
-                mode,
+                // Pass getter for dynamic mode - allows IMMEDIATE→BUFFERED switch without re-subscribing
+                getMode: () => modeRef.current,
                 resourceType,
                 context,
                 // Callbacks still go through refs to prevent stale closures
@@ -94,7 +99,9 @@ const useNDKSubscription = (
                 handleRef.current = null;
             };
         },
-        [filterHash, mode, resourceType, contextHash, optionsHash],
+        // REMOVED 'mode' - mode changes update modeRef.current silently via useSyncedRef
+        // SubscriptionManager reads current mode via getMode() on each event
+        [filterHash, resourceType, contextHash, optionsHash],
         [enabled, managerInitialized]
     );
 };

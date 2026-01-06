@@ -115,7 +115,7 @@ class SubscriptionManager {
             managed.callbacks.set(config.id, {
                 onEvent: config.onEvent,
                 onEose: config.onEose,
-                mode: config.mode,
+                getMode: config.getMode,
                 resourceType: config.resourceType,
                 context: config.context
             });
@@ -178,7 +178,7 @@ class SubscriptionManager {
             callbacks: new Map([[config.id, {
                 onEvent: config.onEvent,
                 onEose: config.onEose,
-                mode: config.mode,
+                getMode: config.getMode,
                 resourceType: config.resourceType,
                 context: config.context
             }]]),
@@ -226,9 +226,12 @@ class SubscriptionManager {
             this.addToGlobalSeen(event.id);
         }
 
-        // 3. Notify all subscribers based on their mode
+        // 3. Notify all subscribers based on their current mode
         managed.callbacks.forEach((callbacks) => {
-            if (callbacks.mode === EventHandlingMode.IMMEDIATE) {
+            // Call getMode() to get current mode - allows dynamic switching
+            const currentMode = callbacks.getMode();
+
+            if (currentMode === EventHandlingMode.IMMEDIATE) {
                 // Immediate mode: fire directly
                 callbacks.onEvent?.(event);
             } else {

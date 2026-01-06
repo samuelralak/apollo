@@ -42,8 +42,8 @@ export interface SubscriptionConfig {
     filters: NDKFilter | NDKFilter[];
     /** Optional NDK subscription options */
     options?: NDKSubscriptionOptions;
-    /** How to handle incoming events */
-    mode: EventHandlingMode;
+    /** Dynamic mode getter - allows mode changes without re-subscribing */
+    getMode: () => EventHandlingMode;
     /** Callback for each event received */
     onEvent?: (event: NDKEvent) => void;
     /** Callback when EOSE is received */
@@ -60,7 +60,8 @@ export interface SubscriptionConfig {
 export interface SubscriptionCallbacks {
     onEvent?: (event: NDKEvent) => void;
     onEose?: () => void;
-    mode: EventHandlingMode;
+    /** Dynamic mode getter - called on each event to determine handling */
+    getMode: () => EventHandlingMode;
     resourceType: ResourceType;
     context?: SubscriptionContext;
 }
