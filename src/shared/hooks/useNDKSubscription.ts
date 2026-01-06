@@ -31,6 +31,7 @@ interface UseNDKSubscriptionOptions {
  * - Automatic deduplication of identical filters
  * - Proper cleanup on unmount
  * - Stable callback references (no stale closures)
+ * - Re-subscribes when filters, context, or options actually change
  * - Support for IMMEDIATE and BUFFERED modes
  *
  * @param filters - NDK filter(s) to subscribe to
@@ -52,15 +53,14 @@ const useNDKSubscription = (
         enabled = true
     } = options;
 
-    // Synced refs to avoid stale closures and unnecessary re-subscriptions
+    // Callbacks: Use refs to ensure stability (prevents re-subscribing when functions change)
     const onEventRef = useSyncedRef(onEvent);
     const onEoseRef = useSyncedRef(onEose);
-    const contextRef = useSyncedRef(context);
-    const ndkOptionsRef = useSyncedRef(ndkOptions);
-    const filtersRef = useSyncedRef(filters);
 
-    // Memoize filter hash to detect actual filter changes
+    // Configuration: Hash objects to detect ACTUAL changes without infinite re-renders
     const filterHash = useMemo(() => hashFilter(filters), [filters]);
+    const contextHash = useMemo(() => JSON.stringify(context), [context]);
+    const optionsHash = useMemo(() => JSON.stringify(ndkOptions), [ndkOptions]);
 
     // Generate stable subscription ID per component instance
     const subscriptionIdRef = useRef<string | null>(null);
@@ -79,11 +79,12 @@ const useNDKSubscription = (
 
             handleRef.current = manager.subscribe({
                 id: subscriptionIdRef.current!,
-                filters: filtersRef.current,
-                options: ndkOptionsRef.current,
+                filters,
+                options: ndkOptions,
                 mode,
                 resourceType,
-                context: contextRef.current,
+                context,
+                // Callbacks still go through refs to prevent stale closures
                 onEvent: (event) => onEventRef.current?.(event),
                 onEose: () => onEoseRef.current?.()
             });
@@ -93,7 +94,7 @@ const useNDKSubscription = (
                 handleRef.current = null;
             };
         },
-        [filterHash, mode, resourceType],
+        [filterHash, mode, resourceType, contextHash, optionsHash],
         [enabled, managerInitialized]
     );
 };

@@ -1,6 +1,6 @@
 import NDK, {NDKEvent, NDKNip07Signer, NDKPrivateKeySigner, NDKSigner} from "@nostr-dev-kit/ndk";
-import {createContext, ReactNode, useRef, useState, useCallback} from "react";
-import {useMountEffect, useUnmountEffect} from "@react-hookz/web";
+import {createContext, ReactNode, useRef, useState, useCallback, useMemo} from "react";
+import {useMountEffect, useUnmountEffect, useUpdateEffect} from "@react-hookz/web";
 import Loader from "../../shared/components/feedback/Loader";
 import {useSelector, useDispatch} from "react-redux";
 import {RootState, AppDispatch} from "../../app/store";
@@ -16,7 +16,7 @@ export interface RelayInfo {
 }
 
 export interface NDKContext {
-    signer: () => NDKSigner | null;
+    signer: NDKSigner | null;
     ndkConnected: boolean;
     ndkInstance: () => NDK;
     setNDKSigner: (signer?: NDKSigner) => void;
@@ -32,71 +32,27 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch<AppDispatch>()
     const ndkRef = useRef<NDK | undefined>(undefined)
-    const signerRef = useRef<NDKSigner | null>(null)
+    const [activeSigner, setActiveSigner] = useState<NDKSigner | null>(null)
     const [ndkConnected, setNDKConnected] = useState(false)
 
-    const ndkInstance = (): NDK => {
+    const ndkInstance = useCallback((): NDK => {
         if (!ndkRef.current) {
             throw new Error('NDK not initialized');
         }
         return ndkRef.current;
-    }
-    const signer = (): NDKSigner | null => signerRef.current
-
-    const connectNDK = async () => {
-        try {
-            ndkRef.current = new NDK({ explicitRelayUrls: constants.explicitRelays })
-            await ndkRef.current.connect(5000)
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            const connected = Array.from(ndkRef.current.pool.relays.values())
-                .filter(r => r.connectivity.status === 1)
-
-            if (connected.length === 0) {
-                console.warn('No relays connected, proceeding anyway')
-            }
-
-            SubscriptionManager.getInstance().initialize(ndkRef.current, dispatch)
-            setNDKConnected(true)
-        } catch (error) {
-            console.error('NDK connection error:', error)
-            setNDKConnected(true)
-        }
-    }
-
-    const buildEvent = (kind: number, content: string, tags: string[][] = []): NDKEvent => {
-        const event = new NDKEvent(ndkRef.current)
-        event.kind = kind
-        event.content = content
-        event.tags = tags
-        return event
-    }
-
-    const publishEvent = async (kind: number, content: string, tags: string[][] = []): Promise<string> => {
-        if (!ndkInstance().signer) setNDKSigner()
-
-        const currentSigner = ndkInstance().signer
-        if (!currentSigner) {
-            throw new Error('No signer available. Please log in again.')
-        }
-
-        // Wait for NIP-07 extension to be ready
-        if ('blockUntilReady' in currentSigner) {
-            await (currentSigner as NDKNip07Signer).blockUntilReady()
-        }
-
-        const event = buildEvent(kind, content, tags)
-        await event.publish()
-        return event.id
-    }
+    }, [])
 
     // Create signer based on auth method with NIP-07 fallback
     const createSigner = useCallback((): NDKSigner | null => {
         if (auth.signerMethod === SignerMethod.PRIVATE_KEY) {
-            const stored = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec?: string; privkey?: string } | null
-            const key = stored?.nsec ? decodeNsec(stored.nsec as `nsec1${string}`) : stored?.privkey
+            try {
+                const stored = secureLocalStorage.getItem(constants.secureStorageKey) as { nsec?: string; privkey?: string } | null
+                const key = stored?.nsec ? decodeNsec(stored.nsec as `nsec1${string}`) : stored?.privkey
 
-            if (key) return new NDKPrivateKeySigner(key as string)
+                if (key) return new NDKPrivateKeySigner(key as string)
+            } catch (error) {
+                console.error('Failed to restore signer from storage:', error)
+            }
 
             // Clear stale encrypted data if decryption failed
             const rawKey = `@secure.j.${constants.secureStorageKey}`
@@ -114,20 +70,89 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
         return null
     }, [auth.signerMethod])
 
+    const connectNDK = useCallback(async () => {
+        try {
+            ndkRef.current = new NDK({ explicitRelayUrls: constants.explicitRelays })
+            await ndkRef.current.connect(5000)
+            await new Promise(resolve => setTimeout(resolve, 1000))
+
+            const connected = Array.from(ndkRef.current.pool.relays.values())
+                .filter(r => r.connectivity.status === 1)
+
+            if (connected.length === 0) {
+                console.warn('No relays connected, proceeding anyway')
+            }
+
+            SubscriptionManager.getInstance().initialize(ndkRef.current, dispatch)
+
+            // Restore signer if user was logged in
+            if (auth.isLoggedIn && auth.signerMethod) {
+                const restoredSigner = createSigner()
+                if (restoredSigner) {
+                    ndkRef.current.signer = restoredSigner
+                    setActiveSigner(restoredSigner)
+                }
+            }
+
+            setNDKConnected(true)
+        } catch (error) {
+            console.error('NDK connection error:', error)
+            setNDKConnected(true)
+        }
+    }, [auth.isLoggedIn, auth.signerMethod, createSigner, dispatch])
+
+    const buildEvent = useCallback((kind: number, content: string, tags: string[][] = []): NDKEvent => {
+        const event = new NDKEvent(ndkRef.current)
+        event.kind = kind
+        event.content = content
+        event.tags = tags
+        return event
+    }, [])
+
     const setNDKSigner = useCallback((signerInstance?: NDKSigner) => {
         const newSigner = signerInstance ?? createSigner()
         if (ndkRef.current) {
             ndkRef.current.signer = newSigner ?? undefined
         }
-        signerRef.current = newSigner
+        setActiveSigner(newSigner)
     }, [createSigner])
 
     const removeNDKSigner = useCallback(() => {
         if (ndkRef.current) {
             ndkRef.current.signer = undefined
         }
-        signerRef.current = null
+        setActiveSigner(null)
     }, [])
+
+    // Auto-sync NDK signer when Redux auth state changes (skips initial mount)
+    useUpdateEffect(() => {
+        // Wait for connection before syncing auth state
+        if (!ndkConnected) return
+
+        if (auth.isLoggedIn && !activeSigner) {
+            setNDKSigner()
+        } else if (!auth.isLoggedIn && activeSigner) {
+            removeNDKSigner()
+        }
+    }, [auth.isLoggedIn, activeSigner, setNDKSigner, removeNDKSigner, ndkConnected])
+
+    const publishEvent = useCallback(async (kind: number, content: string, tags: string[][] = []): Promise<string> => {
+        if (!ndkInstance().signer) setNDKSigner()
+
+        const currentSigner = ndkInstance().signer
+        if (!currentSigner) {
+            throw new Error('No signer available. Please log in again.')
+        }
+
+        // Wait for NIP-07 extension to be ready
+        if ('blockUntilReady' in currentSigner) {
+            await (currentSigner as NDKNip07Signer).blockUntilReady()
+        }
+
+        const event = buildEvent(kind, content, tags)
+        await event.publish()
+        return event.id
+    }, [ndkInstance, setNDKSigner, buildEvent])
 
     const getRelays = useCallback((): RelayInfo[] => {
         if (!ndkRef.current) return [];
@@ -138,6 +163,18 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
                 : 'disconnected'
         }));
     }, []);
+
+    // Memoize context value to prevent unnecessary re-renders
+    const contextValue = useMemo<NDKContext>(() => ({
+        signer: activeSigner,
+        ndkConnected,
+        ndkInstance,
+        setNDKSigner,
+        removeNDKSigner,
+        buildEvent,
+        publishEvent,
+        getRelays
+    }), [activeSigner, ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, buildEvent, publishEvent, getRelays]);
 
     useMountEffect(() => {
         connectNDK().catch(console.error)
@@ -152,7 +189,7 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
     }
 
     return (
-        <NDKContext.Provider value={{signer, ndkConnected, ndkInstance, setNDKSigner, removeNDKSigner, buildEvent, publishEvent, getRelays}}>
+        <NDKContext.Provider value={contextValue}>
             {children}
         </NDKContext.Provider>
     )

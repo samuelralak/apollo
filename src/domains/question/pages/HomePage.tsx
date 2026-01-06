@@ -33,6 +33,9 @@ const HomePage = () => {
     }, [dispatch]);
 
     // Filter configuration - memoized to prevent unnecessary re-renders
+    // TODO: Add `limit` to filter to prevent fetching thousands of historical events.
+    // Currently unbounded - will fetch ALL questions from relay on mount.
+    // Recommended: limit: 20-50 for initial load, with pagination/infinite scroll for more.
     const filters = useMemo(() => ({
         kinds: [constants.questionKind]
     }), []);
