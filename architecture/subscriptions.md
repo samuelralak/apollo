@@ -69,9 +69,10 @@ A singleton manager that:
 ├─────────────────────────────────────────────────────────────────────┤
 │  • Filter hashing & normalization                                    │
 │  • Reference counting                                                │
-│  • Event deduplication (Set<string>)                                │
+│  • Event deduplication (global + per-subscription)                  │
 │  • IMMEDIATE/BUFFERED mode routing                                  │
-│  • LRU cleanup (max 10,000 seen events)                             │
+│  • Multi-target buffering (handles overlapping contexts)            │
+│  • LRU cleanup (10k global, 5k per-subscription)                    │
 └─────────────────────────────────────────────────────────────────────┘
                           │
                           ▼
@@ -325,10 +326,11 @@ const QuestionPage = () => {
 Constants in `SubscriptionManager.ts`:
 
 ```typescript
-EOSE_TIMEOUT_MS = 10000       // Fallback if EOSE never fires
-MAX_SEEN_EVENTS = 10000       // LRU cleanup threshold
-BUFFER_CLEANUP_INTERVAL_MS = 60000    // Stale buffer cleanup
-STALE_EVENT_THRESHOLD_MS = 3600000    // 1 hour buffer TTL
+EOSE_TIMEOUT_MS = 10000                  // Fallback if EOSE never fires
+MAX_GLOBAL_SEEN_EVENTS = 10000           // Global LRU cleanup threshold
+MAX_SUBSCRIPTION_SEEN_EVENTS = 5000      // Per-subscription LRU threshold
+BUFFER_CLEANUP_INTERVAL_MS = 60000       // Stale buffer cleanup interval
+STALE_EVENT_THRESHOLD_MS = 3600000       // 1 hour buffer TTL
 ```
 
 ---
@@ -391,8 +393,24 @@ useNDKSubscription(
 
 ## Future Improvements
 
-1. **Optimistic updates** for votes
-2. **Buffered mode** for answers/comments if needed
-3. **Connection status indicator** in UI
-4. **Component memoization** for render optimization
-5. **Relay health monitoring** and failover
+1. **"Late Joiner" Cache & Replay** - When reusing subscriptions, new subscribers
+   joining after EOSE don't receive historical events. Fix: store recent events in
+   a `recentEvents` Map (with LRU) and replay to late joiners (similar to RxJS ReplaySubject)
+2. **Optimistic updates** for votes
+3. **Buffered mode** for answers/comments if needed
+4. **Connection status indicator** in UI
+5. **Component memoization** for render optimization
+6. **Relay health monitoring** and failover
+
+---
+
+## Recent Changes (v2)
+
+- **Multi-target buffering**: Events matching multiple contexts (e.g., Feed + Profile)
+  now correctly track all targets without collision
+- **Dual LRU pruning**: Both global (10k) and per-subscription (5k) seen sets are
+  now pruned to prevent memory growth during long sessions
+- **EOSE timer cleanup**: Timeout IDs are tracked and cleared on unsubscribe/EOSE
+  to prevent timer leaks
+- **Error-safe flush**: `flushBufferedEvents` wraps callbacks in try/catch and
+  always clears Redux state even if errors occur

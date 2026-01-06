@@ -81,10 +81,12 @@ export interface ManagedSubscription {
     callbacks: Map<string, SubscriptionCallbacks>;
     /** When this subscription was created */
     createdAt: number;
-    /** Event IDs already processed (for deduplication) */
+    /** Event IDs already processed (for deduplication) - with insertion order for LRU */
     seenEventIds: Set<string>;
     /** Whether EOSE has been received */
     eoseReceived: boolean;
+    /** EOSE timeout timer ID (for cleanup) */
+    eoseTimeoutId?: ReturnType<typeof setTimeout>;
 }
 
 /**
@@ -98,13 +100,20 @@ export interface SubscriptionHandle {
 }
 
 /**
- * Buffered event with metadata
+ * Target for a buffered event (supports multiple contexts per event)
+ */
+export interface BufferedEventTarget {
+    resourceType: ResourceType;
+    context?: SubscriptionContext;
+}
+
+/**
+ * Buffered event with metadata - supports multiple targets to avoid collision
  */
 export interface BufferedEvent {
     id: string;
     event: NDKEvent;
-    resourceType: ResourceType;
-    context?: SubscriptionContext;
+    targets: BufferedEventTarget[];
     receivedAt: number;
 }
 

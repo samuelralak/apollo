@@ -6,6 +6,7 @@ import type {
     SubscriptionHandle,
     SubscriptionStats,
     BufferedEvent,
+    BufferedEventTarget,
     SubscriptionContext
 } from "./types";
 import { EventHandlingMode, ResourceType } from "./types";
@@ -16,15 +17,32 @@ import { hashFilter, normalizeFilter, contextMatches } from "./utils";
  *
  * Key responsibilities:
  * 1. Deduplicates subscriptions with identical filters (reference counting)
- * 2. Deduplicates events using seen event IDs
+ * 2. Deduplicates events using seen event IDs (unified across modes)
  * 3. Supports IMMEDIATE and BUFFERED modes for event handling
- * 4. Provides clean lifecycle management
+ * 4. Handles multiple contexts per buffered event (no collision)
+ * 5. Provides clean lifecycle management with proper cleanup
  *
  * Usage:
  *   const manager = SubscriptionManager.getInstance();
  *   manager.initialize(ndk, dispatch);
  *   const handle = manager.subscribe(config);
  *   handle.unsubscribe(); // when done
+ *
+ * TODO: "Late Joiner" Issue
+ * When reusing an existing subscription (same filter hash), new subscribers
+ * joining after EOSE will not receive historical events that were already
+ * processed. This is fine for "live stream" use cases but breaks UI that
+ * expects to load past data (profiles, threads).
+ *
+ * Recommended fix: "Cache & Replay" Strategy (similar to RxJS ReplaySubject)
+ * - Store full event objects in a `recentEvents: Map<string, NDKEvent>` inside
+ *   ManagedSubscription (with LRU pruning, e.g., last 100-500 events)
+ * - When a new subscriber joins an existing subscription:
+ *   1. Iterate over `recentEvents`
+ *   2. Filter events matching the new subscriber's context (if applicable)
+ *   3. Emit those events to the new subscriber immediately
+ *   4. Then add subscriber to callbacks for future live events
+ * - This ensures late joiners receive current state without re-fetching from relays
  */
 class SubscriptionManager {
     private static instance: SubscriptionManager | null = null;
@@ -37,7 +55,8 @@ class SubscriptionManager {
 
     // Configuration
     private readonly EOSE_TIMEOUT_MS = 10000;
-    private readonly MAX_SEEN_EVENTS = 10000;
+    private readonly MAX_GLOBAL_SEEN_EVENTS = 10000;
+    private readonly MAX_SUBSCRIPTION_SEEN_EVENTS = 5000;
     private readonly BUFFER_CLEANUP_INTERVAL_MS = 60000;
     private readonly STALE_EVENT_THRESHOLD_MS = 3600000; // 1 hour
 
@@ -129,6 +148,11 @@ class SubscriptionManager {
         managed.refCount--;
 
         if (managed.refCount <= 0) {
+            // Clear the EOSE timeout to prevent timer leak
+            if (managed.eoseTimeoutId) {
+                clearTimeout(managed.eoseTimeoutId);
+            }
+
             // No more subscribers, stop the subscription
             managed.subscription.stop();
             this.subscriptions.delete(filterHash);
@@ -172,8 +196,8 @@ class SubscriptionManager {
             this.handleEose(managed);
         });
 
-        // EOSE timeout fallback
-        setTimeout(() => {
+        // EOSE timeout fallback - store the timeout ID for cleanup
+        managed.eoseTimeoutId = setTimeout(() => {
             if (!managed.eoseReceived) {
                 console.warn(`EOSE timeout for filter ${filterHash.substring(0, 50)}...`);
                 this.handleEose(managed);
@@ -184,26 +208,34 @@ class SubscriptionManager {
     }
 
     /**
-     * Handle incoming event
+     * Handle incoming event with unified deduplication
      */
     private handleEvent(managed: ManagedSubscription, event: NDKEvent): void {
-        // Local deduplication within this subscription
+        // 1. Local deduplication (per-subscription)
+        // Check if THIS specific subscription has already processed this event
         if (managed.seenEventIds.has(event.id)) {
             return;
         }
-        managed.seenEventIds.add(event.id);
 
-        // Notify all subscribers based on their mode
+        // Add to local seen set with LRU pruning
+        this.addToLocalSeen(managed, event.id);
+
+        // 2. Global tracking (for stats, not for blocking)
+        const isGloballyNew = !this.globalSeenEventIds.has(event.id);
+        if (isGloballyNew) {
+            this.addToGlobalSeen(event.id);
+        }
+
+        // 3. Notify all subscribers based on their mode
         managed.callbacks.forEach((callbacks) => {
             if (callbacks.mode === EventHandlingMode.IMMEDIATE) {
-                // Immediate mode: call the callback directly
+                // Immediate mode: fire directly
                 callbacks.onEvent?.(event);
             } else {
-                // Buffered mode: check global dedup to avoid duplicate buffering
-                if (!this.globalSeenEventIds.has(event.id)) {
-                    this.addToGlobalSeen(event.id);
-                    this.bufferEvent(event, callbacks.resourceType, callbacks.context);
-                }
+                // Buffered mode: ALWAYS attempt to buffer.
+                // bufferEvent internally checks if this specific resourceType/context
+                // target has already been recorded, preventing duplicates.
+                this.bufferEvent(event, callbacks.resourceType, callbacks.context);
             }
         });
     }
@@ -215,28 +247,47 @@ class SubscriptionManager {
         if (managed.eoseReceived) return;
         managed.eoseReceived = true;
 
+        // Clear the timeout since EOSE was received
+        if (managed.eoseTimeoutId) {
+            clearTimeout(managed.eoseTimeoutId);
+            managed.eoseTimeoutId = undefined;
+        }
+
         managed.callbacks.forEach((callbacks) => {
             callbacks.onEose?.();
         });
     }
 
     /**
-     * Buffer an event for later display
+     * Buffer an event for later display - handles multiple contexts per event
      */
     private bufferEvent(
         event: NDKEvent,
         resourceType: ResourceType,
         context?: SubscriptionContext
     ): void {
-        const buffered: BufferedEvent = {
-            id: event.id,
-            event,
-            resourceType,
-            context,
-            receivedAt: Date.now()
-        };
+        const target: BufferedEventTarget = { resourceType, context };
 
-        this.bufferedEvents.set(event.id, buffered);
+        let buffered = this.bufferedEvents.get(event.id);
+
+        if (buffered) {
+            // Event already buffered - add this target if not already present
+            const hasTarget = buffered.targets.some(t =>
+                t.resourceType === resourceType && contextMatches(t.context, context)
+            );
+            if (!hasTarget) {
+                buffered.targets.push(target);
+            }
+        } else {
+            // New buffered event
+            buffered = {
+                id: event.id,
+                event,
+                targets: [target],
+                receivedAt: Date.now()
+            };
+            this.bufferedEvents.set(event.id, buffered);
+        }
 
         // Dispatch action to update pending counts in Redux
         if (this.dispatchFn) {
@@ -254,33 +305,55 @@ class SubscriptionManager {
 
     /**
      * Flush buffered events for a resource type/context
+     * Handles partial flush when event has multiple targets
      */
     flushBufferedEvents(
         resourceType: ResourceType,
         context?: SubscriptionContext,
         callback?: (event: NDKEvent) => void
     ): void {
-        const toFlush: BufferedEvent[] = [];
+        const toProcess: BufferedEvent[] = [];
 
-        this.bufferedEvents.forEach((buffered, id) => {
-            if (buffered.resourceType === resourceType) {
-                // Check context match if provided
-                if (!context || contextMatches(buffered.context, context)) {
-                    toFlush.push(buffered);
-                    this.bufferedEvents.delete(id);
-                }
+        // Collect matching events
+        this.bufferedEvents.forEach((buffered) => {
+            const matchingTargetIndex = buffered.targets.findIndex(t =>
+                t.resourceType === resourceType &&
+                (!context || contextMatches(t.context, context))
+            );
+
+            if (matchingTargetIndex !== -1) {
+                toProcess.push(buffered);
             }
         });
 
         // Sort by event timestamp (oldest first)
-        toFlush.sort((a, b) => (a.event.created_at ?? 0) - (b.event.created_at ?? 0));
+        toProcess.sort((a, b) => (a.event.created_at ?? 0) - (b.event.created_at ?? 0));
 
-        // Process each buffered event
-        toFlush.forEach((buffered) => {
-            callback?.(buffered.event);
+        // Process each buffered event with error handling
+        toProcess.forEach((buffered) => {
+            try {
+                callback?.(buffered.event);
+            } catch (error) {
+                console.error('Error processing buffered event:', error);
+            }
+
+            // Remove the matching target
+            const matchingTargetIndex = buffered.targets.findIndex(t =>
+                t.resourceType === resourceType &&
+                (!context || contextMatches(t.context, context))
+            );
+
+            if (matchingTargetIndex !== -1) {
+                buffered.targets.splice(matchingTargetIndex, 1);
+            }
+
+            // If no targets left, remove the event entirely
+            if (buffered.targets.length === 0) {
+                this.bufferedEvents.delete(buffered.id);
+            }
         });
 
-        // Clear pending state in Redux
+        // Clear pending state in Redux (always dispatch, even if errors occurred)
         if (this.dispatchFn) {
             this.dispatchFn({
                 type: 'subscription/clearPendingEvents',
@@ -295,13 +368,34 @@ class SubscriptionManager {
     getPendingCount(resourceType: ResourceType, context?: SubscriptionContext): number {
         let count = 0;
         this.bufferedEvents.forEach((buffered) => {
-            if (buffered.resourceType === resourceType) {
-                if (!context || contextMatches(buffered.context, context)) {
-                    count++;
-                }
+            const hasMatchingTarget = buffered.targets.some(t =>
+                t.resourceType === resourceType &&
+                (!context || contextMatches(t.context, context))
+            );
+            if (hasMatchingTarget) {
+                count++;
             }
         });
         return count;
+    }
+
+    /**
+     * Add event ID to subscription's seen set with LRU-style cleanup
+     */
+    private addToLocalSeen(managed: ManagedSubscription, eventId: string): void {
+        managed.seenEventIds.add(eventId);
+
+        // LRU cleanup when exceeding max
+        if (managed.seenEventIds.size > this.MAX_SUBSCRIPTION_SEEN_EVENTS) {
+            const toDelete = managed.seenEventIds.size - this.MAX_SUBSCRIPTION_SEEN_EVENTS;
+            const iterator = managed.seenEventIds.values();
+            for (let i = 0; i < toDelete; i++) {
+                const { value } = iterator.next();
+                if (value) {
+                    managed.seenEventIds.delete(value);
+                }
+            }
+        }
     }
 
     /**
@@ -311,8 +405,8 @@ class SubscriptionManager {
         this.globalSeenEventIds.add(eventId);
 
         // Cleanup when exceeding max
-        if (this.globalSeenEventIds.size > this.MAX_SEEN_EVENTS) {
-            const toDelete = this.globalSeenEventIds.size - this.MAX_SEEN_EVENTS;
+        if (this.globalSeenEventIds.size > this.MAX_GLOBAL_SEEN_EVENTS) {
+            const toDelete = this.globalSeenEventIds.size - this.MAX_GLOBAL_SEEN_EVENTS;
             const iterator = this.globalSeenEventIds.values();
             for (let i = 0; i < toDelete; i++) {
                 const { value } = iterator.next();
@@ -370,6 +464,10 @@ class SubscriptionManager {
         }
 
         this.subscriptions.forEach((managed) => {
+            // Clear EOSE timeouts
+            if (managed.eoseTimeoutId) {
+                clearTimeout(managed.eoseTimeoutId);
+            }
             managed.subscription.stop();
         });
 
