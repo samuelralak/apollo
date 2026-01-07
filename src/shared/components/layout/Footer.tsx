@@ -42,7 +42,7 @@ const Footer = () => {
                             Terms
                         </Link>
                         <a
-                            href="https://github.com/anthropics/apollo"
+                            href="https://github.com/samuelralak/apollo"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"

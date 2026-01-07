@@ -174,7 +174,7 @@ const PrivacyPolicyPage = () => {
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                         If you have questions about this privacy policy, you can reach us through our{" "}
                         <a
-                            href="https://github.com/anthropics/apollo"
+                            href="https://github.com/samuelralak/apollo"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-teal-600 dark:text-teal-400 hover:underline"

@@ -174,7 +174,7 @@ const TermsOfUsePage = () => {
                         license terms. If you run a modified version of Apollo on a server, you must make
                         the source code available to users. See the{" "}
                         <a
-                            href="https://github.com/anthropics/apollo/blob/main/LICENSE"
+                            href="https://github.com/samuelralak/apollo/blob/main/LICENSE"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-teal-600 dark:text-teal-400 hover:underline"
@@ -264,7 +264,7 @@ const TermsOfUsePage = () => {
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                         Questions about these terms can be directed to our{" "}
                         <a
-                            href="https://github.com/anthropics/apollo"
+                            href="https://github.com/samuelralak/apollo"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-teal-600 dark:text-teal-400 hover:underline"
