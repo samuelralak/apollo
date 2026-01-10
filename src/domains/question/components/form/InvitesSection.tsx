@@ -42,9 +42,9 @@ const InvitesSection = ({ invitedUsers, onInvite, onRemove }: InvitesSectionProp
                                         >
                                             {/* User Avatar */}
                                             <div className="h-6 w-6 rounded-full overflow-hidden bg-teal-100 dark:bg-teal-800 flex-shrink-0">
-                                                {user.profile?.image ? (
+                                                {(user.profile?.image || user.profile?.picture) ? (
                                                     <img
-                                                        src={user.profile.image}
+                                                        src={user.profile.image ?? user.profile.picture}
                                                         alt=""
                                                         className="h-full w-full object-cover"
                                                         onError={(e) => {

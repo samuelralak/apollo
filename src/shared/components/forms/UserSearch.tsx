@@ -1,5 +1,6 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState, useCallback } from 'react'
 import { Combobox, ComboboxInput, ComboboxButton, ComboboxOptions, ComboboxOption } from '@headlessui/react'
+import { useToggle, useDebouncedEffect, useIsMounted } from '@react-hookz/web'
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon, Tick02Icon, UserIcon } from "@hugeicons-pro/core-solid-rounded"
 import { NDKContext } from "../../../lib/ndk/NDKProvider"
@@ -27,98 +28,94 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
     const [query, setQuery] = useState('')
     const [users, setUsers] = useState<NDKUser[]>([])
     const [loading, setLoading] = useState(false)
-    const [isFocused, setIsFocused] = useState(false)
+    const [isFocused, toggleFocus] = useToggle(false)
+    const isMounted = useIsMounted()
 
-    useEffect(() => {
-        let cancelled = false
+    // Memoized search function
+    const performSearch = useCallback(async (searchQuery: string) => {
+        if (!searchQuery || searchQuery.length < 3) {
+            setUsers([])
+            return
+        }
 
-        const performSearch = async (searchQuery: string) => {
-            if (!searchQuery || searchQuery.length < 3) {
+        setLoading(true)
+        const ndk = ndkInstance()
+
+        try {
+            // 1. Check for NPUB/NPROFILE
+            if (searchQuery.startsWith('npub1') || searchQuery.startsWith('nprofile1')) {
+                try {
+                    const user = ndk.getUser({ npub: searchQuery })
+                    await user.fetchProfile()
+                    if (isMounted()) {
+                        setUsers([user])
+                        setLoading(false)
+                    }
+                    return
+                } catch {
+                    // Invalid encoding, fall through to text search
+                }
+            }
+
+            // 2. Text Search (NIP-50) via dedicated search relays
+            const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk)
+
+            const searchPromise = ndk.fetchEvents({
+                kinds: [0],
+                search: searchQuery,
+                limit: 15
+            }, {
+                closeOnEose: true,
+            }, searchRelaySet)
+
+            // Add timeout to prevent hanging
+            const timeoutPromise = new Promise<never>((_, reject) => {
+                setTimeout(() => reject(new Error('Search timeout')), 5000)
+            })
+
+            const events = await Promise.race([searchPromise, timeoutPromise])
+
+            if (!isMounted()) return
+
+            // Deduplicate by pubkey using Map
+            const uniqueUsers = new Map<string, NDKUser>()
+
+            for (const event of events) {
+                if (excludePubkeys.includes(event.pubkey)) continue
+                if (uniqueUsers.has(event.pubkey)) continue
+
+                const user = ndk.getUser({ pubkey: event.pubkey })
+
+                // Hydrate profile safely
+                try {
+                    const content = JSON.parse(event.content)
+                    user.profile = content
+                    uniqueUsers.set(event.pubkey, user)
+                } catch {
+                    // Skip malformed profile content
+                }
+            }
+
+            setUsers(Array.from(uniqueUsers.values()))
+
+        } catch (error) {
+            if (isMounted()) {
+                console.error("Search failed:", error)
                 setUsers([])
-                return
             }
-
-            setLoading(true)
-            const ndk = ndkInstance()
-
-            try {
-                // 1. Check for NPUB/NPROFILE
-                if (searchQuery.startsWith('npub1') || searchQuery.startsWith('nprofile1')) {
-                    try {
-                        const user = ndk.getUser({ npub: searchQuery })
-                        await user.fetchProfile()
-                        if (!cancelled) {
-                            setUsers([user])
-                            setLoading(false)
-                        }
-                        return
-                    } catch {
-                        // Invalid encoding, fall through to text search
-                    }
-                }
-
-                // 2. Text Search (NIP-50) via dedicated search relays
-                const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk)
-
-                const searchPromise = ndk.fetchEvents({
-                    kinds: [0],
-                    search: searchQuery,
-                    limit: 15
-                }, {
-                    closeOnEose: true,
-                }, searchRelaySet)
-
-                // Add timeout to prevent hanging
-                const timeoutPromise = new Promise<never>((_, reject) => {
-                    setTimeout(() => reject(new Error('Search timeout')), 5000)
-                })
-
-                const events = await Promise.race([searchPromise, timeoutPromise])
-
-                if (cancelled) return
-
-                // Deduplicate by pubkey using Map
-                const uniqueUsers = new Map<string, NDKUser>()
-
-                for (const event of events) {
-                    if (excludePubkeys.includes(event.pubkey)) continue
-                    if (uniqueUsers.has(event.pubkey)) continue
-
-                    const user = ndk.getUser({ pubkey: event.pubkey })
-
-                    // Hydrate profile safely
-                    try {
-                        const content = JSON.parse(event.content)
-                        user.profile = content
-                        uniqueUsers.set(event.pubkey, user)
-                    } catch {
-                        // Skip malformed profile content
-                    }
-                }
-
-                setUsers(Array.from(uniqueUsers.values()))
-
-            } catch (error) {
-                if (!cancelled) {
-                    console.error("Search failed:", error)
-                    setUsers([])
-                }
-            } finally {
-                if (!cancelled) {
-                    setLoading(false)
-                }
+        } finally {
+            if (isMounted()) {
+                setLoading(false)
             }
         }
+    }, [ndkInstance, excludePubkeys, isMounted])
 
-        const timeoutId = setTimeout(() => {
-            performSearch(query)
-        }, 400)
-
-        return () => {
-            cancelled = true
-            clearTimeout(timeoutId)
-        }
-    }, [query, ndkInstance, excludePubkeys])
+    // Debounced search effect - automatically handles timing and cleanup
+    useDebouncedEffect(
+        () => { performSearch(query) },
+        [query, performSearch],
+        400
+    )
 
     const handleSelect = (user: NDKUser | null) => {
         if (!user) return
@@ -155,8 +152,8 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
                             className="w-full border-none py-3 pl-10 pr-10 bg-transparent text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
+                            onFocus={() => toggleFocus(true)}
+                            onBlur={() => toggleFocus(false)}
                             placeholder="Search by name or paste npub..."
                             aria-label="Search for users"
                         />
@@ -220,9 +217,9 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
                                                 <div className="flex items-center gap-3">
                                                     {/* Avatar */}
                                                     <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden flex-shrink-0 ring-2 ring-slate-200 dark:ring-slate-600">
-                                                        {user.profile?.image ? (
+                                                        {(user.profile?.image || user.profile?.picture) ? (
                                                             <img
-                                                                src={user.profile.image}
+                                                                src={user.profile.image ?? user.profile.picture}
                                                                 alt=""
                                                                 className="h-full w-full object-cover"
                                                                 onError={(e) => {
