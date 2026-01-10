@@ -23,11 +23,12 @@ const NewQuestionsBanner = ({ count, onLoad, onLoadCallback }: NewQuestionsBanne
             onClick={handleClick}
             className="fixed top-20 left-1/2 -translate-x-1/2 z-50
                        flex items-center gap-2 px-4 py-2
-                       bg-indigo-600 hover:bg-indigo-700
+                       bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-400
                        text-white text-sm font-medium
                        rounded-full shadow-lg
                        transition-all duration-200
                        hover:shadow-xl hover:scale-105
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600
                        animate-fade-in"
         >
             <HugeiconsIcon icon={ArrowUp01Icon} size={16} />

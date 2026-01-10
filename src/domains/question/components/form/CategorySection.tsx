@@ -18,7 +18,7 @@ const CategorySection = ({form, defaultCategory}: Props) => {
     return (
         <div className="sm:col-span-4">
             <label htmlFor="category" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
-                Category
+                Category<span className="text-red-500 ml-0.5">*</span>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                     Please choose the appropriate section for your question
                 </p>

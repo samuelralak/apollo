@@ -185,7 +185,7 @@ const InvoiceDisplay = ({ invoice, canvasRef, onCopy }: InvoiceDisplayProps) => 
                 value={invoice}
                 disabled
                 readOnly
-                className="flex-1 block w-full border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-600 bg-slate-100 dark:bg-slate-700 leading-6"
+                className="flex-1 block w-full border-0 rounded-lg py-2.5 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 leading-6"
             />
             <button
                 onClick={onCopy}
@@ -208,13 +208,13 @@ interface ZapFormProps {
 const ZapForm = ({ register, errors, onSubmit, onCancel, isLoading }: ZapFormProps) => (
     <div>
         {/* Amount input */}
-        <div className="relative mt-2 rounded-lg bg-slate-200 dark:bg-slate-700">
+        <div className="relative mt-2 rounded-lg bg-slate-200 dark:bg-slate-800">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2">
                 <HugeiconsIcon icon={FlashIcon} size={16} className="text-amber-500" />
             </div>
             <input
                 {...register('amount')}
-                className="block w-full bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 rounded-lg border-0 py-3 pl-7 pr-12 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
+                className="block w-full bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 rounded-lg border-0 py-3 pl-7 pr-12 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-200 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
                 placeholder="0"
             />
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -231,7 +231,7 @@ const ZapForm = ({ register, errors, onSubmit, onCancel, isLoading }: ZapFormPro
                 {...register('comment')}
                 rows={3}
                 placeholder="Add an optional message"
-                className="block w-full bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 rounded-lg border-0 py-1.5 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-300 dark:ring-slate-600 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
+                className="block w-full bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 rounded-lg border-0 py-1.5 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-200 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
             />
         </div>
         {errors.comment && (

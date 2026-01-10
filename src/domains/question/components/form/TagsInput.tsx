@@ -17,7 +17,7 @@ const TagsInput = ({form}: Props) => {
     return (
         <div className="sm:col-span-4">
             <label htmlFor="tags" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
-                Tags
+                Tags<span className="text-red-500 ml-0.5">*</span>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
                     Add up to 5 tags to describe what your question is about:
                 </p>
@@ -50,7 +50,7 @@ const TagsInput = ({form}: Props) => {
                     <input
                         type="text"
                         name="tags"
-                        className="block flex-1 border-0 bg-transparent py-4 text-sm pl-1 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
+                        className="block flex-1 border-0 bg-transparent py-3 text-sm pl-2 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
                         placeholder="comma or space separated values"
                         onInput={onKeyDown}
                         onFocus={onToggleFocus}

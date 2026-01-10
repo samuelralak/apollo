@@ -29,7 +29,11 @@ const AcceptAnswer = ({answer, question}: { answer: Answer, question: Question }
     }
 
     return (
-        <button onClick={handleMarkAcceptedAnswer} disabled={isLoading}>
+        <button
+            onClick={handleMarkAcceptedAnswer}
+            disabled={isLoading}
+            className="rounded-md p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-500 disabled:cursor-not-allowed transition-colors"
+        >
             {isLoading ? (
                 <HugeiconsIcon icon={Settings02Icon} className="animate-spin text-slate-400 dark:text-slate-500" size={24} />
             ) : (

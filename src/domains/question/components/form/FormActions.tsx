@@ -1,15 +1,17 @@
 interface Props {
     onSubmit: () => void;
+    onCancel: () => void;
     publishing: boolean;
 }
 
-const FormActions = ({onSubmit, publishing}: Props) => {
+const FormActions = ({onSubmit, onCancel, publishing}: Props) => {
     return (
         <div className="mt-6 flex items-center justify-end gap-x-6 border-t border-slate-200 dark:border-slate-700 pt-6">
             <button
                 disabled={publishing}
                 type="button"
-                className="text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100 disabled:text-slate-400 text-center"
+                onClick={onCancel}
+                className="text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-300 disabled:text-slate-400 transition-colors"
             >
                 Cancel
             </button>

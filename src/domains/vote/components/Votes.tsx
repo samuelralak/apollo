@@ -104,7 +104,11 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
             horizontal ? 'flex-row gap-1' : 'w-6 sm:w-8 flex-col',
             'flex items-center'
         )}>
-            <button type="button" onClick={() => onVote(VoteType.UPVOTE)}>
+            <button
+                type="button"
+                onClick={() => onVote(VoteType.UPVOTE)}
+                className="rounded-md p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-500"
+            >
                 <HugeiconsIcon
                     icon={myVote?.vote === VoteType.UPVOTE ? ThumbsUpSolidIcon : ThumbsUpIcon}
                     size={horizontal ? 18 : 22}
@@ -117,7 +121,11 @@ const Votes = ({kind, eventId, pubkey, identifier, refEvent, horizontal}: {
                 'text-center font-medium text-slate-500 dark:text-slate-400'
             )}>{vote?.total ?? 0}</p>
 
-            <button onClick={() => onVote(VoteType.DOWNVOTE)}>
+            <button
+                type="button"
+                onClick={() => onVote(VoteType.DOWNVOTE)}
+                className="rounded-md p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:focus-visible:ring-teal-500"
+            >
                 <HugeiconsIcon
                     icon={myVote?.vote === VoteType.DOWNVOTE ? ThumbsDownSolidIcon : ThumbsDownIcon}
                     size={horizontal ? 18 : 22}

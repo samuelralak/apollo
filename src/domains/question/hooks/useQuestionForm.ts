@@ -70,8 +70,13 @@ const useQuestionForm = (question?: Question) => {
                 type: 'success'
             }))
             navigate(`/questions/${questionId}`)
-        } catch {
+        } catch (error) {
             setPublishing(false)
+            dispatch(showToast({
+                title: 'Error',
+                subtitle: error instanceof Error ? error.message : 'Failed to publish question. Please try again.',
+                type: 'error'
+            }))
         }
     }
 

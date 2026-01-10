@@ -74,7 +74,7 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
                 {...register('comment')}
                 onInput={() => trigger('comment')}
                 rows={2}
-                className="block w-full rounded-md border border-slate-200 dark:border-slate-700 bg-transparent px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 dark:focus:border-teal-500"
+                className="block w-full rounded-lg border-0 ring-2 ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 px-2.5 sm:px-3 py-2 sm:py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
                 placeholder="Add a comment..."
             />
             <div className="flex items-center justify-between mt-1.5 sm:mt-2">
