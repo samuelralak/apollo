@@ -8,6 +8,7 @@ const constants: {
     shareKind: NDKKind;
     secureStorageKey: string;
     explicitRelays: string[];
+    searchRelays: string[];
     defaultZapAmount: number;
 } = {
     noteKind: 1,
@@ -16,7 +17,9 @@ const constants: {
     answerKind:  parseInt(import.meta.env.VITE_ANSWER_KIND),
     voteKind:  parseInt(import.meta.env.VITE_VOTE_KIND),
     secureStorageKey: '_heimdall',
-    explicitRelays: (import.meta.env.VITE_EXPLICIT_RELAYS ?? "wss://relay.damus.io").split(','),
+    explicitRelays: (import.meta.env.VITE_EXPLICIT_RELAYS ?? "wss://relay.damus.io,wss://relay.nostr.band").split(','),
+    // NIP-50 search relays - see architecture/search-relays.md
+    searchRelays: (import.meta.env.VITE_SEARCH_RELAYS ?? "wss://relay.nostr.band,wss://relay.noswhere.com").split(','),
     defaultZapAmount: 21
 }
 

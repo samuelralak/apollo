@@ -1,4 +1,4 @@
-import type {Question} from "../types/question.types";
+import type { Question } from "../types/question.types";
 import useQuestionForm from "../hooks/useQuestionForm";
 import {
     CategorySection,
@@ -6,11 +6,12 @@ import {
     DetailsSection,
     TagsInput,
     GuidelinesPanel,
-    FormActions
+    FormActions,
+    InvitesSection
 } from "./form";
 
-const QuestionForm = ({question}: {question?: Question}) => {
-    const {form, onSubmit, publishing} = useQuestionForm(question)
+const QuestionForm = ({ question }: { question?: Question }) => {
+    const { form, onSubmit, publishing, invitedUsers, inviteUser, removeInvitedUser } = useQuestionForm(question)
     const category = form.watch('category')
 
     return (
@@ -19,6 +20,7 @@ const QuestionForm = ({question}: {question?: Question}) => {
                 <CategorySection form={form} defaultCategory={question?.category} />
                 <TitleInput form={form} category={category} defaultTitle={question?.title} />
                 <DetailsSection form={form} />
+                <InvitesSection invitedUsers={invitedUsers} onInvite={inviteUser} onRemove={removeInvitedUser} />
                 <TagsInput form={form} />
                 <FormActions onSubmit={form.handleSubmit(onSubmit)} publishing={publishing} />
             </div>
