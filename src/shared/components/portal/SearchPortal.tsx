@@ -6,7 +6,7 @@ import { useDebouncedEffect, useIsMounted } from "@react-hookz/web";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon, Cancel01Icon, UserIcon, CommandIcon } from "@hugeicons-pro/core-solid-rounded";
 import { HelpCircleIcon, HashtagIcon } from "@hugeicons-pro/core-duotone-rounded";
-import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKRelaySet } from "@nostr-dev-kit/ndk";
 import { AppDispatch, RootState } from "../../../app/store";
 import { hidePortal } from "../../store/portal.slice";
@@ -48,6 +48,9 @@ const SearchPortal = () => {
     const [loading, setLoading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
+    // Race condition fix: Track the latest request ID
+    const searchRequestId = useRef(0);
+
     const existingQuestions = useSelector((state: RootState) => state.question.data);
 
     const isMac = useMemo(() =>
@@ -68,60 +71,70 @@ const SearchPortal = () => {
     }, [handleClose, navigate]);
 
     const performSearch = useCallback(async (searchQuery: string, tab: SearchTab) => {
-        if (!searchQuery || searchQuery.length < 2) {
+        const trimmedQuery = searchQuery.trim();
+
+        if (!trimmedQuery || trimmedQuery.length < 2) {
             setResults([]);
+            setLoading(false);
             return;
         }
 
+        // Increment ID for this new search to handle race conditions
+        const currentRequestId = ++searchRequestId.current;
         setLoading(true);
+
         const ndk = ndkInstance();
         const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk);
         const allResults: SearchResult[] = [];
 
-        try {
-            if (tab === 'all' || tab === 'questions') {
-                const questionEvents = await Promise.race([
-                    ndk.fetchEvents({
-                        kinds: [constants.questionKind],
-                        search: searchQuery,
-                        limit: tab === 'questions' ? 15 : 8
-                    }, { closeOnEose: true }, searchRelaySet),
-                    new Promise<Set<never>>((_, reject) =>
-                        setTimeout(() => reject(new Error('timeout')), 5000)
-                    )
-                ]).catch(() => new Set());
+        // Search Questions
+        if (tab === 'all' || tab === 'questions') {
+            try {
+                const limit = tab === 'questions' ? 15 : 8;
+                const questionEvents = await ndk.fetchEvents({
+                    kinds: [constants.questionKind as NDKKind],
+                    search: trimmedQuery,
+                    limit
+                }, { closeOnEose: true }, searchRelaySet);
 
-                for (const event of questionEvents as Set<NDKEvent>) {
-                    const question = questionTransformer(event);
-                    allResults.push({
-                        id: question.id,
-                        type: 'question',
-                        title: question.title,
-                        subtitle: markdownToText(question.description).slice(0, 80),
-                        url: `/questions/${question.id}`,
-                    });
+                for (const event of questionEvents) {
+                    try {
+                        const question = questionTransformer(event);
+                        allResults.push({
+                            id: question.id,
+                            type: 'question',
+                            title: question.title,
+                            subtitle: markdownToText(question.description).slice(0, 80),
+                            url: `/questions/${question.id}`,
+                        });
+                    } catch {
+                        // Skip malformed question events
+                    }
                 }
+            } catch (e) {
+                console.warn("Questions search failed", e);
             }
+        }
 
-            if (tab === 'all' || tab === 'users') {
-                const userEvents = await Promise.race([
-                    ndk.fetchEvents({
-                        kinds: [0],
-                        search: searchQuery,
-                        limit: tab === 'users' ? 15 : 5
-                    }, { closeOnEose: true }, searchRelaySet),
-                    new Promise<Set<never>>((_, reject) =>
-                        setTimeout(() => reject(new Error('timeout')), 5000)
-                    )
-                ]).catch(() => new Set());
+        // Search Users
+        if (tab === 'all' || tab === 'users') {
+            try {
+                const limit = tab === 'users' ? 15 : 5;
+                const userEvents = await ndk.fetchEvents({
+                    kinds: [0 as NDKKind],
+                    search: trimmedQuery,
+                    limit
+                }, { closeOnEose: true }, searchRelaySet);
 
                 const seenPubkeys = new Set<string>();
-                for (const event of userEvents as Set<NDKEvent>) {
+
+                for (const event of userEvents) {
                     if (seenPubkeys.has(event.pubkey)) continue;
-                    seenPubkeys.add(event.pubkey);
 
                     try {
                         const profile = JSON.parse(event.content);
+                        seenPubkeys.add(event.pubkey);
+
                         allResults.push({
                             id: event.pubkey,
                             type: 'user',
@@ -135,54 +148,50 @@ const SearchPortal = () => {
                         // Skip malformed profiles
                     }
                 }
+            } catch (e) {
+                console.warn("Users search failed", e);
             }
+        }
 
-            if (tab === 'all' || tab === 'tags') {
-                const tagCounts = new Map<string, number>();
-                const lowerQuery = searchQuery.toLowerCase();
+        // Search Tags (client-side from existing questions)
+        if (tab === 'all' || tab === 'tags') {
+            const tagCounts = new Map<string, number>();
+            const lowerQuery = trimmedQuery.toLowerCase();
 
-                Object.values(existingQuestions).forEach((question) => {
-                    question.tags?.forEach((tag) => {
-                        if (tag.toLowerCase().includes(lowerQuery)) {
-                            tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-                        }
-                    });
+            Object.values(existingQuestions).forEach((question) => {
+                question.tags?.forEach((tag) => {
+                    if (tag.toLowerCase().includes(lowerQuery)) {
+                        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+                    }
                 });
+            });
 
-                const sortedTags = Array.from(tagCounts.entries())
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, tab === 'tags' ? 15 : 3);
+            const sortedTags = Array.from(tagCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, tab === 'tags' ? 15 : 3);
 
-                for (const [tag, count] of sortedTags) {
-                    allResults.push({
-                        id: `tag-${tag}`,
-                        type: 'tag',
-                        title: tag,
-                        subtitle: `${count} question${count !== 1 ? 's' : ''}`,
-                        url: `/questions?tag=${encodeURIComponent(tag)}`,
-                    });
-                }
+            for (const [tag, count] of sortedTags) {
+                allResults.push({
+                    id: `tag-${tag}`,
+                    type: 'tag',
+                    title: tag,
+                    subtitle: `${count} question${count !== 1 ? 's' : ''}`,
+                    url: `/questions?tag=${encodeURIComponent(tag)}`,
+                });
             }
+        }
 
-            if (isMounted()) {
-                setResults(allResults);
-                setSelectedIndex(0);
-            }
-        } catch (error) {
-            console.error('Search failed:', error);
-            if (isMounted()) {
-                setResults([]);
-            }
-        } finally {
-            if (isMounted()) {
-                setLoading(false);
-            }
+        // Race condition check: Only update state if this is still the latest request
+        if (isMounted() && currentRequestId === searchRequestId.current) {
+            setResults(allResults);
+            setSelectedIndex(0);
+            setLoading(false);
         }
     }, [ndkInstance, existingQuestions, isMounted]);
 
     useDebouncedEffect(
         () => { performSearch(query, activeTab); },
-        [query, activeTab, performSearch],
+        [query, activeTab],
         400
     );
 
@@ -295,7 +304,6 @@ const SearchPortal = () => {
                                     <HugeiconsIcon icon={Cancel01Icon} size={16} />
                                 </button>
                             )}
-                            {/* Desktop: Esc hint, Mobile: Cancel text */}
                             <button
                                 onClick={handleClose}
                                 className="flex-shrink-0 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
@@ -305,7 +313,7 @@ const SearchPortal = () => {
                             </button>
                         </div>
 
-                        {/* Tabs - Compact pills */}
+                        {/* Tabs */}
                         <div className="flex gap-1 px-4 sm:px-5 pb-3">
                             {TABS.map((tab) => (
                                 <button
@@ -323,7 +331,6 @@ const SearchPortal = () => {
                             ))}
                         </div>
 
-                        {/* Divider */}
                         <div className="h-px bg-slate-200 dark:bg-slate-800" />
 
                         {/* Results */}
@@ -336,7 +343,7 @@ const SearchPortal = () => {
                             )}
 
                             {/* Empty - Start typing */}
-                            {!loading && results.length === 0 && query.length < 2 && (
+                            {!loading && results.length === 0 && query.trim().length < 2 && (
                                 <div className="px-5 py-12 text-center">
                                     <p className="text-sm text-slate-500 dark:text-slate-400">
                                         Type to search questions, users, and tags
@@ -345,7 +352,7 @@ const SearchPortal = () => {
                             )}
 
                             {/* Empty - No results */}
-                            {!loading && results.length === 0 && query.length >= 2 && (
+                            {!loading && results.length === 0 && query.trim().length >= 2 && (
                                 <div className="px-5 py-12 text-center">
                                     <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No results for "{query}"</p>
                                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Try different keywords</p>
@@ -390,7 +397,7 @@ const SearchPortal = () => {
                             )}
                         </div>
 
-                        {/* Footer - Desktop only */}
+                        {/* Footer */}
                         <div className="hidden sm:flex items-center justify-between px-5 py-3 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                             <div className="flex items-center gap-5">
                                 <span className="flex items-center gap-1.5">
