@@ -17,11 +17,19 @@ import {AppDispatch, RootState} from "../../../app/store";
 import {addQuestion} from "../store/question.slice";
 import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
+import categories from "../../../data/categories.json";
+import MentionedUsers from "../components/MentionedUsers";
+
+const getCategoryTitle = (slug: string): string | undefined => {
+    const category = categories.find(c => c.slug === slug);
+    return category?.title;
+};
 
 const QuestionPage = () => {
     const dispatch = useDispatch<AppDispatch>()
     const {questionId} = useParams()
     const question = useSelector((state: RootState) => state.question).data[questionId!]
+    const categoryTitle = question?.category ? getCategoryTitle(question.category) : undefined;
 
     const handleQuestionEvent = useCallback((event: NDKEvent) => {
         const questionFromEvent = questionTransformer(event)
@@ -59,6 +67,11 @@ const QuestionPage = () => {
             <div className="max-w-3xl">
                 {/* Header */}
                 <header className="mb-4 sm:mb-6">
+                    {categoryTitle && (
+                        <span className="inline-flex items-center rounded-full bg-teal-50 dark:bg-teal-900/20 px-2.5 py-0.5 text-xs font-medium text-teal-700 dark:text-teal-300 ring-1 ring-inset ring-teal-600/20 dark:ring-teal-400/20 mb-2">
+                            {categoryTitle}
+                        </span>
+                    )}
                     <h1 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 leading-snug">
                         {question?.title}
                     </h1>
@@ -67,6 +80,9 @@ const QuestionPage = () => {
                         <span>·</span>
                         <span>{formatDateTime(question?.createdAt)}</span>
                     </div>
+                    {question.mentionedPubkeys && question.mentionedPubkeys.length > 0 && (
+                        <MentionedUsers pubkeys={question.mentionedPubkeys} />
+                    )}
                 </header>
 
                 {/* Question body */}
@@ -103,7 +119,7 @@ const QuestionPage = () => {
                                         key={`${tag}-${index}-${question?.id}`}
                                         className="inline-flex items-center rounded bg-slate-100 dark:bg-slate-800 px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors"
                                     >
-                                        {tag}
+                                        <span className="text-slate-400 dark:text-slate-500 mr-0.5">#</span>{tag}
                                     </span>
                                 ))}
                             </div>

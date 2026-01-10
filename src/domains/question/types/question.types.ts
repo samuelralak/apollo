@@ -11,4 +11,5 @@ export interface Question {
     };
     acceptedAnswerId?: string;
     acceptedAnswerEventId?: string;
+    mentionedPubkeys?: string[];
 }

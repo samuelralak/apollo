@@ -1,4 +1,5 @@
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import { useMemo, useState, useEffect } from "react";
 import type { FormProgress, DraftStatus } from "../../hooks/useQuestionForm";
 
 interface Props {
@@ -6,21 +7,34 @@ interface Props {
     draftStatus: DraftStatus;
 }
 
+const formatTimeDiff = (timestamp: number | null, now: number): string => {
+    if (!timestamp) return ''
+    const diff = now - timestamp
+    if (diff < 60000) return 'just now'
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
+    return `${Math.floor(diff / 3600000)}h ago`
+}
+
 const ProgressIndicator = ({ progress, draftStatus }: Props) => {
-    const steps = [
+    const [now, setNow] = useState(() => Date.now())
+
+    // Update the time reference periodically for "X minutes ago" display
+    useEffect(() => {
+        const interval = setInterval(() => setNow(Date.now()), 60000)
+        return () => clearInterval(interval)
+    }, [])
+
+    const steps = useMemo(() => [
         { key: 'category', label: 'Category', completed: progress.category },
         { key: 'title', label: 'Title', completed: progress.title },
         { key: 'description', label: 'Details', completed: progress.description },
         { key: 'tags', label: 'Tags', completed: progress.tags },
-    ] as const
+    ] as const, [progress.category, progress.title, progress.description, progress.tags])
 
-    const formatLastSaved = (timestamp: number | null): string => {
-        if (!timestamp) return ''
-        const diff = Date.now() - timestamp
-        if (diff < 60000) return 'just now'
-        if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
-        return `${Math.floor(diff / 3600000)}h ago`
-    }
+    const lastSavedText = useMemo(
+        () => formatTimeDiff(draftStatus.lastSavedAt, now),
+        [draftStatus.lastSavedAt, now]
+    )
 
     return (
         <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-4 ring-1 ring-slate-200 dark:ring-slate-700">
@@ -77,7 +91,7 @@ const ProgressIndicator = ({ progress, draftStatus }: Props) => {
                                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                 </svg>
-                                <span>Draft saved {formatLastSaved(draftStatus.lastSavedAt)}</span>
+                                <span>Draft saved {lastSavedText}</span>
                             </>
                         )}
                     </div>

@@ -1,4 +1,4 @@
-import {memo} from "react";
+import {memo, useMemo} from "react";
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {CheckmarkCircle02Icon as CheckmarkCircle02SolidIcon} from "@hugeicons-pro/core-solid-rounded";
@@ -10,6 +10,7 @@ import constants from "../../../constants";
 import {RootState} from "../../../app/store";
 import useQuestionStats from "../hooks/useQuestionStats";
 import ActionItems from "../../../shared/components/ActionItems";
+import categories from "../../../data/categories.json";
 
 interface QuestionListItemBProps {
     question: Question;
@@ -34,12 +35,24 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
     const voteCount = vote?.total ?? 0;
     const answerCount = answer?.total ?? 0;
 
+    const categoryTitle = useMemo(() => {
+        if (!question.category) return undefined;
+        return categories.find(c => c.slug === question.category)?.title;
+    }, [question.category]);
+
     return (
         <li className="py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            {/* Category badge */}
+            {categoryTitle && (
+                <span className="inline-flex items-center rounded-full bg-teal-50 dark:bg-teal-900/20 px-2 py-0.5 text-[10px] font-medium text-teal-700 dark:text-teal-300 ring-1 ring-inset ring-teal-600/20 dark:ring-teal-400/20 mb-1.5">
+                    {categoryTitle}
+                </span>
+            )}
+
             {/* Title */}
             <Link
                 to={`/questions/${question.id}`}
-                className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-2"
+                className="block text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 transition-colors line-clamp-2"
             >
                 {question.title}
             </Link>
@@ -57,9 +70,9 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                     {question.tags.map((tag, index) => (
                         <span
                             key={`${question.id}-${tag}-${index}`}
-                            className="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                            className="inline-flex items-center rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                         >
-                            {tag}
+                            <span className="text-slate-400 dark:text-slate-500 mr-0.5">#</span>{tag}
                         </span>
                     ))}
                 </div>

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useState } from 'react'
 import { useIsMounted, useMountEffect } from '@react-hookz/web'
 import type { QuestionFormValues } from './useQuestionForm'
 
@@ -32,7 +32,7 @@ interface UseQuestionDraftReturn {
 const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDraftReturn => {
     const { questionId, onDraftRestored } = options
     const isMounted = useIsMounted()
-    const lastSavedAtRef = useRef<number | null>(null)
+    const [lastSavedAt, setLastSavedAt] = useState<number | null>(null)
 
     // Generate storage key (different key for editing vs new questions)
     const getStorageKey = useCallback(() => {
@@ -49,7 +49,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
             }
             localStorage.setItem(getStorageKey(), JSON.stringify(draft))
             if (isMounted()) {
-                lastSavedAtRef.current = draft.savedAt
+                setLastSavedAt(draft.savedAt)
             }
         } catch (error) {
             console.error('Failed to save draft:', error)
@@ -74,7 +74,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
                 return null
             }
 
-            lastSavedAtRef.current = draft.savedAt
+            setLastSavedAt(draft.savedAt)
             return draft.values
         } catch (error) {
             console.error('Failed to load draft:', error)
@@ -86,7 +86,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
     const clearDraft = useCallback(() => {
         try {
             localStorage.removeItem(getStorageKey())
-            lastSavedAtRef.current = null
+            setLastSavedAt(null)
         } catch (error) {
             console.error('Failed to clear draft:', error)
         }
@@ -118,7 +118,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
         loadDraft,
         clearDraft,
         hasDraft,
-        lastSavedAt: lastSavedAtRef.current
+        lastSavedAt
     }
 }
 
