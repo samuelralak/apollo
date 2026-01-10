@@ -21,7 +21,7 @@ const CategorySection = ({form, defaultCategory}: Props) => {
             <label htmlFor="category" className={formStyles.label.base}>
                 Category<span className={formStyles.label.required}>*</span>
                 <p className={formStyles.description.base}>
-                    Please choose the appropriate section for your question
+                    Select the type that best matches your question
                 </p>
             </label>
             <div className={formStyles.field.inputWrapper}>

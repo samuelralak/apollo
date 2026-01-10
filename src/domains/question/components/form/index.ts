@@ -5,3 +5,5 @@ export { default as TagsInput } from './TagsInput';
 export { default as GuidelinesPanel } from './GuidelinesPanel';
 export { default as FormActions } from './FormActions';
 export { default as InvitesSection } from './InvitesSection';
+export { default as ProgressIndicator } from './ProgressIndicator';
+export { default as SimilarQuestions } from './SimilarQuestions';

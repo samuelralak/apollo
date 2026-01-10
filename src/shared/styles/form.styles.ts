@@ -119,7 +119,7 @@ export const formStyles = {
     // Form field wrapper
     field: {
         base: "sm:col-span-4",
-        inputWrapper: "mt-5 w-full",
+        inputWrapper: "mt-3 sm:mt-5 w-full",
         inputWrapperCompact: "mt-2 w-full",
     },
 } as const

@@ -14,10 +14,10 @@ const InvitesSection = ({ invitedUsers, onInvite, onRemove }: InvitesSectionProp
     return (
         <div className={formStyles.field.base}>
             <label htmlFor="invites" className={formStyles.label.base}>
-                Invite Users
+                Mention Users
                 <span className="text-slate-400 dark:text-slate-500 text-sm font-normal ml-1">(optional)</span>
                 <p className={formStyles.description.base}>
-                    Search for users you'd like to invite to answer this question
+                    Notify specific users who might have the answer
                 </p>
             </label>
             <div className={formStyles.field.inputWrapper}>

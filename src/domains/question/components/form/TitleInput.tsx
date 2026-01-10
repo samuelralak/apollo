@@ -9,6 +9,8 @@ const placeholderTitleExamples: Record<string, string> = {
     generalized: "How do diet and exercise contribute to overall mental health?"
 }
 
+const defaultPlaceholder = "What specific problem are you trying to solve?"
+
 interface Props {
     form: UseFormReturn<QuestionFormValues>;
     category: string;
@@ -22,9 +24,9 @@ const TitleInput = ({form, category, defaultTitle}: Props) => {
     return (
         <div className={formStyles.field.base}>
             <label htmlFor="title" className={formStyles.label.base}>
-                Question Title<span className={formStyles.label.required}>*</span>
+                Title<span className={formStyles.label.required}>*</span>
                 <p className={formStyles.description.base}>
-                    Imagine you are asking a question to another person
+                    Be specific and concise, as if asking a knowledgeable friend
                 </p>
             </label>
             <div className={formStyles.field.inputWrapper}>
@@ -32,7 +34,9 @@ const TitleInput = ({form, category, defaultTitle}: Props) => {
                     {...register('title')}
                     defaultValue={defaultTitle ?? ''}
                     type="text"
-                    placeholder={`e.g ${placeholderTitleExamples[category] ?? ''}`}
+                    placeholder={category && placeholderTitleExamples[category]
+                        ? `e.g. ${placeholderTitleExamples[category]}`
+                        : defaultPlaceholder}
                     className={getInputClassName()}
                 />
                 <div className="mt-1.5 flex justify-end">

@@ -12,8 +12,8 @@ interface Props {
 
 const GuidelinesContent = ({category}: Props) => (
     <>
-        <p className="text text-slate-600 dark:text-slate-400">
-            Navigate through these simple steps to tailor your queries.
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+            Follow these tips to write a question that gets great answers.
         </p>
 
         <dl className="space-y-6 divide-y divide-slate-200 dark:divide-slate-700">
@@ -69,9 +69,9 @@ const GuidelinesPanel = ({category}: Props) => {
                 <Disclosure as="div" className="lg:hidden">
                     {({open}) => (
                         <>
-                            <DisclosureButton className="flex w-full items-center justify-between px-4 py-5 sm:px-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-600 dark:focus-visible:ring-teal-500">
+                            <DisclosureButton className="flex w-full items-center justify-between px-4 py-4 sm:px-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-600 dark:focus-visible:ring-teal-500">
                                 <h3 className="text-base font-semibold leading-6 text-slate-900 dark:text-slate-100">
-                                    Craft your question
+                                    Writing Tips
                                 </h3>
                                 <span className="text-slate-600 dark:text-slate-400">
                                     {open ? (
@@ -90,9 +90,9 @@ const GuidelinesPanel = ({category}: Props) => {
 
                 {/* Desktop: Always visible */}
                 <div className="hidden lg:block">
-                    <div className="px-4 py-5 sm:px-6">
+                    <div className="px-4 py-4 sm:px-6">
                         <h3 className="text-base font-semibold leading-6 text-slate-900 dark:text-slate-100">
-                            Craft your question
+                            Writing Tips
                         </h3>
                     </div>
                     <div className="px-4 py-5 sm:p-6">

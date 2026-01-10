@@ -21,7 +21,7 @@ const DetailsSection = ({form}: Props) => {
             <label htmlFor="description" className={formStyles.label.base}>
                 Details<span className={formStyles.label.required}>*</span>
                 <p className={formStyles.description.base}>
-                    Include all the information someone would need to answer your question
+                    Provide context, what you've tried, and what you're hoping to learn
                 </p>
             </label>
             <div className={formStyles.field.inputWrapper}>

@@ -20,7 +20,7 @@ const TagsInput = ({form}: Props) => {
             <label htmlFor="tags" className={formStyles.label.base}>
                 Tags<span className={formStyles.label.required}>*</span>
                 <p className={formStyles.description.base}>
-                    Add up to 5 tags to describe what your question is about:
+                    Add up to 5 tags to help others find your question
                 </p>
             </label>
             <div className={formStyles.field.inputWrapper}>
@@ -53,7 +53,7 @@ const TagsInput = ({form}: Props) => {
                         type="text"
                         name="tags"
                         className={`${formStyles.innerInput.base} ${formStyles.innerInput.padding}`}
-                        placeholder="comma or space separated values"
+                        placeholder="e.g. bitcoin, lightning, privacy"
                         onInput={onKeyDown}
                         onFocus={onToggleFocus}
                         onBlur={onToggleFocus}

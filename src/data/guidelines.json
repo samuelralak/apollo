@@ -1,79 +1,79 @@
 {
   "conversational_and_exploratory": [
     {
-      "summary": "Choose theme",
+      "summary": "Start with your story",
       "points": [
-        "Focus on personal or subjective topics.",
-        "Encourage storytelling or experiences.",
-        "Aim for emotional or thoughtful engagement."
+        "Share the experience or situation that sparked your question",
+        "Explain why this topic matters to you personally",
+        "Set the tone for thoughtful, open discussion"
       ]
     },
     {
-      "summary": "Be inviting",
+      "summary": "Ask open-ended questions",
       "points": [
-        "Phrase to elicit opinions or stories.",
-        "Avoid yes/no format; seek depth.",
-        "Keep it open-ended for diverse views."
+        "Avoid yes/no questions — invite stories and opinions",
+        "Use \"how\" or \"what\" to encourage deeper responses",
+        "Leave room for unexpected perspectives"
       ]
     },
     {
-      "summary": "Promote interaction",
+      "summary": "Welcome different viewpoints",
       "points": [
-        "Welcome various perspectives.",
-        "Be respectful and open-minded.",
-        "Foster a conversational tone."
+        "Acknowledge there may be no single right answer",
+        "Be open to answers that challenge your assumptions",
+        "Engage respectfully with diverse opinions"
       ]
     }
   ],
   "technical_and_precise": [
     {
-      "summary": "Be specific",
+      "summary": "Define the problem clearly",
       "points": [
-        "Focus on technical or factual topics.",
-        "Clearly state the technical problem.",
-        "Include essential technical details."
+        "State exactly what you're trying to achieve",
+        "Describe what's happening vs. what you expected",
+        "Include relevant versions, platforms, or configurations"
       ]
     },
     {
-      "summary": "Show your work",
+      "summary": "Show what you've tried",
       "points": [
-        "Share what you've already tried.",
-        "Mention findings from this site or others.",
-        "Explain why solutions found were inadequate."
+        "List solutions you've already attempted",
+        "Explain why they didn't work",
+        "Include any error messages or unexpected behavior"
       ]
     },
     {
-      "summary": "Add precision",
+      "summary": "Include relevant details",
       "points": [
-        "When relevant, include code snippets or error messages.",
-        "Offer context to guide potential solutions.",
-        "Focus on problem-solving and efficiency."
+        "Add code snippets, logs, or screenshots if helpful",
+        "Remove sensitive data but keep the context",
+        "Focus on the specific issue, not your entire setup"
       ]
     }
   ],
   "generalized": [
     {
-      "summary": "Be inclusive",
+      "summary": "Keep it accessible",
       "points": [
-        "Keep the topic broad and versatile.",
-        "Ensure clarity and general interest.",
-        "Avoid overly technical or niche subjects."
+        "Avoid jargon or explain technical terms",
+        "Frame your question for a general audience",
+        "Make it interesting to people from different backgrounds"
       ]
     },
     {
-      "summary": "Guide responses",
+      "summary": "Provide helpful context",
       "points": [
-        "Provide general context if necessary.",
-        "Pose the question to invite various interpretations.",
-        "Keep it simple yet engaging."
+        "Briefly explain why you're asking",
+        "Give enough background for meaningful answers",
+        "Be clear about what kind of answer would help"
       ]
     },
     {
-      "summary": "Encourage variety",
+      "summary": "Welcome diverse answers",
       "points": [
-        "Be open to different types of answers.",
-        "Welcome creative or unconventional insights.",
-        "Promote a friendly, inclusive discussion environment."
+        "Encourage both practical and creative responses",
+        "Be open to answers from unexpected angles",
+        "Appreciate different levels of expertise"
       ]
     }
   ]
