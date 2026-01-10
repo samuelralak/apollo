@@ -5,7 +5,8 @@ export enum PortalID {
     zap = 'zap',
     auth = 'auth',
     mobileMenu = 'mobileMenu',
-    welcome = 'welcome'
+    welcome = 'welcome',
+    search = 'search'
 }
 
 export interface PortalState {

@@ -13,7 +13,9 @@ import SharePortal from "../shared/components/portal/SharePortal";
 import GetStartedPortal from "../shared/components/portal/GetStartedPortal";
 import MobileMenuPortal from "../shared/components/portal/MobileMenuPortal";
 import WelcomePortal from "../shared/components/portal/WelcomePortal";
+import SearchPortal from "../shared/components/portal/SearchPortal";
 import useFirstVisit from "../shared/hooks/useFirstVisit";
+import useSearchShortcut from "../shared/hooks/useSearchShortcut";
 import {useMountEffect} from "@react-hookz/web";
 
 const Root = () => {
@@ -22,6 +24,9 @@ const Root = () => {
     const {visible, portalId, eventCoordinate, ...portal} = useSelector((state: RootState) => state.portal)
     const {isFirstVisit, markWelcomeSeen} = useFirstVisit()
     const helmetContext = {}
+
+    // Global keyboard shortcut for search (Cmd+K / Ctrl+K)
+    useSearchShortcut()
 
     useMountEffect(() => {
         if (isFirstVisit) {
@@ -70,6 +75,10 @@ const Root = () => {
                             dispatch(hidePortal())
                         }}
                     />, document.body
+                )}
+
+                {visible && portalId === PortalID.search && createPortal(
+                    <SearchPortal />, document.body
                 )}
 
                 <ToastRenderer />
