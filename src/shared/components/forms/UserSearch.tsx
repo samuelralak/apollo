@@ -1,9 +1,10 @@
 import { useContext, useState, useEffect } from 'react'
 import { Combobox, ComboboxInput, ComboboxButton, ComboboxOptions, ComboboxOption } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon, Tick02Icon, UserIcon } from "@hugeicons-pro/core-solid-rounded"
 import { NDKContext } from "../../../lib/ndk/NDKProvider"
 import { NDKUser, NDKRelaySet } from "@nostr-dev-kit/ndk"
-import AvatarPlaceholder from "../AvatarPlaceholder"
+import { classNames } from "../../../utils"
 import constants from "../../../constants"
 
 interface UserSearchProps {
@@ -11,11 +12,22 @@ interface UserSearchProps {
     excludePubkeys?: string[]
 }
 
+// Truncate npub for display
+const truncateNpub = (pubkey: string): string => {
+    try {
+        const npub = `npub1${pubkey.slice(0, 8)}...${pubkey.slice(-4)}`
+        return npub
+    } catch {
+        return pubkey.slice(0, 12) + '...'
+    }
+}
+
 export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearchProps) {
     const { ndkInstance } = useContext(NDKContext) as NDKContext
     const [query, setQuery] = useState('')
     const [users, setUsers] = useState<NDKUser[]>([])
     const [loading, setLoading] = useState(false)
+    const [isFocused, setIsFocused] = useState(false)
 
     useEffect(() => {
         let cancelled = false
@@ -46,8 +58,6 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
                 }
 
                 // 2. Text Search (NIP-50) via dedicated search relays
-                // Search relays are configured in constants.searchRelays
-                // See architecture/search-relays.md for details
                 const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk)
 
                 const searchPromise = ndk.fetchEvents({
@@ -102,7 +112,7 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
 
         const timeoutId = setTimeout(() => {
             performSearch(query)
-        }, 400) // 400ms debounce for snappier feel
+        }, 400)
 
         return () => {
             cancelled = true
@@ -113,91 +123,152 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
     const handleSelect = (user: NDKUser | null) => {
         if (!user) return
         onSelect(user)
-        setQuery('') // Clear input only on successful selection
+        setQuery('')
     }
+
+    const showDropdown = isFocused && (users.length > 0 || query.length >= 3)
 
     return (
         <div className="w-full relative z-20">
             <Combobox value={null} onChange={handleSelect}>
-                <div className="relative mt-1">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-slate-700 focus-within:ring-2 focus-within:ring-teal-600 dark:focus-within:ring-teal-500 sm:text-sm sm:leading-6">
+                <div className="relative">
+                    {/* Input Container - matches TitleInput/TagsInput pattern */}
+                    <div
+                        className={classNames(
+                            isFocused ? "bg-white dark:bg-slate-700 ring-teal-600 dark:ring-teal-500" : "bg-slate-100 dark:bg-slate-800 ring-slate-200 dark:ring-slate-700",
+                            "relative w-full overflow-hidden rounded-lg ring-2 transition-colors"
+                        )}
+                    >
+                        {/* Search Icon */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <HugeiconsIcon
+                                icon={Search01Icon}
+                                size={18}
+                                className={classNames(
+                                    isFocused ? "text-teal-600 dark:text-teal-400" : "text-slate-400 dark:text-slate-500",
+                                    "transition-colors"
+                                )}
+                            />
+                        </div>
+
                         <ComboboxInput
-                            className="w-full border-none py-2 pl-3 pr-10 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-0 focus:outline-none placeholder:text-slate-400"
+                            className="w-full border-none py-3 pl-10 pr-10 bg-transparent text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
-                            placeholder="Search user or paste npub..."
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            placeholder="Search by name or paste npub..."
+                            aria-label="Search for users"
                         />
+
                         {/* Loading Indicator */}
-                        <div className="absolute inset-y-0 right-8 flex items-center">
-                            {loading && (
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                            {loading ? (
                                 <div className="h-4 w-4 border-2 border-teal-500 dark:border-teal-400 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                <ComboboxButton className="flex items-center">
+                                    <span className="sr-only">Search users</span>
+                                </ComboboxButton>
                             )}
                         </div>
-                        <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronUpDownIcon
-                                className="h-5 w-5 text-slate-400 dark:text-slate-500"
-                                aria-hidden="true"
-                            />
-                        </ComboboxButton>
                     </div>
 
-                    {/* Render Options only if we have query or results */}
-                    {(users.length > 0 || query.length >= 3) && (
+                    {/* Helper Text */}
+                    {isFocused && query.length > 0 && query.length < 3 && (
+                        <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                            Type {3 - query.length} more character{3 - query.length !== 1 ? 's' : ''} to search
+                        </p>
+                    )}
+
+                    {/* Dropdown Options */}
+                    {showDropdown && (
                         <ComboboxOptions
                             static
-                            className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none sm:text-sm z-50"
+                            className="absolute mt-2 max-h-72 w-full overflow-auto rounded-lg bg-white dark:bg-slate-800 py-2 shadow-lg ring-1 ring-slate-200 dark:ring-slate-700 focus:outline-none z-50"
                         >
-                            {users.length === 0 && !loading && query.length >= 3 ? (
-                                <div className="relative cursor-default select-none px-4 py-2 text-slate-500 dark:text-slate-400">
-                                    No users found. Try pasting an npub.
+                            {/* Loading State */}
+                            {users.length === 0 && loading && (
+                                <div className="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400">
+                                    <div className="h-4 w-4 border-2 border-slate-300 dark:border-slate-600 border-t-teal-500 dark:border-t-teal-400 rounded-full animate-spin" />
+                                    <span className="text-sm">Searching users...</span>
                                 </div>
-                            ) : users.length === 0 && loading ? (
-                                <div className="relative cursor-default select-none px-4 py-2 text-slate-500 dark:text-slate-400">
-                                    Searching...
+                            )}
+
+                            {/* Empty State */}
+                            {users.length === 0 && !loading && query.length >= 3 && (
+                                <div className="px-4 py-6 text-center">
+                                    <div className="mx-auto h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-3">
+                                        <HugeiconsIcon icon={UserIcon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                    </div>
+                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">No users found</p>
+                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                        Try a different search or paste an npub directly
+                                    </p>
                                 </div>
-                            ) : (
-                                users.map((user) => (
-                                    <ComboboxOption
-                                        key={user.pubkey}
-                                        value={user}
-                                        className="relative cursor-default select-none py-2 pl-3 pr-9 text-slate-900 dark:text-slate-100 data-[focus]:bg-teal-600 data-[focus]:text-white dark:data-[focus]:bg-teal-500"
-                                    >
-                                        {({ focus, selected }) => (
-                                            <div className="flex items-center gap-3">
-                                                {/* Safe Image Handling */}
-                                                <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden flex-shrink-0">
-                                                    {user.profile?.image ? (
-                                                        <img
-                                                            src={user.profile.image}
-                                                            alt=""
-                                                            className="h-full w-full object-cover"
-                                                            onError={(e) => {
-                                                                (e.target as HTMLImageElement).style.display = 'none'
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <AvatarPlaceholder mini />
+                            )}
+
+                            {/* Results */}
+                            {users.length > 0 && (
+                                <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                                    {users.map((user) => (
+                                        <ComboboxOption
+                                            key={user.pubkey}
+                                            value={user}
+                                            className="relative cursor-pointer select-none px-4 py-3 text-slate-900 dark:text-slate-100 data-[focus]:bg-slate-50 dark:data-[focus]:bg-slate-700/50 transition-colors"
+                                        >
+                                            {({ focus, selected }) => (
+                                                <div className="flex items-center gap-3">
+                                                    {/* Avatar */}
+                                                    <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden flex-shrink-0 ring-2 ring-slate-200 dark:ring-slate-600">
+                                                        {user.profile?.image ? (
+                                                            <img
+                                                                src={user.profile.image}
+                                                                alt=""
+                                                                className="h-full w-full object-cover"
+                                                                onError={(e) => {
+                                                                    const target = e.target as HTMLImageElement
+                                                                    target.style.display = 'none'
+                                                                    target.parentElement!.innerHTML = `<div class="h-full w-full flex items-center justify-center"><svg class="h-5 w-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <div className="h-full w-full flex items-center justify-center">
+                                                                <HugeiconsIcon icon={UserIcon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* User Info */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className={classNames(
+                                                            "text-sm truncate",
+                                                            selected ? "font-semibold" : "font-medium"
+                                                        )}>
+                                                            {user.profile?.name || user.profile?.display_name || 'Anonymous'}
+                                                        </p>
+                                                        <p className={classNames(
+                                                            "text-xs truncate mt-0.5",
+                                                            focus ? "text-slate-600 dark:text-slate-300" : "text-slate-500 dark:text-slate-400"
+                                                        )}>
+                                                            {user.profile?.nip05 || truncateNpub(user.pubkey)}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Selected Indicator */}
+                                                    {selected && (
+                                                        <div className="flex-shrink-0">
+                                                            <HugeiconsIcon
+                                                                icon={Tick02Icon}
+                                                                size={18}
+                                                                className="text-teal-600 dark:text-teal-400"
+                                                            />
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className={`truncate ${selected ? 'font-semibold' : ''}`}>
-                                                        {user.profile?.name || user.profile?.display_name || 'Anonymous'}
-                                                    </span>
-                                                    {user.profile?.nip05 && (
-                                                        <span className={`text-xs truncate ${focus ? 'text-teal-200' : 'text-slate-500 dark:text-slate-400'}`}>
-                                                            {user.profile.nip05}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                {selected && (
-                                                    <span className={`absolute inset-y-0 right-0 flex items-center pr-3 ${focus ? 'text-white' : 'text-teal-600 dark:text-teal-400'}`}>
-                                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-                                    </ComboboxOption>
-                                ))
+                                            )}
+                                        </ComboboxOption>
+                                    ))}
+                                </div>
                             )}
                         </ComboboxOptions>
                     )}
