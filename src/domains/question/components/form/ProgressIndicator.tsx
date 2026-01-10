@@ -1,5 +1,6 @@
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
+import { useIntervalEffect } from "@react-hookz/web";
 import type { FormProgress, DraftStatus } from "../../hooks/useQuestionForm";
 
 interface Props {
@@ -19,10 +20,7 @@ const ProgressIndicator = ({ progress, draftStatus }: Props) => {
     const [now, setNow] = useState(() => Date.now())
 
     // Update the time reference periodically for "X minutes ago" display
-    useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 60000)
-        return () => clearInterval(interval)
-    }, [])
+    useIntervalEffect(() => setNow(Date.now()), 60000)
 
     const steps = useMemo(() => [
         { key: 'category', label: 'Category', completed: progress.category },
