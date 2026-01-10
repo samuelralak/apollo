@@ -3,6 +3,7 @@ import {Listbox, ListboxButton, ListboxLabel, ListboxOptions, ListboxOption} fro
 import {HugeiconsIcon} from "@hugeicons/react";
 import {ArrowDown01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Tick02Icon as Tick02SolidIcon} from "@hugeicons-pro/core-solid-rounded";
+import {getSelectClassName} from "../../styles/form.styles";
 
 interface Option {
     [key: string]: string | undefined;
@@ -40,8 +41,7 @@ const SelectMenu = <T extends Option>({
         <Listbox value={selected} onChange={onChange}>
             <ListboxLabel className="sr-only">Change published status</ListboxLabel>
             <div className="relative">
-                <ListboxButton
-                    className="inline-flex w-full items-center justify-between rounded-lg bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-200 dark:ring-slate-700 p-3.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900">
+                <ListboxButton className={getSelectClassName()}>
                     <span>{selected?.title ?? placeholder}</span>
                     <HugeiconsIcon icon={ArrowDown01Icon} className="text-slate-600 dark:text-slate-400" size={24} aria-hidden="true" />
                 </ListboxButton>

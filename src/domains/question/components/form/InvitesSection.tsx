@@ -2,6 +2,7 @@ import { NDKUser } from "@nostr-dev-kit/ndk";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, UserIcon } from "@hugeicons-pro/core-solid-rounded";
 import UserSearch from "../../../../shared/components/forms/UserSearch";
+import { formStyles } from "../../../../shared/styles/form.styles";
 
 interface InvitesSectionProps {
     invitedUsers: NDKUser[];
@@ -11,15 +12,15 @@ interface InvitesSectionProps {
 
 const InvitesSection = ({ invitedUsers, onInvite, onRemove }: InvitesSectionProps) => {
     return (
-        <div className="sm:col-span-4">
-            <label htmlFor="invites" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
+        <div className={formStyles.field.base}>
+            <label htmlFor="invites" className={formStyles.label.base}>
                 Invite Users
                 <span className="text-slate-400 dark:text-slate-500 text-sm font-normal ml-1">(optional)</span>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
+                <p className={formStyles.description.base}>
                     Search for users you'd like to invite to answer this question
                 </p>
             </label>
-            <div className="mt-5 w-full">
+            <div className={formStyles.field.inputWrapper}>
                 <UserSearch
                     onSelect={onInvite}
                     excludePubkeys={invitedUsers.map(u => u.pubkey)}

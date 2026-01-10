@@ -4,6 +4,7 @@ import SelectMenu from "../../../../shared/components/forms/SelectMenu";
 import {Category} from "../../../../shared/types/category.types";
 import categories from "../../../../data/categories.json";
 import type {QuestionFormValues} from "../../hooks/useQuestionForm";
+import {formStyles} from "../../../../shared/styles/form.styles";
 
 const options: Category[] = categories
 
@@ -16,14 +17,14 @@ const CategorySection = ({form, defaultCategory}: Props) => {
     const {setValue, formState: {errors}} = form
 
     return (
-        <div className="sm:col-span-4">
-            <label htmlFor="category" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
-                Category<span className="text-red-500 ml-0.5">*</span>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
+        <div className={formStyles.field.base}>
+            <label htmlFor="category" className={formStyles.label.base}>
+                Category<span className={formStyles.label.required}>*</span>
+                <p className={formStyles.description.base}>
                     Please choose the appropriate section for your question
                 </p>
             </label>
-            <div className="mt-5 w-full">
+            <div className={formStyles.field.inputWrapper}>
                 <SelectMenu
                     options={options}
                     idKey={'slug'}
@@ -34,7 +35,7 @@ const CategorySection = ({form, defaultCategory}: Props) => {
                 />
             </div>
             {errors.category && (
-                <p className="mt-2 text-sm text-red-500">
+                <p className={formStyles.error.base}>
                     {errors.category.message as ReactNode}
                 </p>
             )}

@@ -5,6 +5,7 @@ import {Cancel01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {classNames} from "../../../../utils";
 import useTagsInput from "../../hooks/useTagsInput";
 import type {QuestionFormValues} from "../../hooks/useQuestionForm";
+import {formStyles, getInputContainerClassName} from "../../../../shared/styles/form.styles";
 
 interface Props {
     form: UseFormReturn<QuestionFormValues>;
@@ -15,18 +16,19 @@ const TagsInput = ({form}: Props) => {
     const {tags, onKeyDown, onRemove, isFocused, onToggleFocus} = useTagsInput(setValue, watch)
 
     return (
-        <div className="sm:col-span-4">
-            <label htmlFor="tags" className="block font-medium leading-6 text-slate-900 dark:text-slate-100">
-                Tags<span className="text-red-500 ml-0.5">*</span>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-normal">
+        <div className={formStyles.field.base}>
+            <label htmlFor="tags" className={formStyles.label.base}>
+                Tags<span className={formStyles.label.required}>*</span>
+                <p className={formStyles.description.base}>
                     Add up to 5 tags to describe what your question is about:
                 </p>
             </label>
-            <div className="mt-5 w-full">
+            <div className={formStyles.field.inputWrapper}>
                 <div
                     className={classNames(
-                        isFocused ? "bg-white dark:bg-slate-700" : 'bg-slate-100 dark:bg-slate-800',
-                        "flex flex-wrap rounded-lg ring-2 ring-inset ring-slate-200 dark:ring-slate-700 focus-within:ring-2 focus-within:ring-inset focus-within:ring-teal-600 dark:focus-within:ring-teal-500 w-full"
+                        getInputContainerClassName({ isFocused }),
+                        "flex flex-wrap w-full",
+                        formStyles.inputContainer.focusWithin
                     )}
                 >
                     {tags.map((tag: string, index: number) => (
@@ -50,7 +52,7 @@ const TagsInput = ({form}: Props) => {
                     <input
                         type="text"
                         name="tags"
-                        className="block flex-1 border-0 bg-transparent py-3 text-sm pl-2 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
+                        className={`${formStyles.innerInput.base} ${formStyles.innerInput.padding}`}
                         placeholder="comma or space separated values"
                         onInput={onKeyDown}
                         onFocus={onToggleFocus}
@@ -58,7 +60,7 @@ const TagsInput = ({form}: Props) => {
                     />
                 </div>
                 {errors.tags && (
-                    <p className="mt-2 text-sm text-red-500">
+                    <p className={formStyles.error.base}>
                         {errors.tags.message as ReactNode}
                     </p>
                 )}

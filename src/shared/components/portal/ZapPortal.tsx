@@ -231,7 +231,7 @@ const ZapForm = ({ register, errors, onSubmit, onCancel, isLoading }: ZapFormPro
                 {...register('comment')}
                 rows={3}
                 placeholder="Add an optional message"
-                className="block w-full bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 rounded-lg border-0 py-1.5 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-200 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
+                className="block w-full bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 rounded-lg border-0 py-2.5 px-3 text-slate-900 dark:text-slate-100 ring-2 ring-inset ring-slate-200 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 dark:focus:ring-teal-500 text-sm sm:leading-6"
             />
         </div>
         {errors.comment && (

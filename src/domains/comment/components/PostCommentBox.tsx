@@ -12,7 +12,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
 import {showToast} from "../../../shared/store/toast.slice";
-import {classNames} from "../../../utils";
+import {getTextareaClassName, formStyles} from "../../../shared/styles/form.styles";
 
 interface Props {
     resource: Question | Answer;
@@ -42,6 +42,7 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
     const [publishing, setPublishing] = useState<boolean>(false)
     const [fieldState, setFieldState] = useState<FieldState>();
     const watchComment = watch('comment')
+    const length = watchComment?.length ?? 0
 
     const handleCommentSubmit: SubmitHandler<CommentSchema> = async ({comment}) => {
         setPublishing(true)
@@ -68,21 +69,22 @@ const PostCommentBox = ({resource, resourceKind}: Props) => {
         setFieldState(getFieldState('comment'))
     }, [watchComment]);
 
+    const counterClass = fieldState?.invalid && fieldState?.isDirty
+        ? `${formStyles.counter.base} ${formStyles.counter.error}`
+        : `${formStyles.counter.base} ${formStyles.counter.default}`
+
     return (
         <form onSubmit={handleSubmit(handleCommentSubmit)} className="mt-2 sm:mt-3">
             <textarea
                 {...register('comment')}
                 onInput={() => trigger('comment')}
                 rows={2}
-                className="block w-full rounded-lg border-0 ring-2 ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 px-2.5 sm:px-3 py-2 sm:py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                className={getTextareaClassName()}
                 placeholder="Add a comment..."
             />
             <div className="flex items-center justify-between mt-1.5 sm:mt-2">
-                <span className={classNames(
-                    fieldState?.invalid && fieldState?.isDirty ? "text-red-400" : "text-slate-400",
-                    "text-xs"
-                )}>
-                    {watchComment?.length ?? 0}/144
+                <span className={counterClass}>
+                    {length}/144
                 </span>
                 <button
                     disabled={publishing || fieldState?.invalid}

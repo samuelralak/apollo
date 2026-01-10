@@ -7,6 +7,7 @@ import { NDKContext } from "../../../lib/ndk/NDKProvider"
 import { NDKUser, NDKRelaySet } from "@nostr-dev-kit/ndk"
 import { classNames } from "../../../utils"
 import constants from "../../../constants"
+import { formStyles, getInputContainerClassName } from "../../styles/form.styles"
 
 interface UserSearchProps {
     onSelect: (user: NDKUser) => void
@@ -129,11 +130,11 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
         <div className="w-full relative z-20">
             <Combobox value={null} onChange={handleSelect}>
                 <div className="relative">
-                    {/* Input Container - matches TitleInput/TagsInput pattern */}
+                    {/* Input Container - uses shared form styles */}
                     <div
                         className={classNames(
-                            isFocused ? "bg-white dark:bg-slate-700 ring-teal-600 dark:ring-teal-500" : "bg-slate-100 dark:bg-slate-800 ring-slate-200 dark:ring-slate-700",
-                            "relative w-full overflow-hidden rounded-lg ring-2 transition-colors"
+                            getInputContainerClassName({ isFocused }),
+                            "relative w-full overflow-hidden"
                         )}
                     >
                         {/* Search Icon */}
@@ -149,7 +150,7 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
                         </div>
 
                         <ComboboxInput
-                            className="w-full border-none py-3 pl-10 pr-10 bg-transparent text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 focus:outline-none leading-6"
+                            className={formStyles.comboboxInput.base + " " + formStyles.comboboxInput.padding}
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
                             onFocus={() => toggleFocus(true)}

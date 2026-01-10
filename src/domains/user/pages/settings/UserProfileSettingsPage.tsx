@@ -80,7 +80,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('firstName')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                             {errors.firstName && (
@@ -97,7 +97,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('lastName')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                             {errors.lastName && (
@@ -114,7 +114,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('name')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                             {errors.name && (
@@ -131,7 +131,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('website')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                         </div>
@@ -143,7 +143,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('lud16')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                         </div>
@@ -155,7 +155,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <input
                                     {...register('nip05')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                         </div>
@@ -167,7 +167,7 @@ const UserProfileSettingsPage = () => {
                             <div className="mt-2">
                                 <textarea
                                     {...register('about')}
-                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-2 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
+                                    className="block w-full border-0 focus:border-0 rounded-lg py-3 px-3 text-sm text-slate-900 dark:text-slate-100 ring-2 outline-none ring-slate-200 dark:ring-slate-700 bg-slate-100 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 dark:focus:ring-teal-500 leading-6"
                                 />
                             </div>
                         </div>
