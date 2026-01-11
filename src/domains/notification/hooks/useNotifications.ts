@@ -1,11 +1,13 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import { useUnmountEffect } from "@react-hookz/web";
 import { AppDispatch, RootState } from "../../../app/store";
 import useNDKSubscription, { EventHandlingMode, ResourceType } from "../../../shared/hooks/useNDKSubscription";
 import constants from "../../../constants";
 import {
     addNotification,
+    addNotifications,
     markAllRead,
     markReadUntil,
     setInitialized
@@ -46,9 +48,10 @@ interface UseNotificationsReturn {
  *
  * Features:
  * - Subscribes to events where user is tagged via #p
- * - Real-time notification updates (IMMEDIATE mode)
+ * - Real-time notification updates (IMMEDIATE mode with local buffering)
  * - Filters by enabled notification categories
  * - Read/unread tracking via localStorage
+ * - Optimized unread counting and batch dispatching
  */
 const useNotifications = (): UseNotificationsReturn => {
     const dispatch = useDispatch<AppDispatch>();
@@ -62,6 +65,10 @@ const useNotifications = (): UseNotificationsReturn => {
     const notificationState = useSelector((state: RootState) => state.notification);
     const { byId, ids, lastReadTimestamp, loading, initialized, settings, error } = notificationState;
 
+    // Buffer for batching updates during initial load
+    const notificationBuffer = useRef<Notification[]>([]);
+    const hasReceivedEose = useRef(false);
+
     // Build notifications array from state
     const notifications = useMemo(() => {
         return ids
@@ -74,10 +81,30 @@ const useNotifications = (): UseNotificationsReturn => {
         return notifications.filter(n => settings.enabled[n.category]);
     }, [notifications, settings.enabled]);
 
-    // Calculate unread notifications
-    const unreadNotifications = useMemo(() => {
-        return filteredNotifications.filter(n => n.createdAt > lastReadTimestamp);
+    // Calculate unread count efficiently (Early Exit)
+    // Since notifications are sorted new -> old, we can stop counting once we hit an old read one.
+    const unreadCount = useMemo(() => {
+        let count = 0;
+        for (const notification of filteredNotifications) {
+            if (notification.createdAt > lastReadTimestamp) {
+                count++;
+            } else {
+                // Found a notification <= lastReadTimestamp, so all following are also read.
+                break;
+            }
+        }
+        return count;
     }, [filteredNotifications, lastReadTimestamp]);
+
+    const hasUnread = unreadCount > 0;
+
+    // Derived unread list (only computed if accessed or if count changes)
+    const unreadNotifications = useMemo(() => {
+        if (!hasUnread) return [];
+        // We can just slice the first 'unreadCount' items because of the sort order
+        return filteredNotifications.slice(0, unreadCount);
+    }, [filteredNotifications, unreadCount, hasUnread]);
+
 
     // Subscription filter - events where user is tagged
     const filters = useMemo<NDKFilter | null>(() => {
@@ -95,18 +122,38 @@ const useNotifications = (): UseNotificationsReturn => {
         };
     }, [isLoggedIn, userPubkey]);
 
+    // Ensure buffer is flushed on unmount
+    useUnmountEffect(() => {
+        if (notificationBuffer.current.length > 0) {
+            dispatch(addNotifications([...notificationBuffer.current]));
+        }
+    });
+
     // Handle incoming notification events
+    // Before EOSE: buffer for batch dispatch (reduces re-renders during initial load)
+    // After EOSE: dispatch immediately for real-time responsiveness
     const handleNotificationEvent = useCallback((event: NDKEvent) => {
         if (!userPubkey) return;
 
         const notification = notificationTransformer(event, userPubkey);
-        if (notification) {
+        if (!notification) return;
+
+        if (hasReceivedEose.current) {
+            // Real-time: dispatch immediately
             dispatch(addNotification(notification));
+        } else {
+            // Initial load: buffer for batch dispatch on EOSE
+            notificationBuffer.current.push(notification);
         }
     }, [userPubkey, dispatch]);
 
-    // Handle end of stored events
+    // Handle end of stored events - flush buffer as single batch
     const handleEose = useCallback(() => {
+        if (notificationBuffer.current.length > 0) {
+            dispatch(addNotifications([...notificationBuffer.current]));
+            notificationBuffer.current = [];
+        }
+        hasReceivedEose.current = true;
         dispatch(setInitialized());
     }, [dispatch]);
 
@@ -147,8 +194,8 @@ const useNotifications = (): UseNotificationsReturn => {
     return {
         notifications: filteredNotifications,
         unreadNotifications,
-        unreadCount: unreadNotifications.length,
-        hasUnread: unreadNotifications.length > 0,
+        unreadCount,
+        hasUnread,
         lastReadTimestamp,
         loading,
         initialized,
