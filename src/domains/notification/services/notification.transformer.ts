@@ -41,7 +41,24 @@ interface SourceExtractionResult {
  */
 const extractSource = (event: NDKEvent): SourceExtractionResult => {
     const tags = tagFromEvents(event.tags);
+    const kind = event.kind as number;
     let isQARelated = false;
+
+    // For question events (mentions/invites), the event itself IS the source
+    if (kind === constants.questionKind) {
+        const questionId = safeGetTag(tags, 'd');
+        if (questionId) {
+            return {
+                source: {
+                    eventId: event.id,
+                    coordinate: `${constants.questionKind}:${event.pubkey}:${questionId}`,
+                    resourceType: 'question',
+                    resourceId: questionId
+                },
+                isQARelated: true
+            };
+        }
+    }
 
     // Try to get addressable coordinate first (for questions/answers)
     const coordinate = safeGetTag(tags, 'a');
@@ -158,6 +175,16 @@ const isUserTagged = (event: NDKEvent, userPubkey: string): boolean => {
 };
 
 /**
+ * Check if user is tagged with "mention" marker in p tags
+ * This is used for explicit invites/mentions (e.g., inviting someone to a question)
+ */
+const hasExplicitMentionTag = (event: NDKEvent, userPubkey: string): boolean => {
+    return event.tags.some(
+        tag => tag[0] === 'p' && tag[1] === userPubkey && tag[3] === 'mention'
+    );
+};
+
+/**
  * Determine notification type from event kind and content
  */
 const determineNotificationType = (
@@ -179,6 +206,13 @@ const determineNotificationType = (
     // Vote (upvote/downvote)
     if (kind === constants.voteKind) {
         return event.content === '+' ? NotificationType.UPVOTE : NotificationType.DOWNVOTE;
+    }
+
+    // Question with user tagged - this is an invite/mention
+    if (kind === constants.questionKind) {
+        if (hasExplicitMentionTag(event, userPubkey)) {
+            return NotificationType.MENTION;
+        }
     }
 
     // Kind 1 (notes) - could be comment or mention

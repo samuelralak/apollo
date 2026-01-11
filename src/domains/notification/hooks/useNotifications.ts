@@ -111,6 +111,7 @@ const useNotifications = (): UseNotificationsReturn => {
         if (!isLoggedIn || !userPubkey) return null;
         return {
             kinds: [
+                constants.questionKind as number, // Mentions/invites on questions
                 constants.answerKind as number,
                 constants.voteKind as number,
                 constants.noteKind as number,
