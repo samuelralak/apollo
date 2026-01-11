@@ -175,12 +175,15 @@ const isUserTagged = (event: NDKEvent, userPubkey: string): boolean => {
 };
 
 /**
- * Check if user is tagged with "mention" marker in p tags
- * This is used for explicit invites/mentions (e.g., inviting someone to a question)
+ * Check if user is tagged in a question event
+ * Supports both old format (["p", pubkey, "", "mention"]) and new format (["p", pubkey])
+ * All p tags on questions are invites/mentions
  */
-const hasExplicitMentionTag = (event: NDKEvent, userPubkey: string): boolean => {
+const isInvitedToQuestion = (event: NDKEvent, userPubkey: string): boolean => {
+    // Must be a question event and user must be tagged (but not the author)
+    if (event.pubkey === userPubkey) return false;
     return event.tags.some(
-        tag => tag[0] === 'p' && tag[1] === userPubkey && tag[3] === 'mention'
+        tag => tag[0] === 'p' && tag[1] === userPubkey
     );
 };
 
@@ -210,7 +213,7 @@ const determineNotificationType = (
 
     // Question with user tagged - this is an invite/mention
     if (kind === constants.questionKind) {
-        if (hasExplicitMentionTag(event, userPubkey)) {
+        if (isInvitedToQuestion(event, userPubkey)) {
             return NotificationType.MENTION;
         }
     }

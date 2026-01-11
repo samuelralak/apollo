@@ -3,10 +3,12 @@ import { tagFromEvents } from "../../../utils";
 import { safeGetTag, safeGetAllTags, safeGetCoordinateIdentifier } from "../../../utils/tags";
 import type { Question } from "../types/question.types";
 
-// Extract pubkeys from p tags with "mention" marker
-const extractMentionedPubkeys = (eventTags: string[][]): string[] => {
+// Extract pubkeys from p tags (supports both old and new formats)
+// Old format: ["p", pubkey, "", "mention"]
+// New format: ["p", pubkey] (standard NIP-27 compatible)
+const extractMentionedPubkeys = (eventTags: string[][], authorPubkey: string): string[] => {
     return eventTags
-        .filter(tag => tag[0] === 'p' && tag[3] === 'mention')
+        .filter(tag => tag[0] === 'p' && tag[1] && tag[1] !== authorPubkey)  // All p tags except author
         .map(tag => tag[1])
         .filter(Boolean);
 };
@@ -18,8 +20,8 @@ export const questionTransformer = (event: NDKEvent): Question => {
     const acceptedAnswerId = safeGetCoordinateIdentifier(tags);
     const acceptedAnswerEventId = safeGetTag(tags, "accepted_answer");
 
-    // Get mentioned users
-    const mentionedPubkeys = extractMentionedPubkeys(event.tags);
+    // Get mentioned users (excluding the author)
+    const mentionedPubkeys = extractMentionedPubkeys(event.tags, event.pubkey);
 
     return {
         id: safeGetTag(tags, 'd') ?? '',

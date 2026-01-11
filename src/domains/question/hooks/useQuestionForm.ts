@@ -1,14 +1,15 @@
 import { useContext, useState, useMemo, useCallback } from "react";
 import { useDebouncedEffect, useUpdateEffect, useIsMounted } from "@react-hookz/web";
 import { NDKUser } from "@nostr-dev-kit/ndk";
+import { nip19 } from "nostr-tools";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import questionSchema from "../schemas/question.schema";
 import { NDKContext } from "../../../lib/ndk/NDKProvider";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../app/store";
 import { showToast } from "../../../shared/store/toast.slice";
 import constants from "../../../constants";
 import type { Question } from "../types/question.types";
@@ -38,6 +39,7 @@ export interface DraftStatus {
 const useQuestionForm = (question?: Question) => {
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
+    const auth = useSelector((state: RootState) => state.auth)
     const questionId = question?.id ?? uuidv4()
 
     const { publishEvent, ndkInstance } = useContext(NDKContext) as NDKContext
@@ -157,14 +159,50 @@ const useQuestionForm = (question?: Question) => {
 
         try {
             const payload = { ...data, id: questionId } as Question
-            await publishEvent(constants.questionKind, payload.description, [
+            let content = payload.description
+
+            // Part 2: Add NIP-27 mentions to content for interoperability
+            if (invitedUsers.length > 0) {
+                const mentions = invitedUsers
+                    .map(u => `nostr:${nip19.npubEncode(u.pubkey)}`)
+                    .join(' ')
+                content += `\n\n**Invited:** ${mentions}`
+            }
+
+            await publishEvent(constants.questionKind, content, [
                 ["d", payload.id!],
                 ["title", payload.title],
                 ["L", "category"],
                 ["l", payload.category, "category"],
                 ...payload.tags.map((tag) => ["t", tag]),
-                ...invitedUsers.map((user) => ["p", user.pubkey, "", "mention"])
+                ...invitedUsers.map((user) => ["p", user.pubkey])  // Standard p tags (no "mention" marker)
             ])
+
+            // Part 1: Publish kind 1 invite notes for cross-client visibility
+            if (invitedUsers.length > 0 && auth.pubkey) {
+                const questionNaddr = nip19.naddrEncode({
+                    kind: constants.questionKind as number,
+                    pubkey: auth.pubkey,
+                    identifier: questionId
+                })
+
+                // Publish invite note for each user
+                for (const user of invitedUsers) {
+                    try {
+                        await publishEvent(constants.noteKind,
+                            `I invited you to answer my question on Apollo:\n\nnostr:${questionNaddr}`,
+                            [
+                                ["p", user.pubkey],
+                                ["a", `${constants.questionKind}:${auth.pubkey}:${questionId}`],
+                                ["client", "Apollo"]
+                            ]
+                        )
+                    } catch (inviteError) {
+                        // Don't fail the whole submission if invite note fails
+                        console.warn('Failed to publish invite note:', inviteError)
+                    }
+                }
+            }
 
             // Clear draft on successful publish
             draft.clearDraft()
