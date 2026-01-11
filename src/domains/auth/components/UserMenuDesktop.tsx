@@ -1,8 +1,8 @@
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {MessageAdd01Icon, Notification01Icon, UserCircleIcon} from "@hugeicons-pro/core-duotone-rounded";
+import {UserCircleIcon as UserCircleOutlineIcon, Bookmark02Icon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
-import {classNames} from "../../../utils";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../app/store";
 import {AuthState, signOut} from "../store/auth.slice";
@@ -48,60 +48,72 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                 </MenuButton>
                 <MenuItems
                     transition
-                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-slate-800 py-1 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none transition ease-out duration-200 data-[closed]:opacity-0 data-[closed]:scale-95"
+                    className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-xl bg-white dark:bg-slate-800 shadow-lg ring-1 ring-slate-200 dark:ring-slate-700 focus:outline-none transition ease-out duration-200 data-[closed]:opacity-0 data-[closed]:scale-95"
                 >
-                    <MenuItem>
-                        {({focus}) => (
-                            <Link
-                                to={`/user/${auth.pubkey}`}
-                                className={classNames(
-                                    focus ? 'bg-slate-100 dark:bg-slate-700' : '',
-                                    'block px-4 py-2 text-sm text-slate-700 dark:text-slate-200'
-                                )}
-                            >
-                                Your Profile
-                            </Link>
+                    {/* User info header */}
+                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                            {auth.userProfile?.displayName ?? auth.userProfile?.name ?? 'Anonymous'}
+                        </p>
+                        {auth.userProfile?.nip05 && (
+                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                {auth.userProfile.nip05}
+                            </p>
                         )}
-                    </MenuItem>
-                    <MenuItem>
-                        {({focus}) => (
-                            <Link
-                                to="/bookmarks"
-                                className={classNames(
-                                    focus ? 'bg-slate-100 dark:bg-slate-700' : '',
-                                    'block px-4 py-2 text-sm text-slate-700 dark:text-slate-200'
-                                )}
-                            >
-                                Bookmarks
-                            </Link>
-                        )}
-                    </MenuItem>
-                    <MenuItem>
-                        {({focus}) => (
-                            <Link
-                                to={`/settings/user-profile`}
-                                className={classNames(
-                                    focus ? 'bg-slate-100 dark:bg-slate-700' : '',
-                                    'block px-4 py-2 text-sm text-slate-700 dark:text-slate-200'
-                                )}
-                            >
-                                Settings
-                            </Link>
-                        )}
-                    </MenuItem>
-                    <MenuItem>
-                        {({focus}) => (
-                            <a
-                                onClick={onSignOut}
-                                className={classNames(
-                                    focus ? 'bg-slate-100 dark:bg-slate-700' : '',
-                                    'block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer'
-                                )}
-                            >
-                                Sign out
-                            </a>
-                        )}
-                    </MenuItem>
+                    </div>
+
+                    {/* Navigation items */}
+                    <div className="py-1">
+                        <MenuItem>
+                            {({focus}) => (
+                                <Link
+                                    to={`/user/${auth.pubkey}`}
+                                    className={`flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 ${focus ? 'bg-slate-50 dark:bg-slate-700/50' : ''}`}
+                                >
+                                    <HugeiconsIcon icon={UserCircleOutlineIcon} size={18} className="text-slate-400 dark:text-slate-500" />
+                                    Your Profile
+                                </Link>
+                            )}
+                        </MenuItem>
+                        <MenuItem>
+                            {({focus}) => (
+                                <Link
+                                    to="/bookmarks"
+                                    className={`flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 ${focus ? 'bg-slate-50 dark:bg-slate-700/50' : ''}`}
+                                >
+                                    <HugeiconsIcon icon={Bookmark02Icon} size={18} className="text-slate-400 dark:text-slate-500" />
+                                    Bookmarks
+                                </Link>
+                            )}
+                        </MenuItem>
+                        <MenuItem>
+                            {({focus}) => (
+                                <Link
+                                    to="/settings/user-profile"
+                                    className={`flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 ${focus ? 'bg-slate-50 dark:bg-slate-700/50' : ''}`}
+                                >
+                                    <HugeiconsIcon icon={Settings01Icon} size={18} className="text-slate-400 dark:text-slate-500" />
+                                    Settings
+                                </Link>
+                            )}
+                        </MenuItem>
+                    </div>
+
+                    {/* Sign out - separated */}
+                    <div className="border-t border-slate-100 dark:border-slate-700 py-1">
+                        <MenuItem>
+                            {({focus}) => (
+                                <button
+                                    type="button"
+                                    onClick={onSignOut}
+                                    className={`flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-200 ${focus ? 'bg-slate-50 dark:bg-slate-700/50' : ''}`}
+                                >
+                                    <HugeiconsIcon icon={Logout01Icon} size={18} className="text-slate-400 dark:text-slate-500" />
+                                    Sign out
+                                </button>
+                            )}
+                        </MenuItem>
+                    </div>
                 </MenuItems>
             </Menu>
         </>

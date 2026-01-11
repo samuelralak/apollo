@@ -1,6 +1,6 @@
 import {Dialog, DialogBackdrop, DialogPanel} from "@headlessui/react";
 import {HugeiconsIcon} from "@hugeicons/react";
-import {UserCircleIcon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {UserCircleIcon, Settings01Icon, Logout01Icon, Bookmark02Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Link} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
@@ -47,6 +47,10 @@ const MobileMenuPortal = () => {
                             <Link to={`/user/${auth.pubkey}`} onClick={handleClose} className={iconLinkClass}>
                                 <HugeiconsIcon icon={UserCircleIcon} size={20} className="text-slate-400 dark:text-slate-500" />
                                 Your Profile
+                            </Link>
+                            <Link to="/bookmarks" onClick={handleClose} className={iconLinkClass}>
+                                <HugeiconsIcon icon={Bookmark02Icon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                Bookmarks
                             </Link>
                             <Link to="/settings/user-profile" onClick={handleClose} className={iconLinkClass}>
                                 <HugeiconsIcon icon={Settings01Icon} size={20} className="text-slate-400 dark:text-slate-500" />
