@@ -66,8 +66,13 @@ const ProfilePage = () => {
     });
 
     // Re-fetch when navigating between profiles (pubkey changes)
+    // Reset state first to clear stale profile data, then fetch new profile
     useUpdateEffect(() => {
-        if (pubkey) actions.execute(pubkey);
+        if (pubkey) {
+            setActiveTab('overview');
+            actions.reset();
+            actions.execute(pubkey);
+        }
     }, [pubkey]);
 
     // Safety: pass empty string if pubkey is undefined (hooks handle gracefully)
