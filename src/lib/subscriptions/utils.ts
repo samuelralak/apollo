@@ -12,13 +12,14 @@ export function normalizeFilter(filter: NDKFilter): NDKFilter {
     const sortedKeys = Object.keys(filter).sort();
 
     for (const key of sortedKeys) {
-        const value = filter[key as keyof NDKFilter];
+        // Use Record type for dynamic key access to properly handle tag filters like #p
+        const value = (filter as Record<string, unknown>)[key];
 
         if (Array.isArray(value)) {
             // Sort array values for consistent comparison
-            normalized[key as keyof NDKFilter] = [...value].sort() as never;
+            (normalized as Record<string, unknown>)[key] = [...value].sort();
         } else if (value !== undefined) {
-            normalized[key as keyof NDKFilter] = value as never;
+            (normalized as Record<string, unknown>)[key] = value;
         }
     }
 

@@ -4,6 +4,7 @@ import { type AuthState } from "../domains/auth/store/auth.slice";
 import voteReducer from "../domains/vote/store/vote.slice";
 import answerReducer from "../domains/answer/store/answer.slice";
 import bookmarkReducer from "../domains/bookmark/store/bookmark.slice";
+import followReducer from "../domains/follow/store/follow.slice";
 import portalReducer from "../shared/store/portal.slice";
 import questionReducer from "../domains/question/store/question.slice";
 import commentReducer from "../domains/comment/store/comment.slice";
@@ -23,6 +24,7 @@ export const configureAppStore = (preloadedState: PreloadedState) => {
             vote: voteReducer,
             answer: answerReducer,
             bookmark: bookmarkReducer,
+            follow: followReducer,
             portal: portalReducer,
             question: questionReducer,
             comment: commentReducer,

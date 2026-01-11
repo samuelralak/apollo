@@ -5,6 +5,7 @@ import {deleteFromStorage, fetchFromStorage, saveToStorage, storeNames} from "..
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../../constants";
 import {clearBookmarks} from "../../bookmark/store/bookmark.slice";
+import {clearFollows} from "../../follow/store/follow.slice";
 
 export const authListenerMiddleware = createListenerMiddleware()
 
@@ -22,6 +23,7 @@ authListenerMiddleware.startListening({
             await deleteFromStorage(storeNames.SESSION, 'auth')
             secureLocalStorage.removeItem(constants.secureStorageKey)
             listenerApi.dispatch(clearBookmarks())
+            listenerApi.dispatch(clearFollows())
         }
     },
 })

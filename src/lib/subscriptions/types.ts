@@ -18,7 +18,8 @@ export enum ResourceType {
     ANSWER = 'answer',
     VOTE = 'vote',
     COMMENT = 'comment',
-    BOOKMARK = 'bookmark'
+    BOOKMARK = 'bookmark',
+    FOLLOW = 'follow'
 }
 
 /**

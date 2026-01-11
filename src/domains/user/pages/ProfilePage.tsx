@@ -23,11 +23,13 @@ import UserQuestionsList from "../components/UserQuestionsList";
 import UserAnswersList from "../components/UserAnswersList";
 import useUserStats from "../hooks/useUserStats";
 import useUserActivity from "../hooks/useUserActivity";
+import {FollowButton, FollowersList, FollowingList} from "../../follow/components";
+import {useUserFollowers, useUserFollowing} from "../../follow/hooks";
 import type {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import type {UserStats} from "../types/profile.types";
 import type {UserActivity} from "../types/profile.types";
 
-type TabId = 'overview' | 'questions' | 'answers';
+type TabId = 'overview' | 'questions' | 'answers' | 'followers' | 'following';
 
 // TODO: Move formatTimeAgo to src/utils/date.utils.ts for reuse across components
 const formatTimeAgo = (timestamp: number): string => {
@@ -72,6 +74,11 @@ const ProfilePage = () => {
     const {questions, answers, questionVotes, answerVotes, stats, loading: statsLoading} = useUserStats(pubkey || '');
     const {activity, loading: activityLoading} = useUserActivity(pubkey || '');
 
+    // Follower/following data - hooks must be called at page level to avoid "late joiner" issue
+    // (when same filter is used in multiple hooks, later subscribers miss events)
+    const {followersPubkeys, count: followersCount, loading: followersLoading, initialized: followersInitialized} = useUserFollowers(pubkey);
+    const {followingPubkeys, count: followingCount, loading: followingLoading, initialized: followingInitialized} = useUserFollowing(pubkey);
+
     // Safety check: show error state if no pubkey
     if (!pubkey) {
         return <div className="p-8 text-center text-slate-500">Invalid User ID</div>;
@@ -87,7 +94,9 @@ const ProfilePage = () => {
     const tabs = [
         {id: 'overview' as TabId, name: 'Overview', count: null},
         {id: 'questions' as TabId, name: 'Questions', count: stats.questionsCount},
-        {id: 'answers' as TabId, name: 'Answers', count: stats.answersCount}
+        {id: 'answers' as TabId, name: 'Answers', count: stats.answersCount},
+        {id: 'followers' as TabId, name: 'Followers', count: followersCount},
+        {id: 'following' as TabId, name: 'Following', count: followingCount}
     ];
 
     return (
@@ -102,7 +111,16 @@ const ProfilePage = () => {
             {/* Two-column layout */}
             <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8 lg:mx-8">
                 {/* Sidebar */}
-                <ProfileSidebar profile={profile} stats={stats} loading={statsLoading} />
+                <ProfileSidebar
+                    pubkey={pubkey}
+                    profile={profile}
+                    stats={stats}
+                    loading={statsLoading}
+                    followersCount={followersCount}
+                    followingCount={followingCount}
+                    followLoading={followersLoading || followingLoading}
+                    onTabChange={setActiveTab}
+                />
 
                 {/* Main Content */}
                 <div className="mt-6 lg:mt-0">
@@ -153,6 +171,20 @@ const ProfilePage = () => {
                         )}
                         {activeTab === 'answers' && (
                             <UserAnswersList answers={answers} votes={answerVotes} loading={statsLoading} />
+                        )}
+                        {activeTab === 'followers' && (
+                            <FollowersList
+                                followersPubkeys={followersPubkeys}
+                                loading={followersLoading}
+                                initialized={followersInitialized}
+                            />
+                        )}
+                        {activeTab === 'following' && (
+                            <FollowingList
+                                followingPubkeys={followingPubkeys}
+                                loading={followingLoading}
+                                initialized={followingInitialized}
+                            />
                         )}
                     </div>
                 </div>
@@ -334,12 +366,17 @@ const OverviewSkeleton = () => (
 
 /* Sidebar Component */
 interface ProfileSidebarProps {
+    pubkey: string;
     profile?: NDKUserProfile | null;
     stats: UserStats;
     loading: boolean;
+    followersCount: number;
+    followingCount: number;
+    followLoading: boolean;
+    onTabChange: (tab: TabId) => void;
 }
 
-const ProfileSidebar = ({profile, stats, loading}: ProfileSidebarProps) => {
+const ProfileSidebar = ({pubkey, profile, stats, loading, followersCount, followingCount, followLoading, onTabChange}: ProfileSidebarProps) => {
     const displayName = profile?.displayName ?? profile?.display_name ?? profile?.name ?? 'Anonymous';
 
     const getHostname = (url: string): string => {
@@ -387,14 +424,24 @@ const ProfileSidebar = ({profile, stats, loading}: ProfileSidebarProps) => {
 
             {/* Name - shown below avatar on desktop */}
             <div className="hidden lg:block">
-                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                    {displayName}
-                </h1>
-                {profile?.nip05 && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {profile.nip05}
-                    </p>
-                )}
+                <div className="flex items-start justify-between gap-3">
+                    <div>
+                        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                            {displayName}
+                        </h1>
+                        {profile?.nip05 && (
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                {profile.nip05}
+                            </p>
+                        )}
+                    </div>
+                    <FollowButton pubkey={pubkey} size="sm" />
+                </div>
+            </div>
+
+            {/* Follow button on mobile - shown inline */}
+            <div className="lg:hidden">
+                <FollowButton pubkey={pubkey} size="sm" />
             </div>
 
             {/* Bio */}
@@ -420,6 +467,34 @@ const ProfileSidebar = ({profile, stats, loading}: ProfileSidebarProps) => {
                         <span className="text-slate-600 dark:text-slate-400">
                             <strong className="text-slate-900 dark:text-slate-100">{stats.votesReceived.total}</strong> votes
                         </span>
+                    </>
+                )}
+            </div>
+
+            {/* Followers/Following */}
+            <div className="flex items-center gap-4 text-sm">
+                {followLoading ? (
+                    <div className="flex gap-4 animate-pulse">
+                        <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
+                        <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
+                    </div>
+                ) : (
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => onTabChange('followers')}
+                            className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                        >
+                            <strong className="text-slate-900 dark:text-slate-100">{followersCount}</strong> followers
+                        </button>
+                        <span className="text-slate-400 dark:text-slate-600">·</span>
+                        <button
+                            type="button"
+                            onClick={() => onTabChange('following')}
+                            className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                        >
+                            <strong className="text-slate-900 dark:text-slate-100">{followingCount}</strong> following
+                        </button>
                     </>
                 )}
             </div>

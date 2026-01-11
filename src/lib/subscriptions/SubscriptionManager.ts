@@ -168,6 +168,7 @@ class SubscriptionManager {
         normalizedFilters: NDKFilter[]
     ): ManagedSubscription {
         const options = { closeOnEose: false, ...config.options };
+
         const subscription = this.ndk!.subscribe(normalizedFilters, options);
 
         const managed: ManagedSubscription = {
