@@ -185,15 +185,17 @@ const useQuestionForm = (question?: Question) => {
                     pubkey: auth.pubkey,
                     identifier: questionId
                 })
+                const questionUrl = `${window.location.origin}/questions/${questionId}`
 
                 // Publish invite note for each user
                 for (const user of invitedUsers) {
                     try {
                         await publishEvent(constants.noteKind,
-                            `I invited you to answer my question on Apollo:\n\nnostr:${questionNaddr}`,
+                            `I invited you to answer my question on Apollo:\n\n${questionUrl}\n\nnostr:${questionNaddr}`,
                             [
                                 ["p", user.pubkey],
                                 ["a", `${constants.questionKind}:${auth.pubkey}:${questionId}`],
+                                ["r", questionUrl],
                                 ["client", "Apollo"]
                             ]
                         )

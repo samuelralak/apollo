@@ -58,10 +58,11 @@ Publish a standard kind 1 note (which all Nostr clients subscribe to) that notif
 ```json
 {
   "kind": 1,
-  "content": "I invited you to answer my question on Apollo:\n\nnostr:naddr1...",
+  "content": "I invited you to answer my question on Apollo:\n\nhttps://apollo.example.com/questions/{id}\n\nnostr:naddr1...",
   "tags": [
     ["p", "<invited_user_pubkey>"],
     ["a", "<questionKind>:<author_pubkey>:<question_id>"],
+    ["r", "https://apollo.example.com/questions/{id}"],
     ["client", "Apollo"]
   ]
 }
@@ -73,6 +74,7 @@ Publish a standard kind 1 note (which all Nostr clients subscribe to) that notif
 |-----|---------|
 | `["p", pubkey]` | Tags the invited user (triggers notification in their client) |
 | `["a", coordinate]` | Links to the question (allows Apollo to route back) |
+| `["r", url]` | Web URL reference (NIP-standard for linking URLs) |
 | `["client", "Apollo"]` | Identifies the source client |
 
 ### Implementation
@@ -87,14 +89,16 @@ if (invitedUsers.length > 0 && auth.pubkey) {
         pubkey: auth.pubkey,
         identifier: questionId
     });
+    const questionUrl = `${window.location.origin}/questions/${questionId}`;
 
     for (const user of invitedUsers) {
         try {
             await publishEvent(constants.noteKind,
-                `I invited you to answer my question on Apollo:\n\nnostr:${questionNaddr}`,
+                `I invited you to answer my question on Apollo:\n\n${questionUrl}\n\nnostr:${questionNaddr}`,
                 [
                     ["p", user.pubkey],
                     ["a", `${constants.questionKind}:${auth.pubkey}:${questionId}`],
+                    ["r", questionUrl],
                     ["client", "Apollo"]
                 ]
             );
@@ -217,9 +221,9 @@ User A invites User B to a question
 ┌─────────────────────────────┐          ┌─────────────────────────────┐
 │ Publish questionKind event  │          │ Publish kind 1 invite note  │
 │ Content: "Question..." +    │          │ Content: "I invited you..." │
-│   "**Invited:** nostr:npub" │          │   + nostr:naddr1...         │
+│   "**Invited:** nostr:npub" │          │   + web URL + nostr:naddr   │
 │ Tags: [["p", userB_pubkey]] │          │ Tags: [["p", userB_pubkey], │
-└─────────────────────────────┘          │        ["a", coordinate]]   │
+└─────────────────────────────┘          │  ["a", coord], ["r", url]]  │
          │                               └─────────────────────────────┘
          │                                              │
          ▼                                              ▼
@@ -231,8 +235,8 @@ User A invites User B to a question
          ▼                                              ▼
 ┌─────────────────────────────┐          ┌─────────────────────────────┐
 │ User B sees notification    │          │ User B sees notification    │
-│ Type: MENTION               │          │ with naddr link to question │
-│ Links to: /questions/{id}   │          │ Clicking opens Apollo       │
+│ Type: MENTION               │          │ with web URL + naddr link   │
+│ Links to: /questions/{id}   │          │ Clicking URL opens Apollo   │
 └─────────────────────────────┘          └─────────────────────────────┘
 ```
 
