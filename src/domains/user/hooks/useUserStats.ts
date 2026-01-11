@@ -38,6 +38,31 @@ interface UseUserStatsResult {
     loading: boolean;
 }
 
+// Stable empty stats object (prevents new object creation every render)
+const EMPTY_STATS: UserStats = {
+    reputation: 1,
+    questionsCount: 0,
+    answersCount: 0,
+    votesReceived: { upvotes: 0, downvotes: 0, total: 0 },
+    acceptedAnswers: 0
+};
+
+// Stable empty Maps (prevents new object creation every render)
+const EMPTY_QUESTION_VOTES = new Map<string, ResourceVotes>();
+const EMPTY_ANSWER_VOTES = new Map<string, ResourceVotes>();
+
+/**
+ * Extract the target pubkey from a vote event's p-tags.
+ */
+const extractVoteTargetPubkey = (event: NDKEvent, targetPubkey: string): string | undefined => {
+    for (const tag of event.tags) {
+        if (tag[0] === 'p' && tag[1] === targetPubkey) {
+            return targetPubkey;
+        }
+    }
+    return undefined;
+};
+
 /**
  * Hook for fetching user statistics with proper reputation calculation.
  *
@@ -46,6 +71,9 @@ interface UseUserStatsResult {
  * - Votes keyed by voter:resource for handling vote changes (latest wins)
  */
 const useUserStats = (pubkey: string): UseUserStatsResult => {
+    // Track which pubkey the current state belongs to (prevents showing stale data)
+    const [stateForPubkey, setStateForPubkey] = useState<string | undefined>(undefined);
+
     // Use Maps for O(1) lookups and automatic deduplication by key
     const [questionsMap, setQuestionsMap] = useState<Map<string, Question>>(new Map());
     const [answersMap, setAnswersMap] = useState<Map<string, Answer>>(new Map());
@@ -56,8 +84,12 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
     const [answersLoading, setAnswersLoading] = useState(true);
     const [votesLoading, setVotesLoading] = useState(true);
 
+    // Data is stale if it belongs to a different pubkey (prevents flash of old data)
+    const isStale = stateForPubkey !== pubkey;
+
     // Reset state when pubkey changes (useUpdateEffect skips initial mount)
     useUpdateEffect(() => {
+        setStateForPubkey(undefined);
         setQuestionsMap(new Map());
         setAnswersMap(new Map());
         setVotesMap(new Map());
@@ -84,8 +116,14 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
     }), [pubkey]);
 
     // Event handlers with Map updates for O(1) deduplication
+    // IMPORTANT: Derive pubkey from event itself to prevent race condition where
+    // useSyncedRef updates callback during render but old subscription events
+    // arrive before cleanup effect runs.
+
     const handleQuestionEvent = useCallback((event: NDKEvent) => {
         const question = questionTransformer(event);
+        // event.pubkey is the author (the user whose questions we're fetching)
+        setStateForPubkey(event.pubkey);
         setQuestionsMap(prev => {
             if (prev.has(question.id)) return prev;
             const next = new Map(prev);
@@ -97,6 +135,8 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
     const handleAnswerEvent = useCallback((event: NDKEvent) => {
         const answer = answerTransformer(event);
         const id = answer.id || answer.eventId;
+        // event.pubkey is the author (the user whose answers we're fetching)
+        setStateForPubkey(event.pubkey);
         setAnswersMap(prev => {
             if (prev.has(id)) return prev;
             const next = new Map(prev);
@@ -106,9 +146,14 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
     }, []);
 
     const handleVoteEvent = useCallback((event: NDKEvent) => {
+        // Verify event belongs to current filter by checking p-tags
+        const eventTargetPubkey = extractVoteTargetPubkey(event, pubkey);
+        if (!eventTargetPubkey) return; // Event doesn't match current filter, ignore
+
         const vote = voteTransformer(event);
         // Key by voter:resource - if same voter votes again, keep latest
         const key = `${vote.pubkey}:${vote.resourceId}`;
+        setStateForPubkey(eventTargetPubkey);
         setVotesMap(prev => {
             const existing = prev.get(key);
             // Keep the most recent vote (handles vote changes)
@@ -117,11 +162,21 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
             next.set(key, vote);
             return next;
         });
-    }, []);
+    }, [pubkey]);
 
-    const handleQuestionsEose = useCallback(() => setQuestionsLoading(false), []);
-    const handleAnswersEose = useCallback(() => setAnswersLoading(false), []);
-    const handleVotesEose = useCallback(() => setVotesLoading(false), []);
+    // For EOSE, only set stateForPubkey if it hasn't been set by events yet
+    const handleQuestionsEose = useCallback(() => {
+        setStateForPubkey(prev => prev ?? pubkey);
+        setQuestionsLoading(false);
+    }, [pubkey]);
+    const handleAnswersEose = useCallback(() => {
+        setStateForPubkey(prev => prev ?? pubkey);
+        setAnswersLoading(false);
+    }, [pubkey]);
+    const handleVotesEose = useCallback(() => {
+        setStateForPubkey(prev => prev ?? pubkey);
+        setVotesLoading(false);
+    }, [pubkey]);
 
     // Subscriptions
     useNDKSubscription(questionFilters, handleQuestionEvent, handleQuestionsEose, {
@@ -222,6 +277,19 @@ const useUserStats = (pubkey: string): UseUserStatsResult => {
             answerVotes: aVotes
         };
     }, [questionsMap, answersMap, votesMap]);
+
+    // If data is stale (from previous profile), return stable empty objects
+    // This prevents flash of old data when navigating between profiles
+    if (isStale) {
+        return {
+            questions: [],
+            answers: [],
+            questionVotes: EMPTY_QUESTION_VOTES,
+            answerVotes: EMPTY_ANSWER_VOTES,
+            stats: EMPTY_STATS,
+            loading: true
+        };
+    }
 
     return {
         questions,

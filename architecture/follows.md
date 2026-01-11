@@ -380,6 +380,64 @@ interface FollowersListProps {
 | **Duplicate p tags** | Set-based O(1) deduplication in transformer |
 | **Malformed profile JSON** | Safe parsing with try-catch in EventOwner |
 | **Large follower counts** | Pagination (20 items) prevents render freeze |
+| **Viewing own profile** | useUserFollowing returns Redux data (see Late Joiner Fix) |
+| **Profile navigation** | Stale data check prevents flash of old data |
+
+---
+
+## Late Joiner Fix
+
+### Problem
+
+When viewing your own profile, both `useFollows` and `useUserFollowing` subscribe to the same filter:
+```
+{ kinds: [3], authors: [yourPubkey] }
+```
+
+The SubscriptionManager deduplicates by filter hash. If `useFollows` already received events and EOSE, `useUserFollowing` joins as a "late joiner" and never receives the historical events. Result: following count shows 0.
+
+### Solution
+
+`useUserFollowing` detects when viewing the current user's profile and returns data from Redux (already populated by `useFollows`) instead of creating a duplicate subscription:
+
+```typescript
+const isOwnProfile = pubkey && auth.isLoggedIn && pubkey === auth.pubkey;
+
+// Disable subscription for own profile
+const filters = useMemo(() => {
+    if (!pubkey || isOwnProfile) return null;
+    // ...
+}, [pubkey, isOwnProfile]);
+
+// Return Redux data for own profile
+if (isOwnProfile) {
+    return {
+        followingPubkeys: followState.list?.followedPubkeys ?? [],
+        count: followState.list?.followedPubkeys.length ?? 0,
+        loading: followState.loading,
+        initialized: followState.initialized
+    };
+}
+```
+
+### Stale Data Prevention
+
+When navigating between profiles, effects run after render. This can cause a brief flash of old data. Both hooks track which pubkey their state belongs to:
+
+```typescript
+const [stateForPubkey, setStateForPubkey] = useState<string | undefined>(undefined);
+const isStale = stateForPubkey !== pubkey;
+
+// In event handlers:
+setStateForPubkey(pubkey);
+
+// In return:
+if (isStale) {
+    return { followingPubkeys: [], count: 0, loading: true, initialized: false };
+}
+```
+
+This ensures old profile data is never shown for a new profile during the transition
 
 ---
 
@@ -438,6 +496,8 @@ interface FollowersListProps {
 | **Memo components** | All list components | Prevent unnecessary re-renders |
 | **useUpdateEffect** | State reset on pubkey change | Skip initial mount |
 | **useUnmountEffect** | Timeout cleanup | Prevent memory leaks |
+| **Stale data check** | useUserFollowers/useUserFollowing | Prevent flash of old profile data |
+| **Redux reuse** | useUserFollowing (own profile) | Avoid duplicate subscription |
 
 ---
 

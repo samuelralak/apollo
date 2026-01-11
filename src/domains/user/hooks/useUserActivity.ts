@@ -10,6 +10,9 @@ interface UseUserActivityResult {
     loading: boolean;
 }
 
+// Stable empty return for stale state (prevents new object creation every render)
+const EMPTY_ACTIVITY: UserActivity = { days: [], totalContributions: 0 };
+
 /**
  * Converts event count to intensity level (0-4) for heatmap coloring.
  */
@@ -26,12 +29,19 @@ const getIntensityLevel = (count: number): 0 | 1 | 2 | 3 | 4 => {
  * Subscribes to all user activity (questions, answers, votes, comments) from the last year.
  */
 const useUserActivity = (pubkey: string): UseUserActivityResult => {
+    // Track which pubkey the current state belongs to (prevents showing stale data)
+    const [stateForPubkey, setStateForPubkey] = useState<string | undefined>(undefined);
+
     // Use Map for O(1) deduplication instead of array with O(n) .some() check
     const [eventsMap, setEventsMap] = useState<Map<string, NDKEvent>>(() => new Map());
     const [loading, setLoading] = useState(true);
 
+    // Data is stale if it belongs to a different pubkey (prevents flash of old data)
+    const isStale = stateForPubkey !== pubkey;
+
     // Reset state when pubkey changes (useUpdateEffect skips initial mount)
     useUpdateEffect(() => {
+        setStateForPubkey(undefined);
         setEventsMap(new Map());
         setLoading(true);
     }, [pubkey]);
@@ -56,7 +66,11 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
     }), [pubkey, since]);
 
     // Handle incoming activity events - O(1) deduplication via Map
+    // IMPORTANT: Use event.pubkey to prevent race condition where late events
+    // from old subscription arrive after callback is updated but before cleanup.
     const handleEvent = useCallback((event: NDKEvent) => {
+        // event.pubkey is the author (the user whose activity we're fetching)
+        setStateForPubkey(event.pubkey);
         setEventsMap(prev => {
             if (prev.has(event.id)) return prev;
             const newMap = new Map(prev);
@@ -65,7 +79,11 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
         });
     }, []);
 
-    const handleEose = useCallback(() => setLoading(false), []);
+    // For EOSE, only set stateForPubkey if it hasn't been set by events yet
+    const handleEose = useCallback(() => {
+        setStateForPubkey(prev => prev ?? pubkey);
+        setLoading(false);
+    }, [pubkey]);
 
     // Subscribe to all user activity
     useNDKSubscription(
@@ -105,6 +123,12 @@ const useUserActivity = (pubkey: string): UseUserActivityResult => {
             totalContributions: eventsMap.size
         };
     }, [eventsMap]);
+
+    // If data is stale (from previous profile), return stable empty object
+    // This prevents flash of old data when navigating between profiles
+    if (isStale) {
+        return { activity: EMPTY_ACTIVITY, loading: true };
+    }
 
     return {activity, loading};
 };
