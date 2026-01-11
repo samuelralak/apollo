@@ -128,7 +128,7 @@ const QuestionPage = () => {
 
                         {/* Footer: votes + actions */}
                         <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-4 mt-4 sm:mt-6 text-xs font-medium text-slate-500 dark:text-slate-400">
-                            {/* Mobile votes */}
+                            {/* Mobile votes - left side */}
                             <div className="sm:hidden">
                                 <Votes
                                     kind={constants.questionKind}
@@ -138,18 +138,33 @@ const QuestionPage = () => {
                                     horizontal={true}
                                 />
                             </div>
-                            <BookmarkButton
-                                questionId={question.id}
-                                questionPubkey={question.user.pubkey}
-                                showLabel={true}
-                            />
-                            <ActionItems
-                                id={question.id}
-                                eventId={question.eventId}
-                                pubkey={question.user.pubkey}
-                                kind={constants.questionKind}
-                                editPath={`/questions/${question.id}/edit`}
-                            />
+                            {/* Desktop: text link matching ActionItems style */}
+                            <div className="hidden sm:block">
+                                <BookmarkButton
+                                    questionId={question.id}
+                                    questionPubkey={question.user.pubkey}
+                                    variant="link"
+                                />
+                            </div>
+                            {/* Actions group - bookmark + menu grouped on mobile */}
+                            <div className="flex items-center gap-1">
+                                {/* Mobile: bookmark icon */}
+                                <div className="sm:hidden">
+                                    <BookmarkButton
+                                        questionId={question.id}
+                                        questionPubkey={question.user.pubkey}
+                                        variant="icon"
+                                        size="sm"
+                                    />
+                                </div>
+                                <ActionItems
+                                    id={question.id}
+                                    eventId={question.eventId}
+                                    pubkey={question.user.pubkey}
+                                    kind={constants.questionKind}
+                                    editPath={`/questions/${question.id}/edit`}
+                                />
+                            </div>
                         </div>
 
                         {/* Comments */}

@@ -14,6 +14,8 @@ interface BookmarkButtonProps {
     showLabel?: boolean;
     /** Size variant */
     size?: 'sm' | 'md';
+    /** Variant: 'icon' for icon button, 'link' for text link style matching ActionItems */
+    variant?: 'icon' | 'link';
     /** Additional CSS classes */
     className?: string;
 }
@@ -32,6 +34,7 @@ const BookmarkButton = memo(({
     questionPubkey,
     showLabel = false,
     size = 'md',
+    variant = 'icon',
     className = ''
 }: BookmarkButtonProps) => {
     const {
@@ -57,6 +60,28 @@ const BookmarkButton = memo(({
         return null;
     }
 
+    // Link variant - matches ActionItems text link style
+    if (variant === 'link') {
+        return (
+            <a
+                onClick={handleClick}
+                className={classNames(
+                    'cursor-pointer transition-colors',
+                    pending ? 'opacity-50 cursor-wait' : '',
+                    bookmarked
+                        ? 'text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
+                    className
+                )}
+                aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                title={bookmarked ? 'Remove bookmark' : 'Bookmark this question'}
+            >
+                {bookmarked ? 'Saved' : 'Save'}
+            </a>
+        );
+    }
+
+    // Icon variant (default)
     return (
         <button
             type="button"
