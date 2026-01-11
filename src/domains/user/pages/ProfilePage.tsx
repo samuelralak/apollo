@@ -128,7 +128,7 @@ const ProfilePage = () => {
                 {/* Main Content */}
                 <div className="mt-6 lg:mt-0">
                     {/* Tabs */}
-                    <div className="border-b border-slate-200 dark:border-slate-700">
+                    <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
                         <nav className="flex gap-6">
                             {tabs.map((tab) => (
                                 <button
@@ -139,7 +139,7 @@ const ProfilePage = () => {
                                         tab.id === activeTab
                                             ? 'border-teal-500 text-slate-900 dark:text-slate-100'
                                             : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600',
-                                        'flex items-center gap-2 border-b-2 pb-3 text-sm font-medium transition-colors'
+                                        'flex items-center gap-2 border-b-2 pb-3 text-sm font-medium whitespace-nowrap transition-colors'
                                     )}
                                 >
                                     {tab.name}
