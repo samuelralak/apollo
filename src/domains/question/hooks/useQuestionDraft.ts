@@ -6,18 +6,19 @@ const DRAFT_STORAGE_KEY = 'apollo_question_draft'
 
 interface DraftState {
     values: Partial<QuestionFormValues>
+    invitedPubkeys?: string[]
     savedAt: number
     questionId?: string
 }
 
 interface UseQuestionDraftOptions {
     questionId?: string
-    onDraftRestored?: (draft: Partial<QuestionFormValues>) => void
+    onDraftRestored?: (draft: Partial<QuestionFormValues>, invitedPubkeys?: string[]) => void
 }
 
 interface UseQuestionDraftReturn {
-    saveDraft: (values: Partial<QuestionFormValues>) => void
-    loadDraft: () => Partial<QuestionFormValues> | null
+    saveDraft: (values: Partial<QuestionFormValues>, invitedPubkeys?: string[]) => void
+    loadDraft: () => { values: Partial<QuestionFormValues>; invitedPubkeys?: string[] } | null
     clearDraft: () => void
     hasDraft: () => boolean
     lastSavedAt: number | null
@@ -40,10 +41,11 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
     }, [questionId])
 
     // Save draft to localStorage (immediate - debouncing handled by caller)
-    const saveDraft = useCallback((values: Partial<QuestionFormValues>) => {
+    const saveDraft = useCallback((values: Partial<QuestionFormValues>, invitedPubkeys?: string[]) => {
         try {
             const draft: DraftState = {
                 values,
+                invitedPubkeys,
                 savedAt: Date.now(),
                 questionId
             }
@@ -57,7 +59,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
     }, [getStorageKey, questionId, isMounted])
 
     // Load draft from localStorage
-    const loadDraft = useCallback((): Partial<QuestionFormValues> | null => {
+    const loadDraft = useCallback((): { values: Partial<QuestionFormValues>; invitedPubkeys?: string[] } | null => {
         try {
             const stored = localStorage.getItem(getStorageKey())
             if (!stored) return null
@@ -75,7 +77,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
             }
 
             setLastSavedAt(draft.savedAt)
-            return draft.values
+            return { values: draft.values, invitedPubkeys: draft.invitedPubkeys }
         } catch (error) {
             console.error('Failed to load draft:', error)
             return null
@@ -109,7 +111,7 @@ const useQuestionDraft = (options: UseQuestionDraftOptions = {}): UseQuestionDra
     useMountEffect(() => {
         const draft = loadDraft()
         if (draft && onDraftRestored) {
-            onDraftRestored(draft)
+            onDraftRestored(draft.values, draft.invitedPubkeys)
         }
     })
 

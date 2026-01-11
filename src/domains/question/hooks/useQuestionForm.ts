@@ -40,7 +40,7 @@ const useQuestionForm = (question?: Question) => {
     const dispatch = useDispatch<AppDispatch>()
     const questionId = question?.id ?? uuidv4()
 
-    const { publishEvent } = useContext(NDKContext) as NDKContext
+    const { publishEvent, ndkInstance } = useContext(NDKContext) as NDKContext
     const [publishing, setPublishing] = useState<boolean>(false)
     const [invitedUsers, setInvitedUsers] = useState<NDKUser[]>([])
     const [draftStatus, setDraftStatus] = useState<DraftStatus>({
@@ -53,13 +53,20 @@ const useQuestionForm = (question?: Question) => {
     // Draft management
     const draft = useQuestionDraft({
         questionId: question?.id,
-        onDraftRestored: (restoredDraft) => {
+        onDraftRestored: async (restoredDraft, invitedPubkeys) => {
             // Only restore if not editing an existing question
             if (!question && restoredDraft) {
                 if (restoredDraft.title) form.setValue('title', restoredDraft.title)
                 if (restoredDraft.description) form.setValue('description', restoredDraft.description)
                 if (restoredDraft.category) form.setValue('category', restoredDraft.category)
                 if (restoredDraft.tags) form.setValue('tags', restoredDraft.tags)
+
+                // Restore invited users from pubkeys
+                if (invitedPubkeys && invitedPubkeys.length > 0) {
+                    const ndk = ndkInstance()
+                    const users = invitedPubkeys.map(pubkey => ndk.getUser({ pubkey }))
+                    setInvitedUsers(users)
+                }
 
                 dispatch(showToast({
                     title: 'Draft restored',
@@ -115,10 +122,12 @@ const useQuestionForm = (question?: Question) => {
             if (question) return // Don't auto-save when editing existing question
 
             const hasContent = watchedValues.title || watchedValues.description ||
-                watchedValues.category || (watchedValues.tags && watchedValues.tags.length > 0)
+                watchedValues.category || (watchedValues.tags && watchedValues.tags.length > 0) ||
+                invitedUsers.length > 0
 
             if (hasContent) {
-                draft.saveDraft(watchedValues)
+                const invitedPubkeys = invitedUsers.map(u => u.pubkey)
+                draft.saveDraft(watchedValues, invitedPubkeys)
 
                 if (isMounted()) {
                     setDraftStatus({
@@ -129,7 +138,7 @@ const useQuestionForm = (question?: Question) => {
                 }
             }
         },
-        [watchedValues.title, watchedValues.description, watchedValues.category, watchedValues.tags, question, draft],
+        [watchedValues.title, watchedValues.description, watchedValues.category, watchedValues.tags, invitedUsers, question, draft],
         2000 // 2 second debounce
     )
 

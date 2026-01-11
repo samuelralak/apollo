@@ -176,7 +176,7 @@ const SearchPortal = () => {
                     type: 'tag',
                     title: tag,
                     subtitle: `${count} question${count !== 1 ? 's' : ''}`,
-                    url: `/questions?tag=${encodeURIComponent(tag)}`,
+                    url: `/?tag=${encodeURIComponent(tag)}`,
                 });
             }
         }
