@@ -173,17 +173,17 @@ const NotificationItem = ({
             {/* Content */}
             <div className="flex-1 min-w-0 py-0.5">
                 {/* Actor and action */}
-                <p className={`${compact ? 'text-sm' : 'text-sm'} text-slate-900 dark:text-slate-100`}>
+                <div className={`${compact ? 'text-sm' : 'text-sm'} text-slate-900 dark:text-slate-100`}>
                     {actor ? (
                         <span className="font-medium">
-                            <EventOwner pubkey={actor.pubkey} mini={true} inline={true} />
+                            <EventOwner pubkey={actor.pubkey} mini={true} inline={true} disableLink={hasLink} />
                         </span>
                     ) : (
                         <span className="font-medium">Someone</span>
                     )}
                     {" "}
                     <span className="text-slate-600 dark:text-slate-400">{actionText}</span>
-                </p>
+                </div>
 
                 {/* Source preview (if available and not compact) */}
                 {!compact && notification.source.preview && (

@@ -29,7 +29,7 @@ const safeString = (value: unknown): string | undefined => {
     return undefined;
 };
 
-const EventOwner = ({pubkey, mini, hideAvatar, inline}: { pubkey: string, mini?: boolean, hideAvatar?: boolean, inline?: boolean }) => {
+const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: string, mini?: boolean, hideAvatar?: boolean, inline?: boolean, disableLink?: boolean }) => {
     const {ndkInstance} = useContext(NDKContext) as NDKContext
 
     const [state, actions] = useAsyncAbortable(async (_signal, key: string) => {
@@ -50,39 +50,47 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline}: { pubkey: string, mini?:
     const nip05 = safeString(userProfile?.nip05);
     const avatarUrl = safeString(userProfile?.image) ?? safeString(userProfile?.picture);
 
+    const content = (
+        <span className={classNames(inline ? 'inline-flex' : 'flex', 'items-center space-x-3')}>
+            {!hideAvatar && (
+                <span>
+                    {avatarUrl ? (
+                        <img
+                            className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block object-cover')}
+                            src={avatarUrl}
+                            alt="avatar"
+                        />
+                    ) : (
+                        <span
+                            className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-700')}
+                        >
+                            <HugeiconsIcon icon={UserCircleIcon} className="h-full w-full text-slate-300 dark:text-slate-500" size={mini ? 20 : 36} />
+                        </span>
+                    )}
+                </span>
+            )}
+
+            <span>
+                <span className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate max-w-36 sm:max-w-none ')}>
+                    {displayName}
+                </span>
+
+                {(nip05 && !mini) && (
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+                        {nip05}
+                    </span>
+                )}
+            </span>
+        </span>
+    );
+
+    if (disableLink) {
+        return <span className={classNames(inline ? 'inline' : 'block', 'flex-shrink-0')}>{content}</span>;
+    }
+
     return (
         <Link to={`/user/${pubkey}`} className={classNames(inline ? 'inline' : 'block', 'group flex-shrink-0')}>
-            <span className={classNames(inline ? 'inline-flex' : 'flex', 'items-center space-x-3')}>
-                {!hideAvatar && (
-                    <div>
-                        {avatarUrl ? (
-                            <img
-                                className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block object-cover')}
-                                src={avatarUrl}
-                                alt="avatar"
-                            />
-                        ) : (
-                            <span
-                                className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-700')}
-                            >
-                                <HugeiconsIcon icon={UserCircleIcon} className="h-full w-full text-slate-300 dark:text-slate-500" size={mini ? 20 : 36} />
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                <div>
-                    <p className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate max-w-36 sm:max-w-none ')}>
-                        {displayName}
-                    </p>
-
-                    {(nip05 && !mini) && (
-                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">
-                            {nip05}
-                        </p>
-                    )}
-                </div>
-            </span>
+            {content}
         </Link>
     )
 }
