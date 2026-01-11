@@ -133,13 +133,11 @@ const useNotifications = (): UseNotificationsReturn => {
         dispatch(markReadUntil(timestamp));
     }, [dispatch]);
 
-    // Mark a specific notification as read
+    // Mark a specific notification (and all older) as read
+    // The reducer handles the check for whether the timestamp is newer
     const markAsRead = useCallback((notification: Notification) => {
-        // Only mark if this notification is actually unread
-        if (notification.createdAt > lastReadTimestamp) {
-            dispatch(markReadUntil(notification.createdAt));
-        }
-    }, [dispatch, lastReadTimestamp]);
+        dispatch(markReadUntil(notification.createdAt));
+    }, [dispatch]);
 
     // Get notifications by category
     const getByCategory = useCallback((category: NotificationCategory): Notification[] => {

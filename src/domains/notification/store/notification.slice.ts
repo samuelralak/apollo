@@ -17,7 +17,11 @@ const loadLastReadTimestamp = (): number => {
     try {
         const stored = localStorage.getItem(NOTIFICATION_STORAGE_KEYS.LAST_READ);
         if (stored) {
-            return parseInt(stored, 10);
+            const parsed = parseInt(stored, 10);
+            // Guard against NaN (corrupted localStorage)
+            if (!isNaN(parsed) && parsed > 0) {
+                return parsed;
+            }
         }
     } catch {
         // localStorage not available
@@ -219,6 +223,10 @@ const notificationSlice = createSlice({
          * Mark notifications as read up to a specific timestamp
          */
         markReadUntil: (state, { payload }: PayloadAction<number>) => {
+            // Guard against invalid timestamps
+            if (typeof payload !== 'number' || isNaN(payload) || payload <= 0) {
+                return;
+            }
             if (payload > state.lastReadTimestamp) {
                 state.lastReadTimestamp = payload;
                 saveLastReadTimestamp(payload);

@@ -49,7 +49,7 @@ const NotificationBell = () => {
 
                         {/* Unread badge */}
                         {hasUnread && (
-                            <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 dark:bg-red-400 px-1 text-[10px] font-bold text-white">
+                            <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 dark:bg-red-400 px-1 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
                                 {badgeText}
                             </span>
                         )}
@@ -82,7 +82,7 @@ const NotificationBell = () => {
                                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-slate-200 dark:border-slate-700 border-t-teal-500" />
                                 </div>
                             ) : recentNotifications.length === 0 ? (
-                                <NotificationEmptyState />
+                                <NotificationEmptyState compact />
                             ) : (
                                 <div className="divide-y divide-slate-100 dark:divide-slate-700">
                                     {recentNotifications.map(notification => (

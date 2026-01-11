@@ -50,7 +50,8 @@ const YourAnswer = ({answer, question, publishing, setPublishing}: {
         await publishEvent(constants.answerKind, description, [
             ["d", answerId],
             ["e", question.eventId],
-            ["a", `${constants.questionKind}:${question.user.pubkey}:${question.id}`]
+            ["a", `${constants.questionKind}:${question.user.pubkey}:${question.id}`],
+            ["p", question.user.pubkey]
         ])
 
         setPublishing(false)

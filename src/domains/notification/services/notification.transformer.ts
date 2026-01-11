@@ -221,8 +221,12 @@ export const notificationTransformer = (
     // Extract source (what was interacted with) and Q&A relation
     const { source, isQARelated } = extractSource(event);
 
-    // For follow events, source is not required
-    if (!source && type !== NotificationType.FOLLOW) {
+    // Source requirements vary by notification type:
+    // - FOLLOW: No source required (it's about the follower, not a specific content)
+    // - ZAP: No source required (can zap user directly without specific event)
+    // - Others: Source required (must reference some content)
+    const sourceNotRequired = type === NotificationType.FOLLOW || type === NotificationType.ZAP;
+    if (!source && !sourceNotRequired) {
         return null;
     }
 
@@ -243,6 +247,11 @@ export const notificationTransformer = (
         ? `follow:${event.pubkey}`
         : event.id;
 
+    // Ensure valid timestamp (Nostr events should always have created_at)
+    const createdAt = event.created_at && event.created_at > 0
+        ? event.created_at
+        : Math.floor(Date.now() / 1000);
+
     const notification: Notification = {
         id: notificationId,
         type,
@@ -252,7 +261,7 @@ export const notificationTransformer = (
             eventId: event.id,
             resourceType: 'question'
         },
-        createdAt: event.created_at ?? Math.floor(Date.now() / 1000),
+        createdAt,
         isQARelated: finalIsQARelated
     };
 

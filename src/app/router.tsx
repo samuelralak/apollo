@@ -1,9 +1,9 @@
 import {createBrowserRouter, LoaderFunction} from "react-router";
+import {lazy, Suspense} from "react";
 import Root from "./Root";
 import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
 import {ProfilePage} from "../domains/user/pages";
 import {BookmarksPage} from "../domains/bookmark/pages";
-import {NotificationsPage} from "../domains/notification/pages";
 import {AboutPage, PrivacyPolicyPage, TermsOfUsePage} from "../domains/website/pages";
 import {
     SettingsPage,
@@ -16,6 +16,9 @@ import {
 } from "../domains/user/pages/settings";
 import withAuthRequired from "../domains/auth/components/withAuthRequired";
 import {validate as isUUID} from 'uuid'
+
+// Lazy load notifications page for better initial bundle size
+const NotificationsPage = lazy(() => import("../domains/notification/pages/NotificationsPage"));
 
 const uuidLoader: LoaderFunction = ({params}) => {
     const {questionId} = params;
@@ -56,7 +59,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'notifications',
-                element: withAuthRequired(NotificationsPage),
+                element: (
+                    <Suspense fallback={<div className="max-w-3xl animate-pulse"><div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-48 mb-6" /><div className="space-y-4">{[1,2,3,4,5].map(i => <div key={i} className="flex gap-3 py-4"><div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full" /><div className="flex-1"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2" /><div className="h-3 bg-slate-100 dark:bg-slate-700/50 rounded w-1/2" /></div></div>)}</div></div>}>
+                        {withAuthRequired(NotificationsPage)}
+                    </Suspense>
+                ),
             },
             {
                 path: 'settings/',

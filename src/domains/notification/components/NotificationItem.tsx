@@ -145,68 +145,86 @@ const NotificationItem = ({
     const actionText = getActionText(notification.type, notification.zapAmount);
     const link = getNotificationLink(notification);
     const actor = notification.actors[0];
+    const hasLink = link !== "#";
+
+    const handleClick = (e: React.MouseEvent) => {
+        // Prevent navigation for non-linkable items
+        if (!hasLink) {
+            e.preventDefault();
+        }
+        onClick?.();
+    };
+
+    const baseClasses = `block ${compact ? 'px-4 py-3' : 'py-4'} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
+        isUnread ? 'bg-teal-50/50 dark:bg-teal-900/10' : ''
+    }`;
+
+    const content = (
+        <div className="flex items-start gap-3">
+            {/* Icon */}
+            <div className={`flex-shrink-0 ${compact ? 'h-8 w-8' : 'h-10 w-10'} flex items-center justify-center rounded-full ${style.bgColor}`}>
+                <HugeiconsIcon
+                    icon={style.icon}
+                    size={compact ? 16 : 20}
+                    className={style.color}
+                />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0 py-0.5">
+                {/* Actor and action */}
+                <p className={`${compact ? 'text-sm' : 'text-sm'} text-slate-900 dark:text-slate-100`}>
+                    {actor ? (
+                        <span className="font-medium">
+                            <EventOwner pubkey={actor.pubkey} mini={true} inline={true} />
+                        </span>
+                    ) : (
+                        <span className="font-medium">Someone</span>
+                    )}
+                    {" "}
+                    <span className="text-slate-600 dark:text-slate-400">{actionText}</span>
+                </p>
+
+                {/* Source preview (if available and not compact) */}
+                {!compact && notification.source.preview && (
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
+                        "{notification.source.preview}"
+                    </p>
+                )}
+
+                {/* Timestamp and badges */}
+                <div className={`${compact ? 'mt-1' : 'mt-2'} flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500`}>
+                    <time>{formatDateTime(notification.createdAt)}</time>
+                    {!notification.isQARelated && notification.type !== NotificationType.FOLLOW && (
+                        <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                            Nostr
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Unread indicator */}
+            {isUnread && (
+                <div className="flex-shrink-0 self-center">
+                    <span className="block w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400" />
+                </div>
+            )}
+        </div>
+    );
+
+    // Use Link for navigable items, div for non-navigable
+    if (hasLink) {
+        return (
+            <Link to={link} onClick={handleClick} className={baseClasses}>
+                {content}
+            </Link>
+        );
+    }
 
     return (
-        <Link
-            to={link}
-            onClick={onClick}
-            className={`block ${compact ? 'px-4 py-3' : 'px-4 py-4'} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
-                isUnread ? 'bg-teal-50/50 dark:bg-teal-900/10' : ''
-            }`}
-        >
-            <div className="flex gap-3">
-                {/* Icon */}
-                <div className={`flex-shrink-0 p-2 rounded-full ${style.bgColor}`}>
-                    <HugeiconsIcon
-                        icon={style.icon}
-                        size={compact ? 16 : 18}
-                        className={style.color}
-                    />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                    {/* Actor and action */}
-                    <p className={`${compact ? 'text-sm' : 'text-sm'} text-slate-700 dark:text-slate-200`}>
-                        {actor ? (
-                            <span className="font-medium">
-                                <EventOwner pubkey={actor.pubkey} mini={true} inline={true} />
-                            </span>
-                        ) : (
-                            <span className="font-medium">Someone</span>
-                        )}
-                        {" "}
-                        <span className="text-slate-500 dark:text-slate-400">{actionText}</span>
-                    </p>
-
-                    {/* Source preview (if available and not compact) */}
-                    {!compact && notification.source.preview && (
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
-                            {notification.source.preview}
-                        </p>
-                    )}
-
-                    {/* Timestamp and source indicator */}
-                    <div className={`${compact ? 'mt-0.5' : 'mt-1'} flex items-center gap-2`}>
-                        <span className="text-xs text-slate-400 dark:text-slate-500">
-                            {formatDateTime(notification.createdAt)}
-                        </span>
-                        {!notification.isQARelated && notification.type !== NotificationType.FOLLOW && (
-                            <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
-                                Nostr
-                            </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Unread indicator */}
-                {isUnread && (
-                    <div className="flex-shrink-0 self-center">
-                        <span className="block w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400" />
-                    </div>
-                )}
-            </div>
-        </Link>
+        <div onClick={handleClick} className={`${baseClasses} cursor-default`}>
+            {content}
+        </div>
     );
 };
 
