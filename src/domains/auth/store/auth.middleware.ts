@@ -4,6 +4,7 @@ import {RootState} from "../../../app/store";
 import {deleteFromStorage, fetchFromStorage, saveToStorage, storeNames} from "../../../lib/storage";
 import secureLocalStorage from "react-secure-storage";
 import constants from "../../../constants";
+import {clearBookmarks} from "../../bookmark/store/bookmark.slice";
 
 export const authListenerMiddleware = createListenerMiddleware()
 
@@ -20,6 +21,7 @@ authListenerMiddleware.startListening({
         if (action.type === signOut.type) {
             await deleteFromStorage(storeNames.SESSION, 'auth')
             secureLocalStorage.removeItem(constants.secureStorageKey)
+            listenerApi.dispatch(clearBookmarks())
         }
     },
 })

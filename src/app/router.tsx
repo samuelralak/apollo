@@ -2,6 +2,7 @@ import {createBrowserRouter, LoaderFunction} from "react-router";
 import Root from "./Root";
 import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
 import {ProfilePage} from "../domains/user/pages";
+import {BookmarksPage} from "../domains/bookmark/pages";
 import {AboutPage, PrivacyPolicyPage, TermsOfUsePage} from "../domains/website/pages";
 import {
     SettingsPage,
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
             {
                 path: 'questions/new',
                 element: withAuthRequired(NewQuestionPage),
+            },
+            {
+                path: 'bookmarks',
+                element: withAuthRequired(BookmarksPage),
             },
             {
                 path: 'settings/',

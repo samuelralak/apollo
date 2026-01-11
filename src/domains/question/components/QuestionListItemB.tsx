@@ -10,6 +10,7 @@ import constants from "../../../constants";
 import {RootState} from "../../../app/store";
 import useQuestionStats from "../hooks/useQuestionStats";
 import ActionItems from "../../../shared/components/ActionItems";
+import {BookmarkButton} from "../../bookmark/components";
 import categories from "../../../data/categories.json";
 
 interface QuestionListItemBProps {
@@ -103,13 +104,20 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                 </div>
 
                 {/* Actions */}
-                <ActionItems
-                    id={question.id}
-                    eventId={question.eventId}
-                    pubkey={question.user.pubkey}
-                    kind={constants.questionKind}
-                    editPath={`/questions/${question.id}/edit`}
-                />
+                <div className="flex items-center gap-1">
+                    <BookmarkButton
+                        questionId={question.id}
+                        questionPubkey={question.user.pubkey}
+                        size="sm"
+                    />
+                    <ActionItems
+                        id={question.id}
+                        eventId={question.eventId}
+                        pubkey={question.user.pubkey}
+                        kind={constants.questionKind}
+                        editPath={`/questions/${question.id}/edit`}
+                    />
+                </div>
             </div>
         </li>
     );

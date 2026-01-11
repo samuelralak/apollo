@@ -66,6 +66,19 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                     <MenuItem>
                         {({focus}) => (
                             <Link
+                                to="/bookmarks"
+                                className={classNames(
+                                    focus ? 'bg-slate-100 dark:bg-slate-700' : '',
+                                    'block px-4 py-2 text-sm text-slate-700 dark:text-slate-200'
+                                )}
+                            >
+                                Bookmarks
+                            </Link>
+                        )}
+                    </MenuItem>
+                    <MenuItem>
+                        {({focus}) => (
+                            <Link
                                 to={`/settings/user-profile`}
                                 className={classNames(
                                     focus ? 'bg-slate-100 dark:bg-slate-700' : '',

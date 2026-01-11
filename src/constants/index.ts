@@ -6,6 +6,7 @@ const constants: {
     voteKind: NDKKind;
     noteKind: NDKKind;
     shareKind: NDKKind;
+    bookmarkListKind: NDKKind;
     secureStorageKey: string;
     explicitRelays: string[];
     searchRelays: string[];
@@ -13,6 +14,7 @@ const constants: {
 } = {
     noteKind: 1,
     shareKind: 9802,
+    bookmarkListKind: 10003,
     questionKind: parseInt(import.meta.env.VITE_QUESTION_KIND),
     answerKind:  parseInt(import.meta.env.VITE_ANSWER_KIND),
     voteKind:  parseInt(import.meta.env.VITE_VOTE_KIND),

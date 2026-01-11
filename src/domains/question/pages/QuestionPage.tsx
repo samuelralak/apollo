@@ -19,6 +19,7 @@ import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
 import categories from "../../../data/categories.json";
 import MentionedUsers from "../components/MentionedUsers";
+import {BookmarkButton} from "../../bookmark/components";
 
 const getCategoryTitle = (slug: string): string | undefined => {
     const category = categories.find(c => c.slug === slug);
@@ -137,6 +138,11 @@ const QuestionPage = () => {
                                     horizontal={true}
                                 />
                             </div>
+                            <BookmarkButton
+                                questionId={question.id}
+                                questionPubkey={question.user.pubkey}
+                                showLabel={true}
+                            />
                             <ActionItems
                                 id={question.id}
                                 eventId={question.eventId}
