@@ -1,8 +1,8 @@
 import {HugeiconsIcon} from "@hugeicons/react";
 import {Menu01Icon, Github01Icon} from "@hugeicons-pro/core-duotone-rounded";
-import {Search01Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {Search01Icon, Notification01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {CommandIcon} from "@hugeicons-pro/core-solid-rounded";
-import {NavLink} from "react-router";
+import {NavLink, Link} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import UserMenuDesktop from "../../../domains/auth/components/UserMenuDesktop";
@@ -10,10 +10,14 @@ import GetStarted from "../../../domains/auth/components/GetStarted";
 import {ThemeToggle} from "../../theme";
 import {PortalID, showPortal} from "../../store/portal.slice";
 import {useMemo} from "react";
+import {useNotificationBadge} from "../../../domains/notification/hooks";
 
 const MainNavigation = () => {
     const dispatch = useDispatch<AppDispatch>()
     const auth = useSelector((state: RootState) => state.auth)
+
+    // Get notification badge state for mobile
+    const { unreadCount, showNotifications } = useNotificationBadge();
 
     const openMobileMenu = () => dispatch(showPortal({portalId: PortalID.mobileMenu}))
     const openSearch = () => dispatch(showPortal({portalId: PortalID.search}))
@@ -96,6 +100,22 @@ const MainNavigation = () => {
                         >
                             <HugeiconsIcon icon={Search01Icon} size={20} />
                         </button>
+
+                        {/* Notification bell - Mobile */}
+                        {showNotifications && (
+                            <Link
+                                to="/notifications"
+                                className="relative md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                aria-label="Notifications"
+                            >
+                                <HugeiconsIcon icon={Notification01Icon} size={20} />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 dark:bg-red-400 px-1 text-[9px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
 
                         <a
                             href="https://github.com/samuelralak/apollo"

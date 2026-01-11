@@ -129,12 +129,23 @@ const extractZapAmount = (event: NDKEvent): number | undefined => {
 };
 
 /**
- * Check if event is a mention notification (has p tag with "mention" marker)
+ * Check if event is a comment on user's Q&A content
+ * Returns true if the event has an 'a' tag pointing to Q&A content authored by the user
  */
-const isMentionEvent = (event: NDKEvent, userPubkey: string): boolean => {
-    return event.tags.some(
-        tag => tag[0] === 'p' && tag[1] === userPubkey && tag[3] === 'mention'
-    );
+const isCommentOnUserContent = (event: NDKEvent, userPubkey: string): boolean => {
+    const tags = tagFromEvents(event.tags);
+    const coordinate = safeGetTag(tags, 'a');
+
+    if (!coordinate) return false;
+
+    const parsed = parseCoordinate(coordinate);
+    if (!parsed) return false;
+
+    // Check if it's Q&A content (question or answer) authored by the user
+    const isQAKind = parsed.kind === constants.questionKind || parsed.kind === constants.answerKind;
+    const isUserContent = parsed.pubkey === userPubkey;
+
+    return isQAKind && isUserContent;
 };
 
 /**
@@ -172,13 +183,12 @@ const determineNotificationType = (
 
     // Kind 1 (notes) - could be comment or mention
     if (kind === constants.noteKind) {
-        // Check for explicit mention marker
-        if (isMentionEvent(event, userPubkey)) {
-            return NotificationType.MENTION;
-        }
-        // Default to comment if user is tagged
+        // COMMENT: Event references Q&A content authored by the user
+        // MENTION: User is tagged but it's not a comment on their Q&A content
         if (isUserTagged(event, userPubkey)) {
-            return NotificationType.COMMENT;
+            return isCommentOnUserContent(event, userPubkey)
+                ? NotificationType.COMMENT
+                : NotificationType.MENTION;
         }
     }
 
@@ -224,8 +234,12 @@ export const notificationTransformer = (
     // Source requirements vary by notification type:
     // - FOLLOW: No source required (it's about the follower, not a specific content)
     // - ZAP: No source required (can zap user directly without specific event)
+    // - MENTION: No source required (can mention user without referencing specific content)
     // - Others: Source required (must reference some content)
-    const sourceNotRequired = type === NotificationType.FOLLOW || type === NotificationType.ZAP;
+    const sourceNotRequired =
+        type === NotificationType.FOLLOW ||
+        type === NotificationType.ZAP ||
+        type === NotificationType.MENTION;
     if (!source && !sourceNotRequired) {
         return null;
     }
