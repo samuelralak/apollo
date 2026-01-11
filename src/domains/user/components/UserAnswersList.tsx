@@ -178,9 +178,8 @@ const UserAnswersList = ({answers, votes, loading}: UserAnswersListProps) => {
                                         {answer.description.length > 200 ? '...' : ''}
                                     </p>
 
-                                    <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
                                         <span>{formatDateTime(answer.createdAt)}</span>
-                                        <span>·</span>
                                         <Link
                                             to={`/questions/${answer.questionId}`}
                                             className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors"

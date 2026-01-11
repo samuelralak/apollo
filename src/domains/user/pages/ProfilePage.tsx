@@ -114,8 +114,6 @@ const ProfilePage = () => {
                 <ProfileSidebar
                     pubkey={pubkey}
                     profile={profile}
-                    stats={stats}
-                    loading={statsLoading}
                     followersCount={followersCount}
                     followingCount={followingCount}
                     followLoading={followersLoading || followingLoading}
@@ -368,15 +366,13 @@ const OverviewSkeleton = () => (
 interface ProfileSidebarProps {
     pubkey: string;
     profile?: NDKUserProfile | null;
-    stats: UserStats;
-    loading: boolean;
     followersCount: number;
     followingCount: number;
     followLoading: boolean;
     onTabChange: (tab: TabId) => void;
 }
 
-const ProfileSidebar = ({pubkey, profile, stats, loading, followersCount, followingCount, followLoading, onTabChange}: ProfileSidebarProps) => {
+const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, followLoading, onTabChange}: ProfileSidebarProps) => {
     const displayName = profile?.displayName ?? profile?.display_name ?? profile?.name ?? 'Anonymous';
 
     const getHostname = (url: string): string => {
@@ -451,30 +447,10 @@ const ProfileSidebar = ({pubkey, profile, stats, loading, followersCount, follow
                 </p>
             )}
 
-            {/* Stats */}
-            <div className="flex items-center gap-4 text-sm">
-                {loading ? (
-                    <div className="flex gap-4 animate-pulse">
-                        <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
-                        <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
-                    </div>
-                ) : (
-                    <>
-                        <span className="text-slate-600 dark:text-slate-400">
-                            <strong className="text-slate-900 dark:text-slate-100">{stats.reputation}</strong> reputation
-                        </span>
-                        <span className="text-slate-400 dark:text-slate-600">·</span>
-                        <span className="text-slate-600 dark:text-slate-400">
-                            <strong className="text-slate-900 dark:text-slate-100">{stats.votesReceived.total}</strong> votes
-                        </span>
-                    </>
-                )}
-            </div>
-
             {/* Followers/Following */}
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-5 text-sm">
                 {followLoading ? (
-                    <div className="flex gap-4 animate-pulse">
+                    <div className="flex gap-5 animate-pulse">
                         <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
                         <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
                     </div>
@@ -487,7 +463,6 @@ const ProfileSidebar = ({pubkey, profile, stats, loading, followersCount, follow
                         >
                             <strong className="text-slate-900 dark:text-slate-100">{followersCount}</strong> followers
                         </button>
-                        <span className="text-slate-400 dark:text-slate-600">·</span>
                         <button
                             type="button"
                             onClick={() => onTabChange('following')}

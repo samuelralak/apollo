@@ -82,9 +82,8 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
             {/* Stats and actions - always same row */}
             <div className="mt-3 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
                 {/* Stats */}
-                <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap">
                     <span>{voteCount} votes</span>
-                    <span className="text-slate-300 dark:text-slate-600">·</span>
                     <span className={`inline-flex items-center gap-1 ${
                         hasAcceptedAnswer
                             ? 'text-green-600 dark:text-green-400'
@@ -97,9 +96,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                         )}
                         {answerCount} {answerCount === 1 ? 'answer' : 'answers'}
                     </span>
-                    <span className="text-slate-300 dark:text-slate-600">·</span>
                     <span>{formatDateTime(question.createdAt)}</span>
-                    <span className="hidden sm:inline text-slate-300 dark:text-slate-600">·</span>
                     <span className="hidden sm:inline"><EventOwner pubkey={question.user.pubkey} mini={true} /></span>
                 </div>
 

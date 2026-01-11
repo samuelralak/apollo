@@ -57,12 +57,12 @@ const CommentsList = ({resource, resourceKind}: Props) => {
                             <span className="text-slate-700 dark:text-slate-300 break-words">{comment.content}</span>
                             {' – '}
                             <EventOwner pubkey={comment.pubkey} mini={true} hideAvatar={true} inline={true} />
-                            <span className="text-xs text-slate-400 dark:text-slate-500">
-                                {' · '}
-                                <time dateTime={new Date(comment.createdAt * 1000).toISOString()}>
-                                    {formatDateTime(comment.createdAt)}
-                                </time>
-                            </span>
+                            <time
+                                dateTime={new Date(comment.createdAt * 1000).toISOString()}
+                                className="text-xs text-slate-400 dark:text-slate-500 ml-2"
+                            >
+                                {formatDateTime(comment.createdAt)}
+                            </time>
                         </p>
                     </li>
                 ))}

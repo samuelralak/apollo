@@ -76,9 +76,8 @@ const QuestionPage = () => {
                     <h1 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 leading-snug">
                         {question?.title}
                     </h1>
-                    <div className="flex items-center gap-1.5 sm:gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400">
                         <EventOwner pubkey={question.user?.pubkey} mini={true} inline={true} />
-                        <span>·</span>
                         <span>{formatDateTime(question?.createdAt)}</span>
                     </div>
                     {question.mentionedPubkeys && question.mentionedPubkeys.length > 0 && (
