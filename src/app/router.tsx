@@ -3,6 +3,7 @@ import Root from "./Root";
 import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
 import {ProfilePage} from "../domains/user/pages";
 import {BookmarksPage} from "../domains/bookmark/pages";
+import {NotificationsPage} from "../domains/notification/pages";
 import {AboutPage, PrivacyPolicyPage, TermsOfUsePage} from "../domains/website/pages";
 import {
     SettingsPage,
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
             {
                 path: 'bookmarks',
                 element: withAuthRequired(BookmarksPage),
+            },
+            {
+                path: 'notifications',
+                element: withAuthRequired(NotificationsPage),
             },
             {
                 path: 'settings/',

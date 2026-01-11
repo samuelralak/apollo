@@ -8,6 +8,7 @@ import followReducer from "../domains/follow/store/follow.slice";
 import portalReducer from "../shared/store/portal.slice";
 import questionReducer from "../domains/question/store/question.slice";
 import commentReducer from "../domains/comment/store/comment.slice";
+import notificationReducer from "../domains/notification/store/notification.slice";
 import subscriptionReducer from "../shared/store/subscription.slice";
 import toastReducer from "../shared/store/toast.slice";
 import {authListenerMiddleware} from "../domains/auth/store/auth.middleware";
@@ -25,6 +26,7 @@ export const configureAppStore = (preloadedState: PreloadedState) => {
             answer: answerReducer,
             bookmark: bookmarkReducer,
             follow: followReducer,
+            notification: notificationReducer,
             portal: portalReducer,
             question: questionReducer,
             comment: commentReducer,

@@ -19,7 +19,8 @@ export enum ResourceType {
     VOTE = 'vote',
     COMMENT = 'comment',
     BOOKMARK = 'bookmark',
-    FOLLOW = 'follow'
+    FOLLOW = 'follow',
+    NOTIFICATION = 'notification'
 }
 
 /**

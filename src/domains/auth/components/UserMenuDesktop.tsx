@@ -1,14 +1,16 @@
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
-import {MessageAdd01Icon, Notification01Icon, UserCircleIcon} from "@hugeicons-pro/core-duotone-rounded";
+import {MessageAdd01Icon, UserCircleIcon} from "@hugeicons-pro/core-duotone-rounded";
 import {UserCircleIcon as UserCircleOutlineIcon, Bookmark02Icon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../../app/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../../app/store";
 import {AuthState, signOut} from "../store/auth.slice";
+import {NotificationBell} from "../../notification/components";
 
 const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
     const dispatch = useDispatch() as AppDispatch
+    const showNotifications = useSelector((state: RootState) => state.notification.settings.showInApp);
     const onSignOut = () => dispatch(signOut())
 
     return (
@@ -22,13 +24,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                 <span className="hidden md:inline">Ask Question</span>
             </Link>
 
-            <button
-                type="button"
-                className="hidden md:block relative rounded-full p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors"
-            >
-                <span className="sr-only">View notifications</span>
-                <HugeiconsIcon icon={Notification01Icon} size={20} />
-            </button>
+            {showNotifications && <NotificationBell />}
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative hidden md:block">
