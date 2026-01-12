@@ -33,43 +33,41 @@ const AboutPage = () => {
                 </p>
             </section>
 
-            <section className="py-10 space-y-5">
-                <div className="flex gap-4 items-start">
-                    <div className="shrink-0 mt-0.5">
-                        <HugeiconsIcon icon={Database01Icon} size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
+            <section className="py-10 grid gap-6 sm:grid-cols-2">
+                <div className="flex gap-3">
+                    <HugeiconsIcon icon={Database01Icon} size={18} className="text-teal-600 dark:text-teal-400 shrink-0 mt-1" />
                     <div>
-                        <h3 className="font-medium text-slate-900 dark:text-slate-100">You own your data</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                            Built on Nostr, your content lives on relays you choose. No lock-in. No platform can delete what's yours.
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100 leading-snug">You own your data</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Your content lives on relays you choose. No lock-in.
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-4 items-start">
-                    <div className="shrink-0 mt-0.5">
-                        <HugeiconsIcon icon={ShieldUserIcon} size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
+                <div className="flex gap-3">
+                    <HugeiconsIcon icon={ShieldUserIcon} size={18} className="text-teal-600 dark:text-teal-400 shrink-0 mt-1" />
                     <div>
-                        <h3 className="font-medium text-slate-900 dark:text-slate-100">Censorship-resistant</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">No central authority decides what you can say.</p>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100 leading-snug">Censorship-resistant</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            No central authority decides what you can say.
+                        </p>
                     </div>
                 </div>
-                <div className="flex gap-4 items-start">
-                    <div className="shrink-0 mt-0.5">
-                        <HugeiconsIcon icon={BitcoinEllipseIcon} size={20} className="text-amber-500" />
-                    </div>
+                <div className="flex gap-3">
+                    <HugeiconsIcon icon={BitcoinEllipseIcon} size={18} className="text-amber-500 shrink-0 mt-1" />
                     <div>
-                        <h3 className="font-medium text-slate-900 dark:text-slate-100">Earn sats for helping</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Real Bitcoin tips via Lightning. Not points. Money.</p>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100 leading-snug">Earn sats for helping</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Real Bitcoin tips via Lightning. Not points.
+                        </p>
                     </div>
                 </div>
-                <div className="flex gap-4 items-start">
-                    <div className="shrink-0 mt-0.5">
-                        <HugeiconsIcon icon={FingerPrintIcon} size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
+                <div className="flex gap-3">
+                    <HugeiconsIcon icon={FingerPrintIcon} size={18} className="text-teal-600 dark:text-teal-400 shrink-0 mt-1" />
                     <div>
-                        <h3 className="font-medium text-slate-900 dark:text-slate-100">One identity, everywhere</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Your Nostr keys work across hundreds of apps.</p>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100 leading-snug">One identity, everywhere</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Your Nostr keys work across hundreds of apps.
+                        </p>
                     </div>
                 </div>
             </section>
