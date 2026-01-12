@@ -11,21 +11,18 @@ import {
 const AboutPage = () => {
     return (
         <div className="max-w-3xl mx-auto">
-            {/* Hero - asymmetric, less centered */}
             <section className="py-12 sm:py-16">
-                <p className="text-sm font-medium text-teal-600 dark:text-teal-400 tracking-wide uppercase mb-3">
-                    Community Q&A on NOSTR
+                <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-3">
+                    Community Q&A on Nostr
                 </p>
                 <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-                    Knowledge sharing,<br />
-                    <span className="text-teal-600 dark:text-teal-400">truly yours.</span>
+                    Q&A without the middleman.
                 </h1>
                 <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">
                     Ask questions. Share what you know. Get paid in Bitcoin for being helpful.
                 </p>
             </section>
 
-            {/* The shift - prose style, not cards */}
             <section className="py-10 border-t border-slate-200 dark:border-slate-700">
                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-6">
                     Traditional Q&A platforms store your content on their servers, censor what they don't like,
@@ -36,64 +33,59 @@ const AboutPage = () => {
                 </p>
             </section>
 
-            {/* Value props - varied layout, not uniform grid */}
-            <section className="py-10">
-                {/* Featured value - full width */}
-                <div className="mb-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100/50 dark:from-teal-900/20 dark:to-teal-800/10 border border-teal-200/50 dark:border-teal-700/30">
-                    <div className="flex items-center gap-3 mb-3">
-                        <HugeiconsIcon icon={Database01Icon} size={22} className="text-teal-600 dark:text-teal-400" />
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">You own your data</h3>
+            <section className="py-10 space-y-5">
+                <div className="flex gap-4 items-start">
+                    <div className="shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={Database01Icon} size={20} className="text-teal-600 dark:text-teal-400" />
                     </div>
-                    <p className="text-slate-600 dark:text-slate-400">
-                        Built on NOSTR, your content lives on relays you choose. No lock-in.
-                        No platform can delete what's yours.
-                    </p>
+                    <div>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">You own your data</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                            Built on Nostr, your content lives on relays you choose. No lock-in. No platform can delete what's yours.
+                        </p>
+                    </div>
                 </div>
-
-                {/* Secondary values - compact list */}
-                <div className="space-y-4">
-                    <div className="flex gap-4 items-start">
-                        <div className="shrink-0 mt-1">
-                            <HugeiconsIcon icon={ShieldUserIcon} size={20} className="text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div>
-                            <h3 className="font-medium text-slate-900 dark:text-slate-100">Censorship-resistant</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">No central authority decides what you can say.</p>
-                        </div>
+                <div className="flex gap-4 items-start">
+                    <div className="shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={ShieldUserIcon} size={20} className="text-teal-600 dark:text-teal-400" />
                     </div>
-                    <div className="flex gap-4 items-start">
-                        <div className="shrink-0 mt-1">
-                            <HugeiconsIcon icon={BitcoinEllipseIcon} size={20} className="text-amber-500" />
-                        </div>
-                        <div>
-                            <h3 className="font-medium text-slate-900 dark:text-slate-100">Earn sats for helping</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Real Bitcoin tips via Lightning. Not points. Money.</p>
-                        </div>
+                    <div>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">Censorship-resistant</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">No central authority decides what you can say.</p>
                     </div>
-                    <div className="flex gap-4 items-start">
-                        <div className="shrink-0 mt-1">
-                            <HugeiconsIcon icon={FingerPrintIcon} size={20} className="text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <div>
-                            <h3 className="font-medium text-slate-900 dark:text-slate-100">One identity, everywhere</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Your NOSTR keys work across hundreds of apps.</p>
-                        </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                    <div className="shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={BitcoinEllipseIcon} size={20} className="text-amber-500" />
+                    </div>
+                    <div>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">Earn sats for helping</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Real Bitcoin tips via Lightning. Not points. Money.</p>
+                    </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                    <div className="shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={FingerPrintIcon} size={20} className="text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <div>
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">One identity, everywhere</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Your Nostr keys work across hundreds of apps.</p>
                     </div>
                 </div>
             </section>
 
-            {/* Why Apollo - aside/callout style */}
-            <aside className="py-8 my-6 border-l-4 border-amber-400 dark:border-amber-500 pl-6">
-                <p className="text-slate-600 dark:text-slate-400 italic mb-2">
-                    "Apollo was the Greek god of knowledge, truth, and enlightenment."
-                </p>
-                <p className="text-sm text-slate-500 dark:text-slate-500">
-                    A fitting name for a place where questions find answers.
-                </p>
-            </aside>
+            <section className="py-10">
+                <div className="px-5 py-4 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm font-medium mb-1">
+                        Why "Apollo"?
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">
+                        Named after the Greek god of knowledge and truth — a fitting name for a place where questions find answers.
+                    </p>
+                </div>
+            </section>
 
-            {/* CTA - more prominent */}
-            <section className="py-12">
+            <section className="py-8">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <Link
                         to="/"
@@ -110,7 +102,6 @@ const AboutPage = () => {
                     </Link>
                 </div>
             </section>
-
         </div>
     );
 };
