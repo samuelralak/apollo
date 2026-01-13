@@ -5,7 +5,7 @@ import type { IconSvgElement } from "@hugeicons/react";
 import type { AppDispatch, RootState } from "../../../app/store";
 import { showPortal, PortalID } from "../../store/portal.slice";
 import { classNames } from "../../../utils";
-import useNotificationBadge from "../../../domains/notification/hooks/useNotificationBadge";
+import { useNotifications } from "../../../domains/notification/hooks";
 
 // Duotone icons (inactive state)
 import {
@@ -40,7 +40,7 @@ interface BottomTabBarProps {
 const BottomTabBar = ({ className }: BottomTabBarProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const auth = useSelector((state: RootState) => state.auth);
-    const { unreadCount, showNotifications } = useNotificationBadge();
+    const { unreadCount, showNotifications } = useNotifications();
 
     const openAuth = () => dispatch(showPortal({ portalId: PortalID.auth }));
     const openSearch = () => dispatch(showPortal({ portalId: PortalID.search }));

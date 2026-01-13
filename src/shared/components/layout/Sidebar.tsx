@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../app/store";
 import { classNames } from "../../../utils";
-import useNotificationBadge from "../../../domains/notification/hooks/useNotificationBadge";
+import { useNotifications } from "../../../domains/notification/hooks";
 
 // Duotone icons (inactive state)
 import {
@@ -38,7 +38,7 @@ interface SidebarProps {
 
 const Sidebar = ({ className }: SidebarProps) => {
     const auth = useSelector((state: RootState) => state.auth);
-    const { unreadCount, showNotifications } = useNotificationBadge();
+    const { unreadCount, showNotifications } = useNotifications();
 
     const navItems: NavItemConfig[] = [
         {

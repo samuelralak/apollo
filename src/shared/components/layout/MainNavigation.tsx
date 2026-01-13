@@ -10,14 +10,14 @@ import GetStarted from "../../../domains/auth/components/GetStarted";
 import {ThemeToggle} from "../../theme";
 import {PortalID, showPortal} from "../../store/portal.slice";
 import {useMemo} from "react";
-import {useNotificationBadge} from "../../../domains/notification/hooks";
+import {useNotifications} from "../../../domains/notification/hooks";
 
 const MainNavigation = () => {
     const dispatch = useDispatch<AppDispatch>()
     const auth = useSelector((state: RootState) => state.auth)
 
     // Get notification badge state for mobile
-    const { unreadCount, showNotifications } = useNotificationBadge();
+    const { unreadCount, showNotifications } = useNotifications();
 
     const openMobileMenu = () => dispatch(showPortal({portalId: PortalID.mobileMenu}))
     const openSearch = () => dispatch(showPortal({portalId: PortalID.search}))

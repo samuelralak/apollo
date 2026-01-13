@@ -41,6 +41,8 @@ const Root = () => {
             <NDKProvider>
                 <div className="min-h-screen bg-white dark:bg-slate-950">
                     {/* Centered container */}
+                    {/* TODO: Use conditional rendering (useMediaQuery) instead of CSS hiding
+                        for Sidebar/BottomTabBar to avoid duplicate useNotifications callbacks */}
                     <div className="mx-auto max-w-[1400px] flex justify-center">
                         {/* Left Sidebar - hidden on mobile */}
                         <Sidebar className="hidden md:flex" />

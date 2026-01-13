@@ -25,6 +25,8 @@ interface UseNotificationsReturn {
     unreadCount: number;
     /** Whether there are any unread notifications */
     hasUnread: boolean;
+    /** Whether to show notification UI (logged in + showInApp setting) */
+    showNotifications: boolean;
     /** Timestamp of last read - use for efficient isUnread checks */
     lastReadTimestamp: number;
     /** Loading state */
@@ -97,6 +99,7 @@ const useNotifications = (): UseNotificationsReturn => {
     }, [filteredNotifications, lastReadTimestamp]);
 
     const hasUnread = unreadCount > 0;
+    const showNotifications = isLoggedIn && settings.showInApp;
 
     // Derived unread list (only computed if accessed or if count changes)
     const unreadNotifications = useMemo(() => {
@@ -197,6 +200,7 @@ const useNotifications = (): UseNotificationsReturn => {
         unreadNotifications,
         unreadCount,
         hasUnread,
+        showNotifications,
         lastReadTimestamp,
         loading,
         initialized,
