@@ -9,6 +9,8 @@ import {
     ArrowRight01Icon
 } from "@hugeicons-pro/core-duotone-rounded";
 import {Link} from "react-router";
+import LogoFull from "../../../assets/logo-full.svg";
+import LogoFullDark from "../../../assets/logo-full-dark.svg";
 
 interface WelcomePortalProps {
     visible: boolean;
@@ -38,14 +40,13 @@ const WelcomePortal = ({visible, onClose}: WelcomePortalProps) => {
                             <HugeiconsIcon icon={Cancel01Icon} size={18} />
                         </button>
 
-                        {/* Header - left aligned, not centered */}
+                        {/* Header - left aligned with logo */}
                         <div className="mb-5">
-                            <p className="text-xs font-medium text-teal-600 dark:text-teal-400 tracking-wide uppercase mb-1">
+                            <p className="text-xs font-medium text-teal-600 dark:text-teal-400 tracking-wide uppercase mb-2">
                                 Welcome to
                             </p>
-                            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                                Apollo
-                            </h1>
+                            <img src={LogoFull} alt="Apollo" className="h-8 dark:hidden" />
+                            <img src={LogoFullDark} alt="Apollo" className="h-8 hidden dark:block" />
                         </div>
 
                         {/* Single compelling statement */}
