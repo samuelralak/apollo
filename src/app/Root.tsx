@@ -1,6 +1,7 @@
 import Sidebar from "../shared/components/layout/Sidebar";
 import RightSidebar from "../shared/components/layout/RightSidebar";
 import BottomTabBar from "../shared/components/layout/BottomTabBar";
+import FloatingActionButton from "../shared/components/layout/FloatingActionButton";
 import {Outlet} from "react-router";
 import NDKProvider from "../lib/ndk/NDKProvider";
 import ToastRenderer from "../shared/components/feedback/ToastRenderer";
@@ -57,6 +58,9 @@ const Root = () => {
 
                     {/* Mobile bottom tab bar */}
                     <BottomTabBar className="md:hidden" />
+
+                    {/* Mobile floating action button */}
+                    <FloatingActionButton className="md:hidden" />
                 </div>
 
                 {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(

@@ -10,18 +10,17 @@ import useNotificationBadge from "../../../domains/notification/hooks/useNotific
 // Duotone icons (inactive state)
 import {
     Home09Icon,
-    Search01Icon,
     Notification03Icon,
-    UserCircleIcon,
-    MessageAdd01Icon,
+    Settings01Icon,
+    Menu02Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 
 // Solid icons (active state)
 import {
     Home09Icon as Home09SolidIcon,
-    Search01Icon as Search01SolidIcon,
     Notification03Icon as Notification03SolidIcon,
-    UserCircleIcon as UserCircleSolidIcon,
+    Settings01Icon as Settings01SolidIcon,
+    Menu02Icon as Menu02SolidIcon,
 } from "@hugeicons-pro/core-solid-rounded";
 
 interface TabItem {
@@ -29,7 +28,6 @@ interface TabItem {
     href?: string;
     icon: IconSvgElement;
     iconSolid: IconSvgElement;
-    isPrimary?: boolean;
     badge?: number;
     isAction?: boolean;
     onClick?: () => void;
@@ -44,9 +42,8 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
     const auth = useSelector((state: RootState) => state.auth);
     const { unreadCount, showNotifications } = useNotificationBadge();
 
-    const openSearch = () => dispatch(showPortal({ portalId: PortalID.search }));
     const openAuth = () => dispatch(showPortal({ portalId: PortalID.auth }));
-    const openQuestion = () => dispatch(showPortal({ portalId: PortalID.question }));
+    const openMenu = () => dispatch(showPortal({ portalId: PortalID.mobileMenu }));
 
     const tabs: TabItem[] = [
         {
@@ -56,22 +53,7 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
             iconSolid: Home09SolidIcon,
         },
         {
-            name: 'Search',
-            icon: Search01Icon,
-            iconSolid: Search01SolidIcon,
-            isAction: true,
-            onClick: openSearch,
-        },
-        {
-            name: 'Ask',
-            icon: MessageAdd01Icon,
-            iconSolid: MessageAdd01Icon,
-            isPrimary: true,
-            isAction: !auth.isLoggedIn,
-            onClick: auth.isLoggedIn ? openQuestion : openAuth,
-        },
-        {
-            name: 'Alerts',
+            name: 'Notifications',
             href: auth.isLoggedIn && showNotifications ? '/notifications' : undefined,
             icon: Notification03Icon,
             iconSolid: Notification03SolidIcon,
@@ -80,12 +62,17 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
             onClick: !auth.isLoggedIn ? openAuth : undefined,
         },
         {
-            name: 'Profile',
-            href: auth.isLoggedIn ? `/user/${auth.pubkey}` : undefined,
-            icon: UserCircleIcon,
-            iconSolid: UserCircleSolidIcon,
-            isAction: !auth.isLoggedIn,
-            onClick: !auth.isLoggedIn ? openAuth : undefined,
+            name: 'Settings',
+            href: '/settings/user-profile',
+            icon: Settings01Icon,
+            iconSolid: Settings01SolidIcon,
+        },
+        {
+            name: 'Menu',
+            icon: Menu02Icon,
+            iconSolid: Menu02SolidIcon,
+            isAction: true,
+            onClick: openMenu,
         },
     ];
 
@@ -94,7 +81,7 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
             className={classNames(
                 "fixed bottom-0 left-0 right-0 z-40",
                 "flex items-center justify-around",
-                "h-14 bg-white dark:bg-slate-950",
+                "h-16 bg-white dark:bg-slate-950",
                 "border-t border-slate-200 dark:border-slate-800",
                 "safe-area-bottom",
                 className
@@ -108,26 +95,22 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
 };
 
 const TabItem = ({ tab }: { tab: TabItem }) => {
-    if (tab.isPrimary) {
+    if (tab.isAction) {
         return (
             <button
                 type="button"
                 onClick={tab.onClick}
-                className="flex items-center justify-center w-10 h-10 -mt-3 rounded-full bg-teal-500 text-white shadow-sm"
+                className="flex flex-col items-center justify-center gap-1 flex-1 h-full text-slate-500 dark:text-slate-400"
             >
-                <HugeiconsIcon icon={tab.icon} size={18} />
-            </button>
-        );
-    }
-
-    if (tab.isAction && tab.onClick) {
-        return (
-            <button
-                type="button"
-                onClick={tab.onClick}
-                className="flex flex-col items-center justify-center flex-1 h-full text-slate-500 dark:text-slate-400"
-            >
-                <HugeiconsIcon icon={tab.icon} size={20} />
+                <div className="relative">
+                    <HugeiconsIcon icon={tab.icon} size={22} />
+                    {tab.badge !== undefined && tab.badge > 0 && (
+                        <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal-500 px-1 text-[10px] font-bold text-white">
+                            {tab.badge > 99 ? '99+' : tab.badge}
+                        </span>
+                    )}
+                </div>
+                <span className="text-[10px] font-medium">{tab.name}</span>
             </button>
         );
     }
@@ -136,19 +119,22 @@ const TabItem = ({ tab }: { tab: TabItem }) => {
         <NavLink
             to={tab.href!}
             className={({ isActive }) => classNames(
-                "flex flex-col items-center justify-center flex-1 h-full",
+                "flex flex-col items-center justify-center gap-1 flex-1 h-full",
                 isActive ? "text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400"
             )}
         >
             {({ isActive }) => (
-                <div className="relative">
-                    <HugeiconsIcon icon={isActive ? tab.iconSolid : tab.icon} size={20} />
-                    {tab.badge !== undefined && tab.badge > 0 && (
-                        <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal-500 px-1 text-[10px] font-bold text-white">
-                            {tab.badge > 99 ? '99+' : tab.badge}
-                        </span>
-                    )}
-                </div>
+                <>
+                    <div className="relative">
+                        <HugeiconsIcon icon={isActive ? tab.iconSolid : tab.icon} size={22} />
+                        {tab.badge !== undefined && tab.badge > 0 && (
+                            <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal-500 px-1 text-[10px] font-bold text-white">
+                                {tab.badge > 99 ? '99+' : tab.badge}
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-[10px] font-medium">{tab.name}</span>
+                </>
             )}
         </NavLink>
     );
