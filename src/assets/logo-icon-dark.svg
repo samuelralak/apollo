@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Apollo Logo - Icon Only (Dark Mode) -->
+  <!-- Use for favicon on dark backgrounds -->
+
+  <rect x="2" y="4" width="44" height="12" rx="3" fill="#f8fafc"/>
+  <rect x="12" y="19" width="24" height="12" rx="3" fill="#14b8a6"/>
+  <rect x="2" y="34" width="44" height="12" rx="3" fill="#f8fafc"/>
+</svg>

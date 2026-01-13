@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <!-- Apollo Logo - Stacked/Vertical Layout -->
+  <!-- Icon above wordmark -->
+
+  <!-- Icon: 3-bar A -->
+  <rect x="10" y="5" width="60" height="12" rx="3" fill="#0f172a"/>
+  <rect x="23" y="20" width="34" height="12" rx="3" fill="#14b8a6"/>
+  <rect x="10" y="35" width="60" height="12" rx="3" fill="#0f172a"/>
+
+  <!-- Wordmark: apollo with teal LL -->
+  <text x="40" y="68" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="600" letter-spacing="-0.3">
+    <tspan fill="#0f172a">apo</tspan><tspan fill="#14b8a6">ll</tspan><tspan fill="#0f172a">o</tspan>
+  </text>
+</svg>

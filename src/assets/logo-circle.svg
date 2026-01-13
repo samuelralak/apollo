@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Apollo Logo - Circle Icon -->
+  <!-- Use for social media avatars, round contexts -->
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#0f172a"/>
+
+  <!-- 3-bar A mark -->
+  <rect x="64" y="128" width="384" height="80" rx="20" fill="#f8fafc"/>
+  <rect x="144" y="224" width="224" height="80" rx="20" fill="#14b8a6"/>
+  <rect x="64" y="320" width="384" height="80" rx="20" fill="#f8fafc"/>
+</svg>
