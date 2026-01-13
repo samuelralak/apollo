@@ -88,7 +88,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
             {/* Stats and actions - always same row */}
             <div className="mt-3 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
                 {/* Stats */}
-                <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap min-w-0">
                     <span>{voteCount} votes</span>
                     <span className={`inline-flex items-center gap-1 ${
                         hasAcceptedAnswer

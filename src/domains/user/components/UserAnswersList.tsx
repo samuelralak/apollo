@@ -100,7 +100,7 @@ const UserAnswersList = ({answers, votes, loading}: UserAnswersListProps) => {
     });
 
     return (
-        <div>
+        <div className="overflow-hidden">
             {/* Stats Summary */}
             <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">
@@ -122,10 +122,10 @@ const UserAnswersList = ({answers, votes, loading}: UserAnswersListProps) => {
                     {topVoted && topVoted.score > 0 && (
                         <Link
                             to={`/questions/${topVoted.answer.questionId}`}
-                            className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                            className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors overflow-hidden"
                         >
                             <p className="text-xs font-medium text-green-700 dark:text-green-400 mb-1">Most Helpful</p>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 line-clamp-1">
+                            <p className="text-sm text-slate-900 dark:text-slate-100 truncate">
                                 {topVoted.answer.description.slice(0, 80)}...
                             </p>
                             <p className="text-xs text-green-600 dark:text-green-500 mt-1">+{topVoted.score} score</p>
@@ -137,10 +137,10 @@ const UserAnswersList = ({answers, votes, loading}: UserAnswersListProps) => {
                         return downvotes > 0 && (
                             <Link
                                 to={`/questions/${mostControversial.answer.questionId}`}
-                                className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                                className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors overflow-hidden"
                             >
                                 <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">Most Discussed</p>
-                                <p className="text-sm text-slate-900 dark:text-slate-100 line-clamp-1">
+                                <p className="text-sm text-slate-900 dark:text-slate-100 truncate">
                                     {mostControversial.answer.description.slice(0, 80)}...
                                 </p>
                                 <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">{downvotes} downvotes</p>
@@ -172,17 +172,17 @@ const UserAnswersList = ({answers, votes, loading}: UserAnswersListProps) => {
                                     <p className="text-xs text-slate-400 dark:text-slate-500">votes</p>
                                 </div>
 
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2">
+                                <div className="w-0 min-w-0 flex-1 overflow-hidden">
+                                    <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 break-words">
                                         {answer.description.slice(0, 200)}
                                         {answer.description.length > 200 ? '...' : ''}
                                     </p>
 
                                     <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
-                                        <span>{formatDateTime(answer.createdAt)}</span>
+                                        <span className="flex-shrink-0">{formatDateTime(answer.createdAt)}</span>
                                         <Link
                                             to={`/questions/${answer.questionId}`}
-                                            className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors"
+                                            className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors truncate"
                                         >
                                             View question
                                         </Link>

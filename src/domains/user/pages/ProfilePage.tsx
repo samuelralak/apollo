@@ -110,15 +110,35 @@ const ProfilePage = () => {
     ];
 
     return (
-        <div className="space-y-6 overflow-hidden">
-            {/* Banner */}
-            <img
-                className="h-32 sm:h-40 w-full object-cover bg-slate-100 dark:bg-slate-800 rounded-xl"
-                src={profile?.banner ?? BannerPlaceholder}
-                alt=""
-            />
+        <div className="overflow-hidden">
+            {/* Banner with overlapping avatar */}
+            <div className="relative">
+                <img
+                    className="h-32 sm:h-40 w-full object-cover bg-slate-100 dark:bg-slate-800 rounded-xl"
+                    src={profile?.banner ?? BannerPlaceholder}
+                    alt=""
+                />
+                {/* Avatar - positioned to overlap 25% into banner (75% below) */}
+                <div className="absolute bottom-0 left-3 sm:left-4 translate-y-3/4">
+                    {profile?.image || profile?.picture ? (
+                        <img
+                            className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover border-4 border-white dark:border-slate-950 bg-slate-100 dark:bg-slate-800"
+                            src={profile?.image ?? profile?.picture}
+                            alt=""
+                        />
+                    ) : (
+                        <span className="h-20 w-20 sm:h-24 sm:w-24 inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-xl border-4 border-white dark:border-slate-950">
+                            <HugeiconsIcon
+                                icon={UserCircleIcon}
+                                className="h-full w-full text-slate-300 dark:text-slate-600"
+                                size={96}
+                            />
+                        </span>
+                    )}
+                </div>
+            </div>
 
-            {/* Profile Info */}
+            {/* Profile Info - mt accounts for avatar overlap (50% of avatar height) */}
             <ProfileSidebar
                 pubkey={pubkey}
                 profile={profile}
@@ -128,7 +148,7 @@ const ProfilePage = () => {
             />
 
             {/* Main Content */}
-            <div>
+            <div className="mt-6 overflow-hidden">
                     {/* Tabs */}
                     <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
                         <nav className="flex gap-4 md:gap-6">
@@ -161,7 +181,7 @@ const ProfilePage = () => {
                     </div>
 
                     {/* Tab Content */}
-                    <div className="mt-4">
+                    <div className="mt-4 overflow-hidden">
                         {activeTab === 'overview' && (
                             <OverviewTab
                                 activity={activity}
@@ -239,7 +259,7 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-hidden">
             {/* Engagement Stats - Compact Row */}
             <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-1.5">
@@ -267,7 +287,7 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
 
             {/* Top Tags */}
             {topTags.length > 0 && (
-                <div>
+                <div className="overflow-hidden">
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
                         Top Tags
                     </h3>
@@ -275,10 +295,10 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
                         {topTags.map(([tag, count]) => (
                             <span
                                 key={tag}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 max-w-[200px]"
                             >
-                                {tag}
-                                <span className="text-slate-400 dark:text-slate-500">({count})</span>
+                                <span className="truncate">{tag}</span>
+                                <span className="text-slate-400 dark:text-slate-500 flex-shrink-0">({count})</span>
                             </span>
                         ))}
                     </div>
@@ -286,7 +306,7 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
             )}
 
             {/* Recent Activity */}
-            <div>
+            <div className="overflow-hidden">
                 <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4">
                     Recent Activity
                 </h3>
@@ -297,7 +317,7 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
 
                         <ul className="space-y-5">
                             {recentActivity.map((item) => (
-                                <li key={`${item.type}-${item.id}`} className="relative">
+                                <li key={`${item.type}-${item.id}`} className="relative min-w-0">
                                     {/* Timeline icon */}
                                     <div className="absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700">
                                         <HugeiconsIcon
@@ -307,15 +327,17 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
                                         />
                                     </div>
 
-                                    <div className="flex items-baseline justify-between gap-4">
-                                        <p className="text-sm leading-snug">
-                                            <span className="text-slate-500 dark:text-slate-400">
-                                                {item.type === 'question' ? 'Asked' : 'Answered'}
-                                            </span>
-                                            {' '}
-                                            <span className="text-slate-900 dark:text-slate-100 line-clamp-1">{item.title}</span>
-                                        </p>
-                                        <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                                    <div className="flex items-start justify-between gap-3 min-w-0">
+                                        <div className="min-w-0 flex-1 overflow-hidden">
+                                            <p className="text-sm leading-snug truncate">
+                                                <span className="text-slate-500 dark:text-slate-400">
+                                                    {item.type === 'question' ? 'Asked' : 'Answered'}
+                                                </span>
+                                                {' '}
+                                                <span className="text-slate-900 dark:text-slate-100">{item.title}</span>
+                                            </p>
+                                        </div>
+                                        <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap flex-shrink-0">
                                             {formatTimeAgo(item.createdAt)}
                                         </span>
                                     </div>
@@ -369,53 +391,40 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
     };
 
     return (
-        <div className="space-y-4">
-            {/* Avatar and Name Row */}
-            <div className="flex items-start gap-4">
-                <div className="-mt-12">
-                    {profile?.image || profile?.picture ? (
-                        <img
-                            className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover border-4 border-white dark:border-slate-950 bg-slate-100 dark:bg-slate-800"
-                            src={profile?.image ?? profile?.picture}
-                            alt=""
-                        />
-                    ) : (
-                        <span className="h-20 w-20 sm:h-24 sm:w-24 inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-xl border-4 border-white dark:border-slate-950">
-                            <HugeiconsIcon
-                                icon={UserCircleIcon}
-                                className="h-full w-full text-slate-300 dark:text-slate-600"
-                                size={96}
-                            />
-                        </span>
-                    )}
-                </div>
+        <div className="mt-3 space-y-3 px-3 sm:px-4 overflow-hidden">
+            {/* Name Row - with spacer for avatar */}
+            <div className="flex items-end gap-3 sm:gap-4 min-h-[44px] sm:min-h-[52px]">
+                {/* Spacer matching avatar width */}
+                <div className="w-20 sm:w-24 flex-shrink-0" />
 
-                <div className="flex-1 min-w-0 pt-1">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                            <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
+                <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="flex items-center justify-between gap-2 sm:gap-3">
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                            <h1 className="text-base sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
                                 {displayName}
                             </h1>
                             {profile?.nip05 && (
-                                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
                                     {profile.nip05}
                                 </p>
                             )}
                         </div>
-                        <FollowButton pubkey={pubkey} size="sm" />
+                        <div className="flex-shrink-0">
+                            <FollowButton pubkey={pubkey} size="sm" />
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Bio */}
             {profile?.about && (
-                <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-words overflow-hidden">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-words overflow-hidden">
                     {profile.about}
                 </p>
             )}
 
             {/* Followers/Following + Links Row */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-xs sm:text-sm overflow-hidden">
                 {followLoading ? (
                     <div className="flex gap-5 animate-pulse">
                         <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
@@ -443,17 +452,17 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
                         href={profile.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors max-w-[180px]"
                     >
-                        <HugeiconsIcon icon={Link01Icon} size={14} />
-                        {getHostname(profile.website)}
+                        <HugeiconsIcon icon={Link01Icon} size={14} className="flex-shrink-0" />
+                        <span className="truncate">{getHostname(profile.website)}</span>
                     </a>
                 )}
 
                 {profile?.lud16 && (
-                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-                        <HugeiconsIcon icon={BitcoinEllipseIcon} size={14} className="text-amber-500" />
-                        <span className="truncate max-w-[100px] sm:max-w-[160px]">{profile.lud16}</span>
+                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 max-w-[140px] sm:max-w-[200px]">
+                        <HugeiconsIcon icon={BitcoinEllipseIcon} size={14} className="text-amber-500 flex-shrink-0" />
+                        <span className="truncate">{profile.lud16}</span>
                     </div>
                 )}
             </div>

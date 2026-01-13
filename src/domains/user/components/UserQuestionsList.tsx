@@ -96,7 +96,7 @@ const UserQuestionsList = ({questions, votes, loading}: UserQuestionsListProps) 
     });
 
     return (
-        <div>
+        <div className="overflow-hidden">
             {/* Stats Summary */}
             <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4 text-sm">
                 <span className="text-slate-600 dark:text-slate-400">
@@ -115,20 +115,20 @@ const UserQuestionsList = ({questions, votes, loading}: UserQuestionsListProps) 
                     {topVoted && topVoted.score > 0 && (
                         <Link
                             to={`/questions/${topVoted.question.id}`}
-                            className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                            className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors overflow-hidden"
                         >
                             <p className="text-xs font-medium text-green-700 dark:text-green-400 mb-1">Most Voted</p>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 line-clamp-1">{topVoted.question.title}</p>
+                            <p className="text-sm text-slate-900 dark:text-slate-100 truncate">{topVoted.question.title}</p>
                             <p className="text-xs text-green-600 dark:text-green-500 mt-1">+{topVoted.score} score</p>
                         </Link>
                     )}
                     {mostControversial && (votes.get(mostControversial.question.id)?.downvotes ?? 0) > 0 && (
                         <Link
                             to={`/questions/${mostControversial.question.id}`}
-                            className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                            className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors overflow-hidden"
                         >
                             <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">Most Discussed</p>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 line-clamp-1">{mostControversial.question.title}</p>
+                            <p className="text-sm text-slate-900 dark:text-slate-100 truncate">{mostControversial.question.title}</p>
                             <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">{votes.get(mostControversial.question.id)?.downvotes} downvotes</p>
                         </Link>
                     )}
@@ -156,10 +156,10 @@ const UserQuestionsList = ({questions, votes, loading}: UserQuestionsListProps) 
                                     <p className="text-xs text-slate-400 dark:text-slate-500">votes</p>
                                 </div>
 
-                                <div className="min-w-0 flex-1">
+                                <div className="w-0 min-w-0 flex-1 overflow-hidden">
                                     <Link
                                         to={`/questions/${question.id}`}
-                                        className="text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors"
+                                        className="block text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors line-clamp-2"
                                     >
                                         {question.title}
                                     </Link>
@@ -176,7 +176,7 @@ const UserQuestionsList = ({questions, votes, loading}: UserQuestionsListProps) 
                                             {question.tags.map(tag => (
                                                 <span
                                                     key={tag}
-                                                    className="px-2 py-0.5 text-xs rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                                    className="px-2 py-0.5 text-xs rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 max-w-[150px] truncate"
                                                 >
                                                     {tag}
                                                 </span>

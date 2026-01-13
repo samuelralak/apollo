@@ -60,9 +60,9 @@ const AnswerItem = memo(({answer, question, editAction}: AnswerItemProps) => {
 
                 {/* Footer: author left, actions right */}
                 <div className="flex items-center justify-between gap-2 mt-4 sm:mt-6 text-xs text-slate-500 dark:text-slate-400">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                         <EventOwner pubkey={answer.user.pubkey} mini={true} inline={true} />
-                        <span>{formatDateTime(answer.createdAt)}</span>
+                        <span className="flex-shrink-0">{formatDateTime(answer.createdAt)}</span>
                     </div>
 
                     <ActionItems
