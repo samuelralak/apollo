@@ -59,7 +59,8 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
             }
 
             // 2. Text Search (NIP-50) via dedicated search relays
-            const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk)
+            // Pass true for connect parameter to ensure search relays are connected
+            const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk, true)
 
             const searchPromise = ndk.fetchEvents({
                 kinds: [0],

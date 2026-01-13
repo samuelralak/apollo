@@ -6,7 +6,7 @@ import { useDebouncedEffect, useIsMounted } from "@react-hookz/web";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon, Cancel01Icon, UserIcon, CommandIcon } from "@hugeicons-pro/core-solid-rounded";
 import { HelpCircleIcon, HashtagIcon } from "@hugeicons-pro/core-duotone-rounded";
-import type { NDKKind } from "@nostr-dev-kit/ndk";
+import type { NDKKind, NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKRelaySet } from "@nostr-dev-kit/ndk";
 import { AppDispatch, RootState } from "../../../app/store";
 import { hidePortal } from "../../store/portal.slice";
@@ -84,73 +84,91 @@ const SearchPortal = () => {
         setLoading(true);
 
         const ndk = ndkInstance();
-        const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk);
+        // Pass true for connect parameter to ensure search relays are connected
+        const searchRelaySet = NDKRelaySet.fromRelayUrls(constants.searchRelays, ndk, true);
         const allResults: SearchResult[] = [];
 
-        // Search Questions
+        // Helper functions for processing results
+        const processQuestionEvents = (events: Set<NDKEvent>): SearchResult[] => {
+            const results: SearchResult[] = [];
+            for (const event of events) {
+                try {
+                    const question = questionTransformer(event);
+                    results.push({
+                        id: question.id,
+                        type: 'question',
+                        title: question.title,
+                        subtitle: markdownToText(question.description).slice(0, 80),
+                        url: `/questions/${question.id}`,
+                    });
+                } catch {
+                    // Skip malformed question events
+                }
+            }
+            return results;
+        };
+
+        const processUserEvents = (events: Set<NDKEvent>): SearchResult[] => {
+            const results: SearchResult[] = [];
+            const seenPubkeys = new Set<string>();
+            for (const event of events) {
+                if (seenPubkeys.has(event.pubkey)) continue;
+                try {
+                    const profile = JSON.parse(event.content);
+                    seenPubkeys.add(event.pubkey);
+                    results.push({
+                        id: event.pubkey,
+                        type: 'user',
+                        title: profile.name || profile.display_name || 'Anonymous',
+                        subtitle: profile.nip05 || `${event.pubkey.slice(0, 12)}...`,
+                        image: profile.image || profile.picture,
+                        url: `/user/${event.pubkey}`,
+                        pubkey: event.pubkey,
+                    });
+                } catch {
+                    // Skip malformed profiles
+                }
+            }
+            return results;
+        };
+
+        // Build search promises based on active tab
+        const searchPromises: Promise<void>[] = [];
+
         if (tab === 'all' || tab === 'questions') {
-            try {
-                const limit = tab === 'questions' ? 15 : 8;
-                const questionEvents = await ndk.fetchEvents({
+            const limit = tab === 'questions' ? 15 : 8;
+            searchPromises.push(
+                ndk.fetchEvents({
                     kinds: [constants.questionKind as NDKKind],
                     search: trimmedQuery,
                     limit
-                }, { closeOnEose: true }, searchRelaySet);
-
-                for (const event of questionEvents) {
-                    try {
-                        const question = questionTransformer(event);
-                        allResults.push({
-                            id: question.id,
-                            type: 'question',
-                            title: question.title,
-                            subtitle: markdownToText(question.description).slice(0, 80),
-                            url: `/questions/${question.id}`,
-                        });
-                    } catch {
-                        // Skip malformed question events
-                    }
-                }
-            } catch (e) {
-                console.warn("Questions search failed", e);
-            }
+                }, { closeOnEose: true }, searchRelaySet)
+                    .then(events => { allResults.push(...processQuestionEvents(events)); })
+                    .catch(e => console.warn("Questions search failed", e))
+            );
         }
 
-        // Search Users
         if (tab === 'all' || tab === 'users') {
-            try {
-                const limit = tab === 'users' ? 15 : 5;
-                const userEvents = await ndk.fetchEvents({
+            const limit = tab === 'users' ? 15 : 5;
+            searchPromises.push(
+                ndk.fetchEvents({
                     kinds: [0 as NDKKind],
                     search: trimmedQuery,
                     limit
-                }, { closeOnEose: true }, searchRelaySet);
+                }, { closeOnEose: true }, searchRelaySet)
+                    .then(events => { allResults.push(...processUserEvents(events)); })
+                    .catch(e => console.warn("Users search failed", e))
+            );
+        }
 
-                const seenPubkeys = new Set<string>();
-
-                for (const event of userEvents) {
-                    if (seenPubkeys.has(event.pubkey)) continue;
-
-                    try {
-                        const profile = JSON.parse(event.content);
-                        seenPubkeys.add(event.pubkey);
-
-                        allResults.push({
-                            id: event.pubkey,
-                            type: 'user',
-                            title: profile.name || profile.display_name || 'Anonymous',
-                            subtitle: profile.nip05 || `${event.pubkey.slice(0, 12)}...`,
-                            image: profile.image || profile.picture,
-                            url: `/user/${event.pubkey}`,
-                            pubkey: event.pubkey,
-                        });
-                    } catch {
-                        // Skip malformed profiles
-                    }
-                }
-            } catch (e) {
-                console.warn("Users search failed", e);
-            }
+        // Run searches in parallel with overall timeout
+        try {
+            await Promise.race([
+                Promise.all(searchPromises),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Search timeout')), 6000))
+            ]);
+        } catch (e) {
+            console.warn("Search timed out", e);
         }
 
         // Search Tags (client-side from existing questions)
