@@ -40,7 +40,11 @@ const InvitesPage = () => {
     const counts = useMemo(() => {
         let pending = 0, answered = 0;
         for (const q of questions) {
-            answeredIds.has(q.id) ? answered++ : pending++;
+            if (answeredIds.has(q.id)) {
+                answered++;
+            } else {
+                pending++;
+            }
         }
         return { all: questions.length, pending, answered };
     }, [questions, answeredIds]);
