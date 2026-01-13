@@ -81,6 +81,9 @@ const ProfilePage = () => {
     const {activity, loading: activityLoading} = useUserActivity(pubkey || '');
 
     // Follower/following counts for display
+    // TODO: Consider creating lightweight "counts-only" hooks (useUserFollowersCount, useUserFollowingCount)
+    // that don't store the full pubkey lists. Current hooks create persistent subscriptions and store
+    // all follower/following pubkeys in state, but ProfilePage only needs the counts.
     const {count: followersCount, loading: followersLoading} = useUserFollowers(pubkey);
     const {count: followingCount, loading: followingLoading} = useUserFollowing(pubkey);
 
