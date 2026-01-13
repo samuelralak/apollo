@@ -46,7 +46,7 @@ const Root = () => {
                         <Sidebar className="hidden md:flex" />
 
                         {/* Main content area */}
-                        <main className="flex-1 min-h-screen max-w-[600px] border-x border-slate-200 dark:border-slate-800 overflow-hidden">
+                        <main className="flex-1 min-h-screen max-w-[600px] md:border-x md:border-slate-200 md:dark:border-slate-800 overflow-hidden">
                             <div className="px-4 py-6 pb-20 md:pb-6 overflow-hidden">
                                 <Outlet />
                             </div>
