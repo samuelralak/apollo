@@ -76,8 +76,9 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
             await ndkRef.current.connect(5000)
             await new Promise(resolve => setTimeout(resolve, 1000))
 
+            // NDKRelayStatus.CONNECTED = 5, NDKRelayStatus.AUTHENTICATED = 8
             const connected = Array.from(ndkRef.current.pool.relays.values())
-                .filter(r => r.connectivity.status === 1)
+                .filter(r => r.connectivity.status === 5 || r.connectivity.status === 8)
 
             if (connected.length === 0) {
                 console.warn('No relays connected, proceeding anyway')
@@ -156,12 +157,27 @@ const NDKProvider = ({children}: { children: ReactNode }) => {
 
     const getRelays = useCallback((): RelayInfo[] => {
         if (!ndkRef.current) return [];
-        return Array.from(ndkRef.current.pool.relays.entries()).map(([url, relay]) => ({
-            url,
-            status: relay.connectivity.status === 1 ? 'connected'
-                : relay.connectivity.status === 0 ? 'connecting'
-                : 'disconnected'
-        }));
+
+        // NDKRelayStatus enum values:
+        // DISCONNECTING=0, DISCONNECTED=1, RECONNECTING=2, FLAPPING=3,
+        // CONNECTING=4, CONNECTED=5, AUTH_REQUESTED=6, AUTHENTICATING=7, AUTHENTICATED=8
+        return Array.from(ndkRef.current.pool.relays.entries()).map(([url, relay]) => {
+            const status = relay.connectivity.status;
+            let relayStatus: RelayInfo['status'];
+
+            if (status === 5 || status === 8) {
+                // CONNECTED or AUTHENTICATED
+                relayStatus = 'connected';
+            } else if (status === 4 || status === 6 || status === 7 || status === 2) {
+                // CONNECTING, AUTH_REQUESTED, AUTHENTICATING, or RECONNECTING
+                relayStatus = 'connecting';
+            } else {
+                // DISCONNECTING, DISCONNECTED, FLAPPING
+                relayStatus = 'disconnected';
+            }
+
+            return { url, status: relayStatus };
+        });
     }, []);
 
     // Memoize context value to prevent unnecessary re-renders
