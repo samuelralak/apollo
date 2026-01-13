@@ -82,11 +82,12 @@ const RightSidebar = ({ className }: RightSidebarProps) => {
                 </nav>
 
                 <p className="mb-2 text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={CopyrightIcon} size={13} className="inline-block align-middle mr-0.5" />
-                    {currentYear} Apollo. Open source under AGPL-3.0. Built on The Bitcoin Standard.
+                    Open source under AGPL-3.0. Built on The Bitcoin Standard.
                 </p>
                 <p className="flex items-center gap-1 text-slate-400 dark:text-slate-500">
-                    <span className="text-purple-500 font-medium">NOSTR</span>
+                    <HugeiconsIcon icon={CopyrightIcon} size={13} className="inline-block align-middle" />
+                    <span>{currentYear} Apollo.</span>
+                    <span className="text-purple-500 font-semibold">NOSTR</span>
                     <span>+</span>
                     <HugeiconsIcon icon={BitcoinEllipseIcon} size={16} className="text-amber-500" />
                     <HugeiconsIcon icon={FlashIcon} size={13} className="text-amber-400 -ml-0.5" />
