@@ -155,17 +155,17 @@ const InvitesPage = () => {
                                             )}
                                         </div>
 
-                                        <div className="min-w-0 flex-1">
+                                        <div className="w-0 min-w-0 flex-1 overflow-hidden">
                                             <Link
                                                 to={`/questions/${question.id}`}
-                                                className="text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors"
+                                                className="block text-slate-900 dark:text-slate-100 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors line-clamp-2"
                                             >
                                                 {question.title}
                                             </Link>
 
-                                            <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
-                                                <span>Asked by <EventOwner pubkey={question.user.pubkey} mini={true} /></span>
-                                                <span>{formatDateTime(question.createdAt)}</span>
+                                            <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-500 dark:text-slate-400 min-w-0">
+                                                <span className="flex items-center gap-1 min-w-0 truncate">Asked by <EventOwner pubkey={question.user.pubkey} mini={true} inline={true} /></span>
+                                                <span className="flex-shrink-0">{formatDateTime(question.createdAt)}</span>
                                             </div>
 
                                             {question.tags.length > 0 && (
@@ -173,7 +173,7 @@ const InvitesPage = () => {
                                                     {question.tags.map(tag => (
                                                         <span
                                                             key={tag}
-                                                            className="px-2 py-0.5 text-xs rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                                            className="px-2 py-0.5 text-xs rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 max-w-[150px] truncate"
                                                         >
                                                             {tag}
                                                         </span>
