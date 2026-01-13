@@ -1,7 +1,7 @@
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {MessageAdd01Icon, UserCircleIcon} from "@hugeicons-pro/core-duotone-rounded";
-import {UserCircleIcon as UserCircleOutlineIcon, Bookmark02Icon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
+import {UserCircleIcon as UserCircleOutlineIcon, Bookmark02Icon, AtIcon, Settings01Icon, Logout01Icon} from "@hugeicons-pro/core-twotone-rounded";
 import {Menu, MenuButton, MenuItems, MenuItem} from "@headlessui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
@@ -79,6 +79,17 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                                 >
                                     <HugeiconsIcon icon={Bookmark02Icon} size={18} className="text-slate-400 dark:text-slate-500" />
                                     Bookmarks
+                                </Link>
+                            )}
+                        </MenuItem>
+                        <MenuItem>
+                            {({focus}) => (
+                                <Link
+                                    to="/invites"
+                                    className={`flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 ${focus ? 'bg-slate-50 dark:bg-slate-700/50' : ''}`}
+                                >
+                                    <HugeiconsIcon icon={AtIcon} size={18} className="text-slate-400 dark:text-slate-500" />
+                                    Invites
                                 </Link>
                             )}
                         </MenuItem>

@@ -21,15 +21,17 @@ import {
 import ActivityGraph from "../components/ActivityGraph";
 import UserQuestionsList from "../components/UserQuestionsList";
 import UserAnswersList from "../components/UserAnswersList";
+import InvitedQuestionsList from "../components/InvitedQuestionsList";
 import useUserStats from "../hooks/useUserStats";
 import useUserActivity from "../hooks/useUserActivity";
+import useQuestionsForUser from "../hooks/useQuestionsForUser";
 import {FollowButton, FollowersList, FollowingList} from "../../follow/components";
 import {useUserFollowers, useUserFollowing} from "../../follow/hooks";
 import type {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import type {UserStats} from "../types/profile.types";
 import type {UserActivity} from "../types/profile.types";
 
-type TabId = 'overview' | 'questions' | 'answers' | 'followers' | 'following';
+type TabId = 'overview' | 'questions' | 'invites' | 'answers' | 'followers' | 'following';
 
 // TODO: Move formatTimeAgo to src/utils/date.utils.ts for reuse across components
 const formatTimeAgo = (timestamp: number): string => {
@@ -84,6 +86,9 @@ const ProfilePage = () => {
     const {followersPubkeys, count: followersCount, loading: followersLoading, initialized: followersInitialized} = useUserFollowers(pubkey);
     const {followingPubkeys, count: followingCount, loading: followingLoading, initialized: followingInitialized} = useUserFollowing(pubkey);
 
+    // Invited questions - questions where this user is p-tagged (AMA support)
+    const {questions: invitedQuestions, count: invitedCount, loading: invitedLoading, initialized: invitedInitialized} = useQuestionsForUser(pubkey);
+
     // Safety check: show error state if no pubkey
     if (!pubkey) {
         return <div className="p-8 text-center text-slate-500">Invalid User ID</div>;
@@ -99,6 +104,7 @@ const ProfilePage = () => {
     const tabs = [
         {id: 'overview' as TabId, name: 'Overview', count: null},
         {id: 'questions' as TabId, name: 'Questions', count: stats.questionsCount},
+        {id: 'invites' as TabId, name: 'Invites', count: invitedCount},
         {id: 'answers' as TabId, name: 'Answers', count: stats.answersCount},
         {id: 'followers' as TabId, name: 'Followers', count: followersCount},
         {id: 'following' as TabId, name: 'Following', count: followingCount}
@@ -171,6 +177,15 @@ const ProfilePage = () => {
                         )}
                         {activeTab === 'questions' && (
                             <UserQuestionsList questions={questions} votes={questionVotes} loading={statsLoading} />
+                        )}
+                        {activeTab === 'invites' && (
+                            <InvitedQuestionsList
+                                questions={invitedQuestions}
+                                answers={answers}
+                                targetPubkey={pubkey}
+                                loading={invitedLoading}
+                                initialized={invitedInitialized}
+                            />
                         )}
                         {activeTab === 'answers' && (
                             <UserAnswersList answers={answers} votes={answerVotes} loading={statsLoading} />
