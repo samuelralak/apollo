@@ -66,7 +66,7 @@ const HomePage = () => {
     }
 
     return (
-        <div className="max-w-3xl">
+        <div className="max-w-3xl overflow-hidden">
             {/* New questions available banner */}
             <NewQuestionsBanner
                 count={pendingCount}

@@ -48,12 +48,12 @@ const FollowingList = memo(({ followingPubkeys, loading, initialized }: Followin
                     {visiblePubkeys.map((followingPubkey) => (
                         <div
                             key={followingPubkey}
-                            className="flex items-center justify-between py-3 first:pt-0"
+                            className="flex items-center justify-between gap-3 py-3 first:pt-0 overflow-hidden"
                         >
-                            <div className="flex-1 min-w-0">
+                            <div className="flex-1 min-w-0 overflow-hidden">
                                 <EventOwner pubkey={followingPubkey} />
                             </div>
-                            <div className="flex-shrink-0 ml-3">
+                            <div className="flex-shrink-0">
                                 <FollowButton pubkey={followingPubkey} size="sm" />
                             </div>
                         </div>
@@ -94,7 +94,7 @@ const FollowingList = memo(({ followingPubkeys, loading, initialized }: Followin
 
     // Initialized with no data - show empty state
     return (
-        <div className="text-center py-12">
+        <div className="text-center py-8 md:py-12">
             <p className="text-slate-500 dark:text-slate-400">
                 Not following anyone yet
             </p>

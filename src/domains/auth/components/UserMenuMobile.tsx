@@ -35,10 +35,15 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
                     )}
                 </div>
 
-                <div className="ml-3">
-                    <div
-                        className="text-base font-medium text-slate-800 dark:text-slate-200">{auth.userProfile?.displayName ?? auth.userProfile?.name}</div>
-                    <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{auth.userProfile?.nip05}</div>
+                <div className="ml-3 min-w-0 flex-1">
+                    <div className="text-base font-medium text-slate-800 dark:text-slate-200 truncate">
+                        {auth.userProfile?.displayName ?? auth.userProfile?.name}
+                    </div>
+                    {auth.userProfile?.nip05 && (
+                        <div className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
+                            {auth.userProfile.nip05}
+                        </div>
+                    )}
                 </div>
                 {showNotifications && (
                     <DisclosureButton

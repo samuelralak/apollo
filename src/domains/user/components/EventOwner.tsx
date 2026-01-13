@@ -54,9 +54,9 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
     const Wrapper = inline ? 'span' : 'div';
 
     const content = (
-        <Wrapper className={classNames(inline ? 'inline-flex' : 'flex', 'items-center space-x-3')}>
+        <Wrapper className={classNames(inline ? 'inline-flex' : 'flex min-w-0', 'items-center', inline ? 'gap-1.5' : 'gap-3')}>
             {!hideAvatar && (
-                <Wrapper>
+                <Wrapper className="flex-shrink-0">
                     {avatarUrl ? (
                         <img
                             className={classNames(mini ? 'h-5 w-5 rounded' : 'h-9 w-9 rounded-lg', 'inline-block object-cover')}
@@ -73,13 +73,13 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
                 </Wrapper>
             )}
 
-            <Wrapper>
-                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', inline ? '' : 'block', 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate max-w-36 sm:max-w-none ')}>
+            <Wrapper className={classNames(inline ? 'inline-block max-w-[150px] align-middle' : 'min-w-0 flex-1 overflow-hidden')}>
+                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'block max-w-full text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate')}>
                     {displayName}
                 </Wrapper>
 
                 {(nip05 && !mini) && (
-                    <Wrapper className="block text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+                    <Wrapper className="block w-full text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 truncate">
                         {nip05}
                     </Wrapper>
                 )}
@@ -88,11 +88,11 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
     );
 
     if (disableLink) {
-        return <Wrapper className={classNames(inline ? 'inline' : 'block', 'flex-shrink-0')}>{content}</Wrapper>;
+        return <Wrapper className={classNames(inline ? 'inline flex-shrink-0' : 'block min-w-0')}>{content}</Wrapper>;
     }
 
     return (
-        <Link to={`/user/${pubkey}`} className={classNames(inline ? 'inline' : 'block', 'group flex-shrink-0')}>
+        <Link to={`/user/${pubkey}`} className={classNames(inline ? 'inline flex-shrink-0' : 'block min-w-0', 'group')}>
             {content}
         </Link>
     )

@@ -110,7 +110,7 @@ const ProfilePage = () => {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-hidden">
             {/* Banner */}
             <img
                 className="h-32 sm:h-40 w-full object-cover bg-slate-100 dark:bg-slate-800 rounded-xl"
@@ -131,7 +131,7 @@ const ProfilePage = () => {
             <div>
                     {/* Tabs */}
                     <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
-                        <nav className="flex gap-6">
+                        <nav className="flex gap-4 md:gap-6">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -453,7 +453,7 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
                 {profile?.lud16 && (
                     <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
                         <HugeiconsIcon icon={BitcoinEllipseIcon} size={14} className="text-amber-500" />
-                        <span className="truncate max-w-[120px]">{profile.lud16}</span>
+                        <span className="truncate max-w-[100px] sm:max-w-[160px]">{profile.lud16}</span>
                     </div>
                 )}
             </div>

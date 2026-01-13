@@ -62,37 +62,37 @@ const FollowPage = () => {
     ];
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-hidden">
             {/* Header with back button and user info */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
                 <Link
                     to={`/user/${pubkey}`}
-                    className="p-2 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="flex-shrink-0 p-2 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >
                     <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600 dark:text-slate-400" />
                 </Link>
 
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                     {fetchingProfile ? (
                         <div className="animate-pulse flex items-center gap-3">
-                            <div className="h-10 w-10 bg-slate-200 dark:bg-slate-700 rounded-lg" />
+                            <div className="h-10 w-10 bg-slate-200 dark:bg-slate-700 rounded-lg flex-shrink-0" />
                             <div className="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded" />
                         </div>
                     ) : (
                         <>
                             {profile?.image || profile?.picture ? (
                                 <img
-                                    className="h-10 w-10 rounded-lg object-cover bg-slate-100 dark:bg-slate-800"
+                                    className="h-10 w-10 rounded-lg object-cover bg-slate-100 dark:bg-slate-800 flex-shrink-0"
                                     src={profile?.image ?? profile?.picture}
                                     alt=""
                                 />
                             ) : (
-                                <span className="h-10 w-10 inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                <span className="h-10 w-10 inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg flex-shrink-0">
                                     <HugeiconsIcon icon={UserCircleIcon} size={24} className="text-slate-400" />
                                 </span>
                             )}
-                            <div className="min-w-0">
-                                <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">
+                            <div className="min-w-0 flex-1">
+                                <h1 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">
                                     {displayName}
                                 </h1>
                             </div>

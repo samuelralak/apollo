@@ -171,7 +171,7 @@ const NotificationItem = ({
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 py-0.5">
+            <div className="flex-1 min-w-0 py-0.5 overflow-hidden">
                 {/* Actor and action */}
                 <div className={`${compact ? 'text-sm' : 'text-sm'} text-slate-900 dark:text-slate-100`}>
                     {actor ? (

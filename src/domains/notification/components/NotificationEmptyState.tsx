@@ -33,7 +33,7 @@ const NotificationEmptyState = ({
     }
 
     return (
-        <div className="text-center py-12">
+        <div className="text-center py-8 md:py-12">
             <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700 mb-4">
                 <HugeiconsIcon
                     icon={Notification01Icon}

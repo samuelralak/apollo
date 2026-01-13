@@ -64,7 +64,7 @@ const NotificationsPage = () => {
                 description="Your notifications on Apollo"
             />
 
-            <div className="max-w-3xl">
+            <div className="max-w-3xl overflow-hidden">
                 {/* Header */}
                 <header className="mb-6 flex items-center justify-between">
                     <div>
@@ -99,7 +99,7 @@ const NotificationsPage = () => {
 
                 {/* Category tabs */}
                 <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-                    <TabList className="flex gap-6 border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto scrollbar-hide">
+                    <TabList className="flex gap-4 md:gap-6 border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto scrollbar-hide">
                         {CATEGORY_TABS.map((tab) => {
                             const count = categoryCounts[tab.key];
                             return (
