@@ -73,13 +73,13 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
                 </Wrapper>
             )}
 
-            <Wrapper className={classNames(inline ? 'inline-block max-w-[150px] align-middle' : 'min-w-0 flex-1 overflow-hidden')}>
-                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'block max-w-full text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate')}>
+            <Wrapper className={classNames(inline ? 'inline-block max-w-[150px] align-middle overflow-hidden' : 'w-0 min-w-0 flex-1 overflow-hidden')}>
+                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'block text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate')}>
                     {displayName}
                 </Wrapper>
 
                 {(nip05 && !mini) && (
-                    <Wrapper className="block w-full text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 truncate">
+                    <Wrapper className="block text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 truncate">
                         {nip05}
                     </Wrapper>
                 )}
