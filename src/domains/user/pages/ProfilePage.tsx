@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {useParams, Link} from "react-router";
 import {useContext, useState, useMemo} from "react";
 import {useAsyncAbortable, useMountEffect, useUpdateEffect} from "@react-hookz/web";
 import type {Question} from "../../question/types/question.types";
@@ -11,8 +11,7 @@ import {HugeiconsIcon} from "@hugeicons/react";
 import {
     UserCircleIcon,
     Link01Icon,
-    BitcoinEllipseIcon,
-    CheckmarkBadge01Icon
+    BitcoinEllipseIcon
 } from "@hugeicons-pro/core-twotone-rounded";
 import {
     HelpCircleIcon,
@@ -25,13 +24,13 @@ import InvitedQuestionsList from "../components/InvitedQuestionsList";
 import useUserStats from "../hooks/useUserStats";
 import useUserActivity from "../hooks/useUserActivity";
 import useQuestionsForUser from "../hooks/useQuestionsForUser";
-import {FollowButton, FollowersList, FollowingList} from "../../follow/components";
+import {FollowButton} from "../../follow/components";
 import {useUserFollowers, useUserFollowing} from "../../follow/hooks";
 import type {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import type {UserStats} from "../types/profile.types";
 import type {UserActivity} from "../types/profile.types";
 
-type TabId = 'overview' | 'questions' | 'invites' | 'answers' | 'followers' | 'following';
+type TabId = 'overview' | 'questions' | 'invites' | 'answers';
 
 // TODO: Move formatTimeAgo to src/utils/date.utils.ts for reuse across components
 const formatTimeAgo = (timestamp: number): string => {
@@ -81,10 +80,9 @@ const ProfilePage = () => {
     const {questions, answers, questionVotes, answerVotes, stats, loading: statsLoading} = useUserStats(pubkey || '');
     const {activity, loading: activityLoading} = useUserActivity(pubkey || '');
 
-    // Follower/following data - hooks must be called at page level to avoid "late joiner" issue
-    // (when same filter is used in multiple hooks, later subscribers miss events)
-    const {followersPubkeys, count: followersCount, loading: followersLoading, initialized: followersInitialized} = useUserFollowers(pubkey);
-    const {followingPubkeys, count: followingCount, loading: followingLoading, initialized: followingInitialized} = useUserFollowing(pubkey);
+    // Follower/following counts for display
+    const {count: followersCount, loading: followersLoading} = useUserFollowers(pubkey);
+    const {count: followingCount, loading: followingLoading} = useUserFollowing(pubkey);
 
     // Invited questions - questions where this user is p-tagged (AMA support)
     const {questions: invitedQuestions, count: invitedCount, loading: invitedLoading, initialized: invitedInitialized} = useQuestionsForUser(pubkey);
@@ -106,33 +104,28 @@ const ProfilePage = () => {
         {id: 'questions' as TabId, name: 'Questions', count: stats.questionsCount},
         {id: 'invites' as TabId, name: 'Invites', count: invitedCount},
         {id: 'answers' as TabId, name: 'Answers', count: stats.answersCount},
-        {id: 'followers' as TabId, name: 'Followers', count: followersCount},
-        {id: 'following' as TabId, name: 'Following', count: followingCount}
     ];
 
     return (
         <div className="space-y-6">
             {/* Banner */}
             <img
-                className="h-32 sm:h-40 lg:h-48 w-full object-cover bg-slate-100 dark:bg-slate-800 rounded-xl"
+                className="h-32 sm:h-40 w-full object-cover bg-slate-100 dark:bg-slate-800 rounded-xl"
                 src={profile?.banner ?? BannerPlaceholder}
                 alt=""
             />
 
-            {/* Two-column layout */}
-            <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8 lg:mx-8">
-                {/* Sidebar */}
-                <ProfileSidebar
-                    pubkey={pubkey}
-                    profile={profile}
-                    followersCount={followersCount}
-                    followingCount={followingCount}
-                    followLoading={followersLoading || followingLoading}
-                    onTabChange={setActiveTab}
-                />
+            {/* Profile Info */}
+            <ProfileSidebar
+                pubkey={pubkey}
+                profile={profile}
+                followersCount={followersCount}
+                followingCount={followingCount}
+                followLoading={followersLoading || followingLoading}
+            />
 
-                {/* Main Content */}
-                <div className="mt-6 lg:mt-0">
+            {/* Main Content */}
+            <div>
                     {/* Tabs */}
                     <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
                         <nav className="flex gap-6">
@@ -190,23 +183,8 @@ const ProfilePage = () => {
                         {activeTab === 'answers' && (
                             <UserAnswersList answers={answers} votes={answerVotes} loading={statsLoading} />
                         )}
-                        {activeTab === 'followers' && (
-                            <FollowersList
-                                followersPubkeys={followersPubkeys}
-                                loading={followersLoading}
-                                initialized={followersInitialized}
-                            />
-                        )}
-                        {activeTab === 'following' && (
-                            <FollowingList
-                                followingPubkeys={followingPubkeys}
-                                loading={followingLoading}
-                                initialized={followingInitialized}
-                            />
-                        )}
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
@@ -258,108 +236,93 @@ const OverviewTab = ({activity, questions, answers, stats, loading}: OverviewTab
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
+            {/* Engagement Stats - Compact Row */}
+            <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Questions</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{stats.questionsCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Answers</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{stats.answersCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Votes</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">+{stats.votesReceived.upvotes}</span>
+                    <span className="text-slate-300 dark:text-slate-600">/</span>
+                    <span className="font-semibold text-red-600 dark:text-red-400">-{stats.votesReceived.downvotes}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Accepted</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{stats.acceptedAnswers}</span>
+                </div>
+            </div>
+
             {/* Activity Graph */}
             <ActivityGraph activity={activity} loading={false} />
 
-            {/* Two column layout: Timeline + Sidebar */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
-                {/* Activity Timeline */}
+            {/* Top Tags */}
+            {topTags.length > 0 && (
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                        Recent Activity
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                        Top Tags
                     </h3>
-                    {recentActivity.length > 0 ? (
-                        <div className="relative pl-8">
-                            {/* Timeline line */}
-                            <div className="absolute left-[11px] top-1 bottom-1 w-px bg-slate-200 dark:bg-slate-700" />
+                    <div className="flex flex-wrap gap-2">
+                        {topTags.map(([tag, count]) => (
+                            <span
+                                key={tag}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                            >
+                                {tag}
+                                <span className="text-slate-400 dark:text-slate-500">({count})</span>
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
-                            <ul className="space-y-5">
-                                {recentActivity.map((item) => (
-                                    <li key={`${item.type}-${item.id}`} className="relative">
-                                        {/* Timeline icon */}
-                                        <div className="absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                                            <HugeiconsIcon
-                                                icon={item.type === 'question' ? HelpCircleIcon : MessageDone01Icon}
-                                                size={14}
-                                                className="text-slate-400 dark:text-slate-500"
-                                            />
-                                        </div>
+            {/* Recent Activity */}
+            <div>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4">
+                    Recent Activity
+                </h3>
+                {recentActivity.length > 0 ? (
+                    <div className="relative pl-8">
+                        {/* Timeline line */}
+                        <div className="absolute left-[11px] top-1 bottom-1 w-px bg-slate-200 dark:bg-slate-700" />
 
-                                        <div className="flex items-baseline justify-between gap-4">
-                                            <p className="text-sm leading-snug">
-                                                <span className="text-slate-500 dark:text-slate-400">
-                                                    {item.type === 'question' ? 'Asked' : 'Answered'}
-                                                </span>
-                                                {' '}
-                                                <span className="text-slate-900 dark:text-slate-100 line-clamp-1">{item.title}</span>
-                                            </p>
-                                            <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                                                {formatTimeAgo(item.createdAt)}
+                        <ul className="space-y-5">
+                            {recentActivity.map((item) => (
+                                <li key={`${item.type}-${item.id}`} className="relative">
+                                    {/* Timeline icon */}
+                                    <div className="absolute -left-8 top-0 w-6 h-6 rounded-full flex items-center justify-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700">
+                                        <HugeiconsIcon
+                                            icon={item.type === 'question' ? HelpCircleIcon : MessageDone01Icon}
+                                            size={14}
+                                            className="text-slate-400 dark:text-slate-500"
+                                        />
+                                    </div>
+
+                                    <div className="flex items-baseline justify-between gap-4">
+                                        <p className="text-sm leading-snug">
+                                            <span className="text-slate-500 dark:text-slate-400">
+                                                {item.type === 'question' ? 'Asked' : 'Answered'}
                                             </span>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ) : (
-                        <p className="text-sm text-slate-500 dark:text-slate-400">No recent activity</p>
-                    )}
-                </div>
-
-                {/* Sidebar: Tags + Engagement */}
-                <div className="space-y-6">
-                    {/* Top Tags */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
-                            Top Tags
-                        </h3>
-                        {topTags.length > 0 ? (
-                            <div className="flex flex-wrap gap-2">
-                                {topTags.map(([tag, count]) => (
-                                    <span
-                                        key={tag}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-                                    >
-                                        {tag}
-                                        <span className="text-slate-400 dark:text-slate-500">({count})</span>
-                                    </span>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-slate-500 dark:text-slate-400">No tags yet</p>
-                        )}
+                                            {' '}
+                                            <span className="text-slate-900 dark:text-slate-100 line-clamp-1">{item.title}</span>
+                                        </p>
+                                        <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                                            {formatTimeAgo(item.createdAt)}
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-
-                    {/* Engagement Stats */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
-                            Engagement
-                        </h3>
-                        <dl className="space-y-3">
-                            <div className="flex justify-between items-center">
-                                <dt className="text-sm text-slate-600 dark:text-slate-400">Questions</dt>
-                                <dd className="text-sm font-semibold text-slate-900 dark:text-slate-100">{stats.questionsCount}</dd>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <dt className="text-sm text-slate-600 dark:text-slate-400">Answers</dt>
-                                <dd className="text-sm font-semibold text-slate-900 dark:text-slate-100">{stats.answersCount}</dd>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <dt className="text-sm text-slate-600 dark:text-slate-400">Votes received</dt>
-                                <dd className="text-sm font-semibold">
-                                    <span className="text-green-600 dark:text-green-400">+{stats.votesReceived.upvotes}</span>
-                                    <span className="text-slate-400 dark:text-slate-500 mx-1">/</span>
-                                    <span className="text-red-600 dark:text-red-400">-{stats.votesReceived.downvotes}</span>
-                                </dd>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <dt className="text-sm text-slate-600 dark:text-slate-400">Accepted</dt>
-                                <dd className="text-sm font-semibold text-slate-900 dark:text-slate-100">{stats.acceptedAnswers}</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
+                ) : (
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No recent activity</p>
+                )}
             </div>
         </div>
     );
@@ -389,10 +352,9 @@ interface ProfileSidebarProps {
     followersCount: number;
     followingCount: number;
     followLoading: boolean;
-    onTabChange: (tab: TabId) => void;
 }
 
-const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, followLoading, onTabChange}: ProfileSidebarProps) => {
+const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, followLoading}: ProfileSidebarProps) => {
     const displayName = profile?.displayName ?? profile?.display_name ?? profile?.name ?? 'Anonymous';
 
     const getHostname = (url: string): string => {
@@ -404,60 +366,42 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
     };
 
     return (
-        <aside className="space-y-4">
-            {/* Avatar */}
-            <div className="flex lg:block items-center gap-4">
-                <div className="-mt-12 lg:-mt-16">
+        <div className="space-y-4">
+            {/* Avatar and Name Row */}
+            <div className="flex items-start gap-4">
+                <div className="-mt-12">
                     {profile?.image || profile?.picture ? (
                         <img
-                            className="h-24 w-24 lg:h-32 lg:w-32 rounded-xl object-cover border-4 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800"
+                            className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover border-4 border-white dark:border-slate-950 bg-slate-100 dark:bg-slate-800"
                             src={profile?.image ?? profile?.picture}
                             alt=""
                         />
                     ) : (
-                        <span className="h-24 w-24 lg:h-32 lg:w-32 inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-xl border-4 border-white dark:border-slate-900">
+                        <span className="h-20 w-20 sm:h-24 sm:w-24 inline-flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-800 rounded-xl border-4 border-white dark:border-slate-950">
                             <HugeiconsIcon
                                 icon={UserCircleIcon}
                                 className="h-full w-full text-slate-300 dark:text-slate-600"
-                                size={128}
+                                size={96}
                             />
                         </span>
                     )}
                 </div>
 
-                {/* Name - shown inline on mobile */}
-                <div className="lg:hidden mt-2">
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                        {displayName}
-                    </h1>
-                    {profile?.nip05 && (
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {profile.nip05}
-                        </p>
-                    )}
-                </div>
-            </div>
-
-            {/* Name - shown below avatar on desktop */}
-            <div className="hidden lg:block">
-                <div className="flex items-start justify-between gap-3">
-                    <div>
-                        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                            {displayName}
-                        </h1>
-                        {profile?.nip05 && (
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                {profile.nip05}
-                            </p>
-                        )}
+                <div className="flex-1 min-w-0 pt-1">
+                    <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                            <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
+                                {displayName}
+                            </h1>
+                            {profile?.nip05 && (
+                                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                                    {profile.nip05}
+                                </p>
+                            )}
+                        </div>
+                        <FollowButton pubkey={pubkey} size="sm" />
                     </div>
-                    <FollowButton pubkey={pubkey} size="sm" />
                 </div>
-            </div>
-
-            {/* Follow button on mobile - shown inline */}
-            <div className="lg:hidden">
-                <FollowButton pubkey={pubkey} size="sm" />
             </div>
 
             {/* Bio */}
@@ -467,8 +411,8 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
                 </p>
             )}
 
-            {/* Followers/Following */}
-            <div className="flex items-center gap-5 text-sm">
+            {/* Followers/Following + Links Row */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
                 {followLoading ? (
                     <div className="flex gap-5 animate-pulse">
                         <div className="h-4 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
@@ -476,53 +420,41 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
                     </div>
                 ) : (
                     <>
-                        <button
-                            type="button"
-                            onClick={() => onTabChange('followers')}
+                        <Link
+                            to={`/user/${pubkey}/followers`}
                             className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
                         >
                             <strong className="text-slate-900 dark:text-slate-100">{followersCount}</strong> followers
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => onTabChange('following')}
+                        </Link>
+                        <Link
+                            to={`/user/${pubkey}/following`}
                             className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
                         >
                             <strong className="text-slate-900 dark:text-slate-100">{followingCount}</strong> following
-                        </button>
+                        </Link>
                     </>
                 )}
-            </div>
 
-            {/* Links */}
-            {(profile?.website || profile?.lud16) && (
-                <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                    {profile?.website && (
-                        <a
-                            href={profile.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-                        >
-                            <HugeiconsIcon icon={Link01Icon} size={16} />
-                            {getHostname(profile.website)}
-                        </a>
-                    )}
-                    {profile?.lud16 && (
-                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                            <HugeiconsIcon icon={BitcoinEllipseIcon} size={16} className="text-amber-500" />
-                            <span className="truncate">{profile.lud16}</span>
-                        </div>
-                    )}
-                    {profile?.nip05 && (
-                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                            <HugeiconsIcon icon={CheckmarkBadge01Icon} size={16} className="text-teal-500" />
-                            <span className="truncate">{profile.nip05}</span>
-                        </div>
-                    )}
-                </div>
-            )}
-        </aside>
+                {profile?.website && (
+                    <a
+                        href={profile.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                    >
+                        <HugeiconsIcon icon={Link01Icon} size={14} />
+                        {getHostname(profile.website)}
+                    </a>
+                )}
+
+                {profile?.lud16 && (
+                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                        <HugeiconsIcon icon={BitcoinEllipseIcon} size={14} className="text-amber-500" />
+                        <span className="truncate max-w-[120px]">{profile.lud16}</span>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

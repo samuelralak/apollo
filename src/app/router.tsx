@@ -2,7 +2,7 @@ import {createBrowserRouter, LoaderFunction} from "react-router";
 import {lazy, Suspense} from "react";
 import Root from "./Root";
 import {HomePage, QuestionPage, NewQuestionPage, EditQuestionPage} from "../domains/question/pages";
-import {ProfilePage, InvitesPage} from "../domains/user/pages";
+import {ProfilePage, InvitesPage, FollowPage} from "../domains/user/pages";
 import {BookmarksPage} from "../domains/bookmark/pages";
 import {AboutPage, PrivacyPolicyPage, TermsOfUsePage} from "../domains/website/pages";
 import {
@@ -103,6 +103,14 @@ const router = createBrowserRouter([
             {
                 path: 'user/:pubkey',
                 element: <ProfilePage/>,
+            },
+            {
+                path: 'user/:pubkey/followers',
+                element: <FollowPage/>,
+            },
+            {
+                path: 'user/:pubkey/following',
+                element: <FollowPage/>,
             },
             {
                 path: 'about',
