@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon } from "@hugeicons-pro/core-solid-rounded";
+import { MessageAdd01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import type { AppDispatch, RootState } from "../../../app/store";
 import { showPortal, PortalID } from "../../store/portal.slice";
 import { classNames } from "../../../utils";
@@ -36,7 +36,7 @@ const FloatingActionButton = ({ className }: FloatingActionButtonProps) => {
             )}
             aria-label="Ask a question"
         >
-            <HugeiconsIcon icon={Add01Icon} size={24} />
+            <HugeiconsIcon icon={MessageAdd01Icon} size={24} />
         </button>
     );
 };

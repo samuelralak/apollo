@@ -1,10 +1,10 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Search01Icon,
     UserCircleIcon,
     Bookmark02Icon,
     AtIcon,
+    Settings01Icon,
     InformationCircleIcon,
     FileValidationIcon,
     SecurityLockIcon,
@@ -13,12 +13,11 @@ import {
     CopyrightIcon,
     BitcoinEllipseIcon,
     FlashIcon,
-    Cancel01Icon
 } from "@hugeicons-pro/core-twotone-rounded";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../app/store";
-import { hidePortal, showPortal, PortalID } from "../../store/portal.slice";
+import { hidePortal } from "../../store/portal.slice";
 import { signOut } from "../../../domains/auth/store/auth.slice";
 import { ThemeToggle } from "../../theme";
 
@@ -35,67 +34,50 @@ const MobileMenuPortal = () => {
         handleClose();
     };
 
-    const openSearch = () => {
-        dispatch(hidePortal());
-        setTimeout(() => {
-            dispatch(showPortal({ portalId: PortalID.search }));
-        }, 100);
-    };
-
-    const menuItemClass = "flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:bg-slate-100 dark:active:bg-slate-700 transition-colors";
-    const secondaryItemClass = "flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:bg-slate-100 dark:active:bg-slate-700 transition-colors";
+    const menuItemClass = "flex items-center gap-3 px-5 py-3.5 text-[15px] font-medium text-slate-800 dark:text-slate-100 active:bg-slate-100 dark:active:bg-slate-800 transition-colors";
+    const secondaryItemClass = "flex items-center gap-3 px-5 py-3 text-[14px] text-slate-600 dark:text-slate-300 active:bg-slate-100 dark:active:bg-slate-800 transition-colors";
 
     return (
         <Dialog open={visible} onClose={handleClose} className="relative z-50 md:hidden">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ease-out data-closed:opacity-0"
+                className="fixed inset-0 bg-black/40 transition-opacity duration-200 ease-out data-closed:opacity-0"
             />
 
             <div className="fixed inset-0 flex items-end">
                 <DialogPanel
                     transition
-                    className="w-full max-h-[85vh] rounded-t-2xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-closed:translate-y-full"
+                    className="w-full max-h-[80vh] rounded-t-2xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden transition-transform duration-300 ease-out data-closed:translate-y-full"
                 >
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                        <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">Menu</span>
-                        <button
-                            type="button"
-                            onClick={handleClose}
-                            className="p-2 -mr-2 rounded-lg text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        >
-                            <HugeiconsIcon icon={Cancel01Icon} size={20} />
-                        </button>
+                    {/* Drag handle */}
+                    <div className="flex justify-center pt-3 pb-2">
+                        <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
                     </div>
 
                     {/* Scrollable content */}
-                    <div className="overflow-y-auto max-h-[calc(85vh-60px)]">
-                        {/* Search */}
-                        <button type="button" onClick={openSearch} className={`${menuItemClass} w-full`}>
-                            <HugeiconsIcon icon={Search01Icon} size={20} className="text-slate-400 dark:text-slate-500" />
-                            Search
-                        </button>
-
+                    <div className="overflow-y-auto max-h-[calc(80vh-24px)] pb-safe">
                         {/* Auth-required items */}
                         {auth.isLoggedIn && (
                             <>
                                 <Link to={`/user/${auth.pubkey}`} onClick={handleClose} className={menuItemClass}>
-                                    <HugeiconsIcon icon={UserCircleIcon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                    <HugeiconsIcon icon={UserCircleIcon} size={20} className="text-slate-500 dark:text-slate-400" />
                                     Profile
                                 </Link>
                                 <Link to="/bookmarks" onClick={handleClose} className={menuItemClass}>
-                                    <HugeiconsIcon icon={Bookmark02Icon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                    <HugeiconsIcon icon={Bookmark02Icon} size={20} className="text-slate-500 dark:text-slate-400" />
                                     Bookmarks
                                 </Link>
                                 <Link to="/invites" onClick={handleClose} className={menuItemClass}>
-                                    <HugeiconsIcon icon={AtIcon} size={20} className="text-slate-400 dark:text-slate-500" />
+                                    <HugeiconsIcon icon={AtIcon} size={20} className="text-slate-500 dark:text-slate-400" />
                                     Invites
                                 </Link>
+                                <Link to="/settings/user-profile" onClick={handleClose} className={menuItemClass}>
+                                    <HugeiconsIcon icon={Settings01Icon} size={20} className="text-slate-500 dark:text-slate-400" />
+                                    Settings
+                                </Link>
+                                <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4 my-1" />
                             </>
                         )}
-
-                        <div className="border-t border-slate-100 dark:border-slate-800 my-1" />
 
                         {/* Info links */}
                         <Link to="/about" onClick={handleClose} className={secondaryItemClass}>
@@ -120,38 +102,38 @@ const MobileMenuPortal = () => {
                             GitHub
                         </a>
 
-                        <div className="border-t border-slate-100 dark:border-slate-800 my-1" />
+                        <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4 my-1" />
 
                         {/* Theme */}
-                        <div className="flex items-center justify-between px-4 py-3">
-                            <span className="text-base font-medium text-slate-700 dark:text-slate-200">Appearance</span>
+                        <div className="flex items-center justify-between px-5 py-3">
+                            <span className="text-[15px] font-medium text-slate-800 dark:text-slate-100">Appearance</span>
                             <ThemeToggle />
                         </div>
 
                         {/* Sign out */}
                         {auth.isLoggedIn && (
                             <>
-                                <div className="border-t border-slate-100 dark:border-slate-800 my-1" />
-                                <button type="button" onClick={handleSignOut} className={`${menuItemClass} w-full text-red-600 dark:text-red-400`}>
+                                <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4 my-1" />
+                                <button type="button" onClick={handleSignOut} className={`${menuItemClass} w-full`}>
                                     <HugeiconsIcon icon={Logout01Icon} size={20} className="text-red-500 dark:text-red-400" />
-                                    Sign out
+                                    <span className="text-red-600 dark:text-red-400">Sign out</span>
                                 </button>
                             </>
                         )}
 
                         {/* Footer */}
-                        <div className="border-t border-slate-100 dark:border-slate-800 mt-1" />
-                        <div className="px-4 py-4 text-xs text-slate-400 dark:text-slate-500">
-                            <p className="mb-2">
+                        <div className="h-px bg-slate-100 dark:bg-slate-800 mx-4 mt-1" />
+                        <div className="px-5 py-4 text-[12px] text-slate-400 dark:text-slate-500">
+                            <p className="mb-2 leading-relaxed">
                                 Open source under AGPL-3.0. Built on The Bitcoin Standard.
                             </p>
                             <p className="flex items-center gap-1">
-                                <HugeiconsIcon icon={CopyrightIcon} size={12} className="inline-block" />
+                                <HugeiconsIcon icon={CopyrightIcon} size={11} className="inline-block" />
                                 <span>{currentYear} Apollo.</span>
                                 <span className="text-purple-500 font-semibold">NOSTR</span>
                                 <span>+</span>
-                                <HugeiconsIcon icon={BitcoinEllipseIcon} size={14} className="text-amber-500" />
-                                <HugeiconsIcon icon={FlashIcon} size={12} className="text-amber-400 -ml-0.5" />
+                                <HugeiconsIcon icon={BitcoinEllipseIcon} size={13} className="text-amber-500" />
+                                <HugeiconsIcon icon={FlashIcon} size={11} className="text-amber-400 -ml-0.5" />
                             </p>
                         </div>
                     </div>
