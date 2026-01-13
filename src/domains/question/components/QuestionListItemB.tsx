@@ -1,17 +1,18 @@
-import {memo, useMemo} from "react";
+import {memo, useCallback, useMemo} from "react";
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {CheckmarkCircle02Icon as CheckmarkCircle02SolidIcon} from "@hugeicons-pro/core-solid-rounded";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import type {Question} from "../types/question.types";
 import {formatDateTime, markdownToText} from "../../../utils";
 import EventOwner from "../../user/components/EventOwner";
 import constants from "../../../constants";
-import {RootState} from "../../../app/store";
+import {AppDispatch, RootState} from "../../../app/store";
 import useQuestionStats from "../hooks/useQuestionStats";
 import ActionItems from "../../../shared/components/ActionItems";
 import {BookmarkButton} from "../../bookmark/components";
 import categories from "../../../data/categories.json";
+import {PortalID, showPortal} from "../../../shared/store/portal.slice";
 
 interface QuestionListItemBProps {
     question: Question;
@@ -26,11 +27,16 @@ interface QuestionListItemBProps {
  * - Accepted answer indicator
  */
 const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItemBProps) => {
+    const dispatch = useDispatch<AppDispatch>();
     const vote = useSelector((state: RootState) => state.vote[question.id]);
     const answer = useSelector((state: RootState) => state.answer[question.id]);
 
     // Subscribe to vote and answer stats for this question
     useQuestionStats(question);
+
+    const handleEditQuestion = useCallback(() => {
+        dispatch(showPortal({ portalId: PortalID.question, questionId: question.id }));
+    }, [dispatch, question.id]);
 
     const hasAcceptedAnswer = !!question.acceptedAnswerId;
     const voteCount = vote?.total ?? 0;
@@ -112,7 +118,7 @@ const QuestionListItemB = memo(({question, showPreview = true}: QuestionListItem
                         eventId={question.eventId}
                         pubkey={question.user.pubkey}
                         kind={constants.questionKind}
-                        editPath={`/questions/${question.id}/edit`}
+                        editAction={handleEditQuestion}
                     />
                 </div>
             </div>

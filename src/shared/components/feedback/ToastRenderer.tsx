@@ -1,5 +1,6 @@
 import {createPortal} from "react-dom";
 import {useDispatch, useSelector} from "react-redux";
+import {Link} from "react-router";
 import {useTimeoutEffect} from "@react-hookz/web";
 import {HugeiconsIcon} from "@hugeicons/react";
 import type {IconSvgElement} from "@hugeicons/react";
@@ -7,7 +8,8 @@ import {CheckmarkCircle02Icon, Cancel01Icon, Alert02Icon, InformationCircleIcon}
 import {AppDispatch, RootState} from "../../../app/store";
 import {dismissToast, ToastType} from "../../store/toast.slice";
 
-const TOAST_TIMEOUT = 3000
+const TOAST_TIMEOUT = 3000;
+const TOAST_TIMEOUT_WITH_ACTION = 6000;
 
 interface ToastConfig {
     icon: IconSvgElement;
@@ -42,9 +44,11 @@ const ToastRenderer = () => {
     const dispatch = useDispatch<AppDispatch>();
     const toast = useSelector((state: RootState) => state.toast);
 
+    const timeout = toast.action ? TOAST_TIMEOUT_WITH_ACTION : TOAST_TIMEOUT;
+
     useTimeoutEffect(
         () => dispatch(dismissToast()),
-        toast.visible ? TOAST_TIMEOUT : undefined
+        toast.visible ? timeout : undefined
     );
 
     if (!toast.visible) return null;
@@ -78,6 +82,17 @@ const ToastRenderer = () => {
                                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                                         {toast.subtitle}
                                     </p>
+                                )}
+                                {toast.action && (
+                                    <div className="mt-2">
+                                        <Link
+                                            to={toast.action.href}
+                                            onClick={() => dispatch(dismissToast())}
+                                            className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-500 dark:hover:text-teal-300"
+                                        >
+                                            {toast.action.label} &rarr;
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
                             <div className="ml-4 flex shrink-0">

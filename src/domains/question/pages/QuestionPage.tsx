@@ -15,6 +15,7 @@ import SEOContainer from "../../../shared/components/SEOContainer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import {addQuestion} from "../store/question.slice";
+import {PortalID, showPortal} from "../../../shared/store/portal.slice";
 import CommentsList from "../../comment/components/CommentList";
 import PostCommentBox from "../../comment/components/PostCommentBox";
 import categories from "../../../data/categories.json";
@@ -51,6 +52,10 @@ const QuestionPage = () => {
             resourceType: ResourceType.QUESTION
         }
     );
+
+    const handleEditQuestion = useCallback(() => {
+        dispatch(showPortal({ portalId: PortalID.question, questionId: questionId }));
+    }, [dispatch, questionId]);
 
     if (!question) {
         return <QuestionDetailSkeleton />
@@ -161,7 +166,7 @@ const QuestionPage = () => {
                                     eventId={question.eventId}
                                     pubkey={question.user.pubkey}
                                     kind={constants.questionKind}
-                                    editPath={`/questions/${question.id}/edit`}
+                                    editAction={handleEditQuestion}
                                 />
                             </div>
                         </div>

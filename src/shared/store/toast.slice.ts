@@ -2,11 +2,17 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
 
+export interface ToastAction {
+    label: string;
+    href: string;
+}
+
 interface ToastState {
     visible: boolean;
     title: string;
     subtitle?: string;
     type: ToastType;
+    action?: ToastAction;
 }
 
 const initialState: ToastState = {
@@ -24,9 +30,11 @@ const toastSlice = createSlice({
             state.title = payload.title;
             state.subtitle = payload.subtitle;
             state.type = payload.type ?? 'info';
+            state.action = payload.action;
         },
         dismissToast: (state) => {
             state.visible = false;
+            state.action = undefined;
         }
     }
 });

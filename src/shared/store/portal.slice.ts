@@ -6,7 +6,8 @@ export enum PortalID {
     auth = 'auth',
     mobileMenu = 'mobileMenu',
     welcome = 'welcome',
-    search = 'search'
+    search = 'search',
+    question = 'question'
 }
 
 export interface PortalState {
@@ -16,6 +17,7 @@ export interface PortalState {
     eventId?: string;
     eventCoordinate?: string;
     content?: string;
+    questionId?: string;
 }
 
 const initialState: PortalState = {

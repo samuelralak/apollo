@@ -15,6 +15,7 @@ import GetStartedPortal from "../shared/components/portal/GetStartedPortal";
 import MobileMenuPortal from "../shared/components/portal/MobileMenuPortal";
 import WelcomePortal from "../shared/components/portal/WelcomePortal";
 import SearchPortal from "../shared/components/portal/SearchPortal";
+import QuestionPortal from "../shared/components/portal/QuestionPortal";
 import useFirstVisit from "../shared/hooks/useFirstVisit";
 import useSearchShortcut from "../shared/hooks/useSearchShortcut";
 import {useMountEffect} from "@react-hookz/web";
@@ -93,6 +94,10 @@ const Root = () => {
 
                 {visible && portalId === PortalID.search && createPortal(
                     <SearchPortal />, document.body
+                )}
+
+                {isLoggedIn && visible && portalId === PortalID.question && createPortal(
+                    <QuestionPortal />, document.body
                 )}
 
                 <ToastRenderer />

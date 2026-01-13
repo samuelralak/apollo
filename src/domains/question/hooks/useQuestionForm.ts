@@ -36,7 +36,7 @@ export interface DraftStatus {
     isSaving: boolean;
 }
 
-const useQuestionForm = (question?: Question) => {
+const useQuestionForm = (question?: Question, onSuccess?: () => void) => {
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
     const auth = useSelector((state: RootState) => state.auth)
@@ -211,11 +211,20 @@ const useQuestionForm = (question?: Question) => {
 
             setPublishing(false)
             dispatch(showToast({
-                title: 'Success',
-                subtitle: 'Your question has been successfully published.',
-                type: 'success'
+                title: 'Question published',
+                subtitle: 'Your question is now live.',
+                type: 'success',
+                action: {
+                    label: 'View question',
+                    href: `/questions/${questionId}`
+                }
             }))
-            navigate(`/questions/${questionId}`)
+
+            if (onSuccess) {
+                onSuccess()
+            } else {
+                navigate(`/questions/${questionId}`)
+            }
         } catch (error) {
             setPublishing(false)
             dispatch(showToast({

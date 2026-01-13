@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router";
+import { NavLink } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { IconSvgElement } from "@hugeicons/react";
@@ -46,6 +46,7 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
 
     const openSearch = () => dispatch(showPortal({ portalId: PortalID.search }));
     const openAuth = () => dispatch(showPortal({ portalId: PortalID.auth }));
+    const openQuestion = () => dispatch(showPortal({ portalId: PortalID.question }));
 
     const tabs: TabItem[] = [
         {
@@ -63,10 +64,11 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
         },
         {
             name: 'Ask',
-            href: '/questions/new',
             icon: MessageAdd01Icon,
             iconSolid: MessageAdd01Icon,
             isPrimary: true,
+            isAction: !auth.isLoggedIn,
+            onClick: auth.isLoggedIn ? openQuestion : openAuth,
         },
         {
             name: 'Alerts',
@@ -108,12 +110,13 @@ const BottomTabBar = ({ className }: BottomTabBarProps) => {
 const TabItem = ({ tab }: { tab: TabItem }) => {
     if (tab.isPrimary) {
         return (
-            <Link
-                to={tab.href!}
+            <button
+                type="button"
+                onClick={tab.onClick}
                 className="flex items-center justify-center w-10 h-10 -mt-3 rounded-full bg-teal-500 text-white shadow-sm"
             >
                 <HugeiconsIcon icon={tab.icon} size={18} />
-            </Link>
+            </button>
         );
     }
 
