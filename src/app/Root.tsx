@@ -1,5 +1,6 @@
-import MainNavigation from "../shared/components/layout/MainNavigation";
-import Footer from "../shared/components/layout/Footer";
+import Sidebar from "../shared/components/layout/Sidebar";
+import RightSidebar from "../shared/components/layout/RightSidebar";
+import BottomTabBar from "../shared/components/layout/BottomTabBar";
 import {Outlet} from "react-router";
 import NDKProvider from "../lib/ndk/NDKProvider";
 import ToastRenderer from "../shared/components/feedback/ToastRenderer";
@@ -25,7 +26,6 @@ const Root = () => {
     const {isFirstVisit, markWelcomeSeen} = useFirstVisit()
     const helmetContext = {}
 
-    // Global keyboard shortcut for search (Cmd+K / Ctrl+K)
     useSearchShortcut()
 
     useMountEffect(() => {
@@ -37,13 +37,27 @@ const Root = () => {
     return (
         <HelmetProvider context={helmetContext}>
             <NDKProvider>
-                <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors">
-                    <MainNavigation/>
-                    <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8">
-                        <Outlet/>
-                    </main>
-                    <Footer/>
+                <div className="min-h-screen bg-white dark:bg-slate-950">
+                    {/* Centered container */}
+                    <div className="mx-auto max-w-[1400px] flex justify-center">
+                        {/* Left Sidebar - hidden on mobile */}
+                        <Sidebar className="hidden md:flex" />
+
+                        {/* Main content area */}
+                        <main className="flex-1 min-h-screen max-w-[600px] border-x border-slate-200 dark:border-slate-800">
+                            <div className="px-4 py-6 pb-20 md:pb-6">
+                                <Outlet />
+                            </div>
+                        </main>
+
+                        {/* Right Sidebar - hidden below xl */}
+                        <RightSidebar className="hidden xl:flex" />
+                    </div>
+
+                    {/* Mobile bottom tab bar */}
+                    <BottomTabBar className="md:hidden" />
                 </div>
+
                 {isLoggedIn && (visible && portalId === PortalID.zap) && createPortal(
                     <ZapPortal
                         pubkey={portal.pubkey!}
