@@ -328,3 +328,67 @@ The `**Invited:**` uses markdown bold syntax:
 - [ ] Verify Apollo shows mention notification for both old and new format questions
 - [ ] Test with multiple invited users
 - [ ] Test editing question and adding new invites
+
+---
+
+## Invited Questions Feature
+
+### Overview
+
+Users can view questions they've been invited to answer. This supports AMA (Ask Me Anything) workflows.
+
+### Views
+
+| View | Location | Access | Description |
+|------|----------|--------|-------------|
+| **Profile Tab** | `/user/:pubkey` → Invites tab | Public | See questions asked to any user (AMA discovery) |
+| **Invites Page** | `/invites` | Auth required | User's own inbox with filtering |
+| **Navigation** | User menu dropdown | Auth required | Quick access to invites page |
+
+### Implementation
+
+| File | Purpose |
+|------|---------|
+| `src/domains/user/hooks/useQuestionsForUser.ts` | Query questions where user is p-tagged |
+| `src/domains/user/components/InvitedQuestionsList.tsx` | List with answer status badges |
+| `src/domains/user/pages/InvitesPage.tsx` | Dedicated page with All/Pending/Answered filtering |
+
+### Query Pattern
+
+```typescript
+{ kinds: [questionKind], "#p": [targetPubkey], limit: 100 }
+```
+
+Same pattern as `useUserFollowers` which queries `{ kinds: [3], "#p": [pubkey] }`.
+
+### Answer Status Detection
+
+Answer status is calculated by cross-referencing the user's answers with invited questions:
+
+```typescript
+const answeredIds = useMemo(() => {
+    const userAnswers = answers.filter(a => a.user.pubkey === targetPubkey);
+    return new Set(userAnswers.map(a => a.questionId));
+}, [answers, targetPubkey]);
+```
+
+---
+
+## Future Improvements
+
+### Invites Feature (Phase 2)
+
+| Feature | Description | Complexity |
+|---------|-------------|------------|
+| **"From following" filter** | Prioritize/filter questions from users you follow | Medium |
+| **Dismiss/archive** | Hide invites you don't want to answer | Medium |
+| **Notification badge** | Show count of new/unread invites on menu item | Low |
+| **Sorting options** | Sort by date, by votes, by popularity | Low |
+
+### Cross-Client Improvements
+
+| Feature | Description | Complexity |
+|---------|-------------|------------|
+| **Deduplicate notifications** | Prevent showing both questionKind and kind 1 notifications | Medium |
+| **Edit detection** | Avoid re-notifying already-invited users when editing | Medium |
+| **Inline mention rendering** | Parse and render `nostr:npub1...` as clickable user links | Low |
