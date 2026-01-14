@@ -9,7 +9,7 @@ import {NDKContext} from "../../../../lib/ndk/NDKProvider";
 import {showToast} from "../../../../shared/store/toast.slice";
 
 const displayNameFromProfile = (userProfile: NDKUserProfile) => {
-    const name = String(userProfile?.displayName ?? userProfile?.display_name ?? "").split(" ")
+    const name = String(userProfile?.display_name ?? userProfile?.displayName ?? "").split(" ")
     const [firstName, ...rest] = name
     const lastName = (rest ?? []).join(" ")
 

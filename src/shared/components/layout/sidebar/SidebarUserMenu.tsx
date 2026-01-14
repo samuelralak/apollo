@@ -7,7 +7,7 @@ import type { AuthState } from "../../../../domains/auth/store/auth.slice";
 import { signOut } from "../../../../domains/auth/store/auth.slice";
 import { showPortal, PortalID } from "../../../store/portal.slice";
 import { ThemeToggle } from "../../../theme";
-import { classNames } from "../../../../utils";
+import { classNames, getDisplayName } from "../../../../utils";
 
 interface SidebarUserMenuProps {
     auth: AuthState;
@@ -43,7 +43,7 @@ const SidebarUserMenu = ({ auth }: SidebarUserMenuProps) => {
                 )}
                 <div className="hidden lg:flex lg:flex-col lg:items-start lg:flex-1 min-w-0">
                     <span className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-[130px]">
-                        {auth.userProfile?.displayName ?? auth.userProfile?.name ?? 'Anonymous'}
+                        {getDisplayName(auth.userProfile, auth.pubkey)}
                     </span>
                     {auth.userProfile?.nip05 && (
                         <span className="text-xs text-slate-500 truncate max-w-[130px]">
@@ -71,7 +71,7 @@ const SidebarUserMenu = ({ auth }: SidebarUserMenuProps) => {
             >
                 <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                     <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                        {auth.userProfile?.displayName ?? auth.userProfile?.name ?? 'Anonymous'}
+                        {getDisplayName(auth.userProfile, auth.pubkey)}
                     </p>
                     {auth.userProfile?.nip05 && (
                         <p className="text-xs text-slate-500 truncate mt-0.5">

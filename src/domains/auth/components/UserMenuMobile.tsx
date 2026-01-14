@@ -4,6 +4,7 @@ import {DisclosureButton} from "@headlessui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import {AuthState, signOut} from "../store/auth.slice";
+import {getDisplayName} from "../../../utils";
 
 const UserMenuMobile = ({auth}: { auth: AuthState }) => {
     const dispatch = useDispatch() as AppDispatch
@@ -37,7 +38,7 @@ const UserMenuMobile = ({auth}: { auth: AuthState }) => {
 
                 <div className="ml-3 min-w-0 flex-1">
                     <div className="text-base font-medium text-slate-800 dark:text-slate-200 truncate">
-                        {auth.userProfile?.displayName ?? auth.userProfile?.name}
+                        {getDisplayName(auth.userProfile, auth.pubkey)}
                     </div>
                     {auth.userProfile?.nip05 && (
                         <div className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">

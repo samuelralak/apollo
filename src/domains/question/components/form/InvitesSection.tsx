@@ -3,6 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, UserIcon } from "@hugeicons-pro/core-solid-rounded";
 import UserSearch from "../../../../shared/components/forms/UserSearch";
 import { formStyles } from "../../../../shared/styles/form.styles";
+import { getDisplayName } from "../../../../utils";
 
 interface InvitesSectionProps {
     invitedUsers: NDKUser[];
@@ -60,7 +61,7 @@ const InvitesSection = ({ invitedUsers, onInvite, onRemove }: InvitesSectionProp
 
                                     {/* User Name */}
                                     <span className="truncate max-w-[120px]">
-                                        {user.profile?.name || user.profile?.display_name || 'Anonymous'}
+                                        {getDisplayName(user.profile, user.pubkey)}
                                     </span>
 
                                     {/* Remove Button */}

@@ -2,7 +2,7 @@ import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {useContext} from "react";
 import {useAsyncAbortable, useMountEffect, useUpdateEffect} from "@react-hookz/web";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {classNames, formatNpub, safeString} from "../../../utils";
+import {classNames, formatNpub, safeString, getDisplayName} from "../../../utils";
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
@@ -38,11 +38,8 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
     // Verify NIP-05 with caching
     const {isVerified: isNip05Verified} = useNip05Verification(nip05, pubkey);
 
-    // Display name: displayName (first+last) > name (username) > truncated pubkey
-    const displayName = safeString(userProfile?.displayName)
-        ?? safeString(userProfile?.display_name)
-        ?? safeString(userProfile?.name)
-        ?? formatNpub(pubkey);
+    // Display name with NIP-24 compliant fallback chain
+    const displayName = getDisplayName(userProfile, pubkey);
 
     // Secondary identifier: NIP-05 address > truncated npub
     const secondaryIdentifier = nip05 ?? formatNpub(pubkey);

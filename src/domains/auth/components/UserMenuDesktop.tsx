@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../../app/store";
 import {AuthState, signOut} from "../store/auth.slice";
 import {NotificationBell} from "../../notification/components";
+import {getDisplayName} from "../../../utils";
 
 const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
     const dispatch = useDispatch() as AppDispatch
@@ -49,7 +50,7 @@ const UserMenuDesktop = ({auth}: { auth: AuthState }) => {
                     {/* User info header */}
                     <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
                         <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
-                            {auth.userProfile?.displayName ?? auth.userProfile?.name ?? 'Anonymous'}
+                            {getDisplayName(auth.userProfile, auth.pubkey)}
                         </p>
                         {auth.userProfile?.nip05 && (
                             <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">

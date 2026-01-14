@@ -4,7 +4,7 @@ import { useAsyncAbortable, useMountEffect, useUpdateEffect } from "@react-hookz
 import { NDKContext } from "../../../lib/ndk/NDKProvider";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, UserCircleIcon } from "@hugeicons-pro/core-duotone-rounded";
-import { classNames } from "../../../utils";
+import { classNames, getDisplayName } from "../../../utils";
 import { FollowersList, FollowingList } from "../../follow/components";
 import { useUserFollowers, useUserFollowing } from "../../follow/hooks";
 
@@ -54,7 +54,7 @@ const FollowPage = () => {
 
     const profile = state.result;
     const fetchingProfile = state.status === 'loading' || state.status === 'not-executed';
-    const displayName = profile?.displayName ?? profile?.display_name ?? profile?.name ?? 'Anonymous';
+    const displayName = getDisplayName(profile, pubkey);
 
     const tabs = [
         { id: 'followers' as TabId, name: 'Followers', count: followersCount },

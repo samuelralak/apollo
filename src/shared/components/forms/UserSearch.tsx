@@ -5,23 +5,13 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon, Tick02Icon, UserIcon } from "@hugeicons-pro/core-solid-rounded"
 import { NDKContext } from "../../../lib/ndk/NDKProvider"
 import { NDKUser, NDKRelaySet } from "@nostr-dev-kit/ndk"
-import { classNames } from "../../../utils"
+import { classNames, getDisplayName, formatNpub } from "../../../utils"
 import constants from "../../../constants"
 import { formStyles, getInputContainerClassName } from "../../styles/form.styles"
 
 interface UserSearchProps {
     onSelect: (user: NDKUser) => void
     excludePubkeys?: string[]
-}
-
-// Truncate npub for display
-const truncateNpub = (pubkey: string): string => {
-    try {
-        const npub = `npub1${pubkey.slice(0, 8)}...${pubkey.slice(-4)}`
-        return npub
-    } catch {
-        return pubkey.slice(0, 12) + '...'
-    }
 }
 
 export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearchProps) {
@@ -243,13 +233,13 @@ export default function UserSearch({ onSelect, excludePubkeys = [] }: UserSearch
                                                             "text-sm truncate",
                                                             selected ? "font-semibold" : "font-medium"
                                                         )}>
-                                                            {user.profile?.name || user.profile?.display_name || 'Anonymous'}
+                                                            {getDisplayName(user.profile, user.pubkey)}
                                                         </p>
                                                         <p className={classNames(
                                                             "text-xs truncate mt-0.5",
                                                             focus ? "text-slate-600 dark:text-slate-300" : "text-slate-500 dark:text-slate-400"
                                                         )}>
-                                                            {user.profile?.nip05 || truncateNpub(user.pubkey)}
+                                                            {user.profile?.nip05 ?? formatNpub(user.pubkey)}
                                                         </p>
                                                     </div>
 

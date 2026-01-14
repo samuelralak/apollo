@@ -5,6 +5,7 @@ import { useContext, useState, useCallback } from "react";
 import { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import { useMountEffect } from "@react-hookz/web";
 import { NDKContext } from "../../../lib/ndk/NDKProvider";
+import { getDisplayName } from "../../../utils";
 
 interface MentionedUsersProps {
     pubkeys: string[];
@@ -46,7 +47,7 @@ const MentionedUsers = ({ pubkeys }: MentionedUsersProps) => {
             <div className="flex items-center gap-1.5 flex-wrap">
                 {pubkeys.map((pubkey) => {
                     const profile = profiles[pubkey];
-                    const displayName = profile?.displayName || profile?.display_name || profile?.name || `${pubkey.slice(0, 8)}...`;
+                    const displayName = getDisplayName(profile, pubkey);
                     const image = profile?.image || profile?.picture;
 
                     return (

@@ -14,11 +14,49 @@ export const safeString = (value: unknown): string | undefined => {
 };
 
 /**
+ * Profile-like object with optional name fields
+ * Matches NDKUserProfile structure but allows unknown field types
+ */
+interface ProfileLike {
+    display_name?: unknown;
+    displayName?: unknown;
+    name?: unknown;
+    username?: unknown;
+    [key: string]: unknown;
+}
+
+/**
+ * Get display name from profile with consistent fallback chain (NIP-24 compliant)
+ *
+ * Order: display_name → displayName → name → username → formatNpub(pubkey)
+ * - display_name: Standard field (NIP-24)
+ * - displayName: Deprecated (use display_name)
+ * - name: Standard username field
+ * - username: Deprecated (use name)
+ *
+ * @param profile - User profile object (can be null/undefined)
+ * @param pubkey - Hex public key for fallback
+ * @returns Display name string
+ */
+export const getDisplayName = (profile: ProfileLike | null | undefined, pubkey: string | undefined): string => {
+    return safeString(profile?.display_name)
+        ?? safeString(profile?.displayName)
+        ?? safeString(profile?.name)
+        ?? safeString(profile?.username)
+        ?? formatNpub(pubkey);
+};
+
+/**
  * Format npub for display: npub1 + first 8 characters
- * @param pubkey - hex public key
+ * @param pubkey - hex public key (required - if missing, indicates corrupted state)
  * @returns truncated npub string (e.g., "npub1abc12345")
  */
-export const formatNpub = (pubkey: string): string => {
+export const formatNpub = (pubkey: string | undefined): string => {
+    if (!pubkey) {
+        console.error('[formatNpub] Missing pubkey - app state may be corrupted');
+        return 'npub1...';
+    }
+
     try {
         const npub = nip19.npubEncode(pubkey);
         return npub.substring(0, 13); // "npub1" (5 chars) + 8 chars = 13

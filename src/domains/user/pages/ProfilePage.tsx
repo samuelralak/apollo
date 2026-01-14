@@ -5,7 +5,7 @@ import type {Question} from "../../question/types/question.types";
 import type {Answer} from "../../answer/types/answer.types";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import Loader from "../../../shared/components/feedback/Loader";
-import {classNames, formatNpub, safeString} from "../../../utils";
+import {classNames, formatNpub, safeString, getDisplayName} from "../../../utils";
 import BannerPlaceholder from '../../../assets/banner-placeholder.png';
 import {HugeiconsIcon} from "@hugeicons/react";
 import {
@@ -383,10 +383,7 @@ interface ProfileSidebarProps {
 
 const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, followLoading}: ProfileSidebarProps) => {
     const nip05 = safeString(profile?.nip05);
-    const displayName = safeString(profile?.displayName)
-        ?? safeString(profile?.display_name)
-        ?? safeString(profile?.name)
-        ?? formatNpub(pubkey);
+    const displayName = getDisplayName(profile, pubkey);
     const secondaryIdentifier = nip05 ?? formatNpub(pubkey);
 
     // Verify NIP-05 with caching
