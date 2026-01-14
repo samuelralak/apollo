@@ -2,10 +2,12 @@ import {NDKUserProfile} from "@nostr-dev-kit/ndk";
 import {useContext} from "react";
 import {useAsyncAbortable, useMountEffect, useUpdateEffect} from "@react-hookz/web";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
-import {classNames} from "../../../utils";
+import {classNames, formatNpub, safeString} from "../../../utils";
 import {Link} from "react-router";
 import {HugeiconsIcon} from "@hugeicons/react";
 import {UserCircleIcon} from "@hugeicons-pro/core-twotone-rounded";
+import {CheckmarkBadge01Icon} from "@hugeicons-pro/core-duotone-rounded";
+import {useNip05Verification} from "../hooks";
 
 /**
  * Safely parse profile JSON - handles malformed content from some Nostr users
@@ -17,16 +19,6 @@ const parseProfile = (content: string): NDKUserProfile | null => {
         // Some profiles have invalid JSON - return null to show fallback UI
         return null;
     }
-};
-
-/**
- * Safely get string value - some profiles have objects instead of strings
- */
-const safeString = (value: unknown): string | undefined => {
-    if (typeof value === 'string') return value;
-    if (value === null || value === undefined) return undefined;
-    // If it's an object or other type, ignore it
-    return undefined;
 };
 
 const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: string, mini?: boolean, hideAvatar?: boolean, inline?: boolean, disableLink?: boolean }) => {
@@ -41,13 +33,20 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
     useUpdateEffect(() => { actions.execute(pubkey) }, [pubkey])
 
     const userProfile = state.result;
+    const nip05 = safeString(userProfile?.nip05);
 
-    // Safely extract string fields - some profiles have objects instead of strings
+    // Verify NIP-05 with caching
+    const {isVerified: isNip05Verified} = useNip05Verification(nip05, pubkey);
+
+    // Display name: displayName (first+last) > name (username) > truncated pubkey
     const displayName = safeString(userProfile?.displayName)
         ?? safeString(userProfile?.display_name)
         ?? safeString(userProfile?.name)
-        ?? pubkey.substring(0, 12) + '...';
-    const nip05 = safeString(userProfile?.nip05);
+        ?? formatNpub(pubkey);
+
+    // Secondary identifier: NIP-05 address > truncated npub
+    const secondaryIdentifier = nip05 ?? formatNpub(pubkey);
+
     const avatarUrl = safeString(userProfile?.image) ?? safeString(userProfile?.picture);
 
     // Use div for block layout (default), span for inline layout
@@ -74,13 +73,20 @@ const EventOwner = ({pubkey, mini, hideAvatar, inline, disableLink}: { pubkey: s
             )}
 
             <Wrapper className={classNames(inline ? 'inline-block max-w-[150px] align-middle overflow-hidden' : 'w-0 min-w-0 flex-1 overflow-hidden')}>
-                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'block text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 truncate')}>
-                    {displayName}
+                <Wrapper className={classNames(hideAvatar ? 'text-xs font-bold' : 'text-sm font-semibold', 'flex items-center gap-1 text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100')}>
+                    <span className="truncate">{displayName}</span>
+                    {isNip05Verified && (
+                        <HugeiconsIcon
+                            icon={CheckmarkBadge01Icon}
+                            size={mini ? 12 : 14}
+                            className="flex-shrink-0 text-teal-500 dark:text-teal-400"
+                        />
+                    )}
                 </Wrapper>
 
-                {(nip05 && !mini) && (
+                {!mini && (
                     <Wrapper className="block text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 truncate">
-                        {nip05}
+                        {secondaryIdentifier}
                     </Wrapper>
                 )}
             </Wrapper>

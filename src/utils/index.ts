@@ -3,6 +3,31 @@ import {NDKTag} from "@nostr-dev-kit/ndk";
 import {nip19} from "nostr-tools";
 
 /**
+ * Safely extract string value from unknown type
+ * Handles malformed Nostr profiles where fields may be objects instead of strings
+ * @param value - value to check
+ * @returns string if value is string, undefined otherwise
+ */
+export const safeString = (value: unknown): string | undefined => {
+    if (typeof value === 'string') return value;
+    return undefined;
+};
+
+/**
+ * Format npub for display: npub1 + first 8 characters
+ * @param pubkey - hex public key
+ * @returns truncated npub string (e.g., "npub1abc12345")
+ */
+export const formatNpub = (pubkey: string): string => {
+    try {
+        const npub = nip19.npubEncode(pubkey);
+        return npub.substring(0, 13); // "npub1" (5 chars) + 8 chars = 13
+    } catch {
+        return pubkey.substring(0, 12) + '...';
+    }
+};
+
+/**
  *
  * @param classes
  */

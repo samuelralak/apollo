@@ -5,7 +5,7 @@ import type {Question} from "../../question/types/question.types";
 import type {Answer} from "../../answer/types/answer.types";
 import {NDKContext} from "../../../lib/ndk/NDKProvider";
 import Loader from "../../../shared/components/feedback/Loader";
-import {classNames} from "../../../utils";
+import {classNames, formatNpub, safeString} from "../../../utils";
 import BannerPlaceholder from '../../../assets/banner-placeholder.png';
 import {HugeiconsIcon} from "@hugeicons/react";
 import {
@@ -14,6 +14,7 @@ import {
     BitcoinEllipseIcon
 } from "@hugeicons-pro/core-twotone-rounded";
 import {
+    CheckmarkBadge01Icon,
     HelpCircleIcon,
     MessageDone01Icon
 } from "@hugeicons-pro/core-duotone-rounded";
@@ -24,6 +25,7 @@ import InvitedQuestionsList from "../components/InvitedQuestionsList";
 import useUserStats from "../hooks/useUserStats";
 import useUserActivity from "../hooks/useUserActivity";
 import useQuestionsForUser from "../hooks/useQuestionsForUser";
+import {useNip05Verification} from "../hooks";
 import {FollowButton} from "../../follow/components";
 import {useUserFollowers, useUserFollowing} from "../../follow/hooks";
 import type {NDKUserProfile} from "@nostr-dev-kit/ndk";
@@ -380,7 +382,15 @@ interface ProfileSidebarProps {
 }
 
 const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, followLoading}: ProfileSidebarProps) => {
-    const displayName = profile?.displayName ?? profile?.display_name ?? profile?.name ?? 'Anonymous';
+    const nip05 = safeString(profile?.nip05);
+    const displayName = safeString(profile?.displayName)
+        ?? safeString(profile?.display_name)
+        ?? safeString(profile?.name)
+        ?? formatNpub(pubkey);
+    const secondaryIdentifier = nip05 ?? formatNpub(pubkey);
+
+    // Verify NIP-05 with caching
+    const {isVerified: isNip05Verified} = useNip05Verification(nip05, pubkey);
 
     const getHostname = (url: string): string => {
         try {
@@ -400,14 +410,19 @@ const ProfileSidebar = ({pubkey, profile, followersCount, followingCount, follow
                 <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-center justify-between gap-2 sm:gap-3">
                         <div className="min-w-0 flex-1 overflow-hidden">
-                            <h1 className="text-base sm:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
-                                {displayName}
+                            <h1 className="flex items-center gap-1.5 text-base sm:text-xl font-bold text-slate-900 dark:text-slate-100">
+                                <span className="truncate">{displayName}</span>
+                                {isNip05Verified && (
+                                    <HugeiconsIcon
+                                        icon={CheckmarkBadge01Icon}
+                                        size={18}
+                                        className="flex-shrink-0 text-teal-500 dark:text-teal-400"
+                                    />
+                                )}
                             </h1>
-                            {profile?.nip05 && (
-                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
-                                    {profile.nip05}
-                                </p>
-                            )}
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
+                                {secondaryIdentifier}
+                            </p>
                         </div>
                         <div className="flex-shrink-0">
                             <FollowButton pubkey={pubkey} size="sm" />
